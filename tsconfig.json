@@ -1,0 +1,40 @@
+{
+   "compilerOptions": {
+      /* Types */
+      "declaration": true,
+      "declarationDir": "dist/types",
+      "emitDeclarationOnly": true,
+      "outDir": "dist/types",
+
+      /* General */
+      "target": "ESNext",
+      "useDefineForClassFields": true,
+      "lib": ["ESNext", "DOM", "DOM.Iterable"],
+      "skipLibCheck": true,
+      "module": "ESNext",
+
+      /* Bundler mode */
+      "allowImportingTsExtensions": true,
+      "isolatedModules": true,
+      "sourceMap": true,
+      "resolveJsonModule": true,
+      "baseUrl": ".",
+      "paths": {
+         "@/*": ["src/*"]
+      },
+
+      /* Linting */
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitAny": true,
+
+      /* Vue */
+      "jsx": "preserve",
+      "moduleResolution": "bundler",
+      "types": ["vitest/globals", "node"]
+   },
+   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.d.ts", "test/**/*.d.ts"],
+   "exclude": ["node_modules", "dist"]
+}

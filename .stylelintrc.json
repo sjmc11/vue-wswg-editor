@@ -1,0 +1,30 @@
+{
+   "extends": [
+      "stylelint-config-standard",
+      "stylelint-config-recess-order",
+      "postcss-scss",
+      "stylelint-config-standard-scss",
+      "stylelint-config-standard-vue/scss"
+   ],
+   "rules": {
+      "at-rule-no-deprecated": [
+         true,
+         {
+            "ignoreAtRules": ["apply", "tailwind"]
+         }
+      ],
+      "at-rule-no-unknown": [
+         true,
+         {
+            "ignoreAtRules": ["apply", "tailwind", "use", "include"]
+         }
+      ],
+      "scss/at-rule-no-unknown": [
+         true,
+         {
+            "ignoreAtRules": ["apply", "tailwind"]
+         }
+      ],
+      "no-descending-specificity": null
+   }
+}

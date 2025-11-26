@@ -1,0 +1,15 @@
+node_modules
+test
+src
+*.config.js
+*.config.ts
+tsconfig.json
+.eslintrc*
+.stylelintrc*
+.prettierrc*
+.gitignore
+README.md
+coverage
+*.log
+.DS_Store
+
