@@ -1,7 +1,9 @@
 <template>
    <div
-      :data-block-type="block.name"
+      :data-block-type="toCamelCase(block.__name)"
+      draggable="true"
       class="cursor-pointer rounded-md border bg-zinc-50 p-3 text-sm text-zinc-900 hover:border-zinc-400 hover:text-zinc-900"
+      @dragstart="(event) => handleDragStart(event, block)"
    >
       <!-- thumbnail image -->
       <img
@@ -25,8 +27,7 @@
 
 <script setup lang="ts">
 import { computed, defineProps, ref } from "vue";
-import type { Block } from "../../util/registry";
-import { getBlockThumbnailUrl } from "../../util/registry";
+import { type Block, toCamelCase, getBlockThumbnailUrl } from "../../util/registry";
 
 const props = defineProps<{
    block: Block;
@@ -36,4 +37,11 @@ const thumbnailError = ref<boolean>(false);
 const thumbnailUrl = computed(() => {
    return getBlockThumbnailUrl(props.block.directory);
 });
+
+function handleDragStart(event: DragEvent, block: Block) {
+   if (!event.dataTransfer) return;
+   // Store the block type in dataTransfer
+   event.dataTransfer.setData("block-type", toCamelCase(block.__name));
+   event.dataTransfer.effectAllowed = "move";
+}
 </script>

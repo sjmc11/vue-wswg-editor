@@ -212,7 +212,11 @@ const textFieldValue = computed({
    },
    set: (newValue: string) => {
       // Try to parse as JSON if it looks like JSON, otherwise keep as string
-      if (newValue.trim().startsWith("{") || newValue.trim().startsWith("[")) {
+      if (
+         newValue &&
+         ((typeof newValue === "string" && (newValue.trim().startsWith("{") || newValue.trim().startsWith("["))) ||
+            (typeof newValue === "object" && Object.keys(newValue).length > 0))
+      ) {
          try {
             fieldValue.value = JSON.parse(newValue);
          } catch {

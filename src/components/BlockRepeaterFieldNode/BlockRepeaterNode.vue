@@ -80,7 +80,7 @@
          </div>
 
          <button
-            v-if="editable && fieldValue"
+            v-if="editable && fieldValue.length"
             :disabled="canAddItem"
             class="ml-auto flex items-center gap-1 rounded-md border border-blue-200 bg-blue-500 px-2.5 py-1.5 text-sm text-blue-500 transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
             :class="{ 'cursor-not-allowed opacity-50': canAddItem }"
@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, onBeforeUnmount, ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import BlockEditorFieldNode from "../BlockEditorFieldNode/BlockEditorFieldNode.vue";
 import type { EditorFieldConfig } from "../../util/fieldConfig";
 import {
@@ -122,9 +122,6 @@ const fieldValue = computed({
    },
 });
 
-// Track if component is mounted
-let isMounted = true;
-
 // Track open repeater items
 const openRepeaterItems = ref<string[]>([]);
 
@@ -134,42 +131,6 @@ onBeforeMount(() => {
       id: item.id || crypto.randomUUID(),
       ...item,
    }));
-});
-
-// Initialize with default items if empty
-const watcher = watch(
-   () => fieldValue.value,
-   (newValue) => {
-      if (!isMounted) return;
-      const defaultItems = props.fieldConfig?.defaultItems;
-      if (!defaultItems) return;
-      if (newValue.length === 0) {
-         if (props.fieldConfig.repeaterFields) {
-            const createDefaultItem = () => {
-               return Object.fromEntries(
-                  Object.entries(props.fieldConfig.repeaterFields || {}).map(([key, value]) => [
-                     key,
-                     getDefaultValue(value),
-                  ])
-               );
-            };
-            fieldValue.value = Array.from({ length: defaultItems }, () => ({
-               id: crypto.randomUUID(),
-               ...createDefaultItem(),
-            }));
-         } else {
-            fieldValue.value = Array.from({ length: defaultItems }, () => ({
-               id: crypto.randomUUID(),
-            }));
-         }
-      }
-   },
-   { immediate: true }
-);
-
-onBeforeUnmount(() => {
-   isMounted = false;
-   watcher();
 });
 
 // Helper function to get default value for a field
@@ -186,15 +147,12 @@ function addItem() {
       return;
    }
    const itemId = crypto.randomUUID();
+   // Merge the default value with the new item
+   const defaultValues = typeof props.fieldConfig.default === "object" ? props.fieldConfig.default : {};
+   const newItem = { id: itemId, ...defaultValues };
 
-   if (props.fieldConfig.repeaterFields) {
-      const defaultItem = Object.fromEntries(
-         Object.entries(props.fieldConfig.repeaterFields).map(([key, value]) => [key, getDefaultValue(value)])
-      );
-      fieldValue.value.push({ id: itemId, ...defaultItem });
-   } else {
-      fieldValue.value.push({ id: itemId });
-   }
+   // Create a new array reference to ensure reactivity
+   fieldValue.value = [...fieldValue.value, newItem];
    openRepeaterItems.value.push(itemId);
 }
 
@@ -202,8 +160,9 @@ function removeItem(index: number) {
    if (props.fieldConfig.minItems && fieldValue.value.length <= props.fieldConfig.minItems) {
       return;
    }
-   fieldValue.value.splice(index, 1);
    const itemId = fieldValue.value[index]?.id;
+   // Create a new array reference to ensure reactivity
+   fieldValue.value = fieldValue.value.filter((_, i) => i !== index);
    if (itemId) {
       openRepeaterItems.value = openRepeaterItems.value.filter((item) => item !== itemId);
    }
@@ -211,15 +170,21 @@ function removeItem(index: number) {
 
 function moveItemUp(index: number) {
    if (index > 0) {
-      const item = fieldValue.value.splice(index, 1)[0];
-      fieldValue.value.splice(index - 1, 0, item);
+      const newArray = [...fieldValue.value];
+      const [item] = newArray.splice(index, 1);
+      newArray.splice(index - 1, 0, item);
+      // Create a new array reference to ensure reactivity
+      fieldValue.value = newArray;
    }
 }
 
 function moveItemDown(index: number) {
    if (index < fieldValue.value.length - 1) {
-      const item = fieldValue.value.splice(index, 1)[0];
-      fieldValue.value.splice(index + 1, 0, item);
+      const newArray = [...fieldValue.value];
+      const [item] = newArray.splice(index, 1);
+      newArray.splice(index + 1, 0, item);
+      // Create a new array reference to ensure reactivity
+      fieldValue.value = newArray;
    }
 }
 

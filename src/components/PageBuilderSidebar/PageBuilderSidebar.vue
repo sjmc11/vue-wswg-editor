@@ -87,7 +87,7 @@ const pageData = defineModel<any>();
 const activeBlock = defineModel<any>("activeBlock");
 const hoveredBlockId = defineModel<string | null>("hoveredBlockId");
 const showPageSettings = defineModel<boolean>("showPageSettings");
-const showAddBlockMenu = ref(false);
+const showAddBlockMenu = defineModel<boolean>("showAddBlockMenu");
 
 // Editable prop
 const props = withDefaults(
@@ -196,6 +196,7 @@ function handleBlockClick(block: Block) {
    activeBlock.value = block;
    hoveredBlockId.value = null;
    showAddBlockMenu.value = false;
+   showPageSettings.value = false;
 }
 
 function handleShowAddBlockMenu() {

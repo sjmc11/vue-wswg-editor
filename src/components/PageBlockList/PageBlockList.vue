@@ -1,19 +1,24 @@
 <template>
    <div id="page-blocks-list" class="flex flex-col gap-1 p-5">
-      <div
-         v-for="block in pageBlocks"
-         :key="block.id"
-         :class="{ 'hovered-block': hoveredBlockId === block.id }"
-         class="block-item -mx-2.5 flex cursor-pointer items-center gap-1 rounded-md p-2.5 text-sm text-neutral-900"
-         @mouseenter="setHoveredBlockId(block.id)"
-         @mouseleave="setHoveredBlockId(null)"
-         @click="emit('block-click', block)"
-      >
-         <p>{{ block.label || block.name }}</p>
-         <span v-if="!block.__file" class="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500"
-            >Not registered</span
+      <template v-if="pageBlocks?.length">
+         <div
+            v-for="block in pageBlocks"
+            :key="block.id"
+            :class="{ 'hovered-block': hoveredBlockId === block.id }"
+            class="block-item -mx-2.5 flex cursor-pointer items-center gap-1 rounded-md p-2.5 text-sm text-neutral-900"
+            @mouseenter="setHoveredBlockId(block.id)"
+            @mouseleave="setHoveredBlockId(null)"
+            @click="emit('block-click', block)"
          >
-      </div>
+            <p>{{ block.label || block.name }}</p>
+            <span v-if="!block.__file" class="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500"
+               >Not registered</span
+            >
+         </div>
+      </template>
+      <template v-else>
+         <p class="bg-zinc-100 p-5 text-center text-sm text-zinc-500">No blocks added yet.</p>
+      </template>
    </div>
 </template>
 

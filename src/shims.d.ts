@@ -5,6 +5,37 @@ declare module "*.vue" {
    export default component;
 }
 
+// Image imports - Vite returns the URL as a string
+declare module "*.jpg" {
+   const src: string;
+   export default src;
+}
+
+declare module "*.jpeg" {
+   const src: string;
+   export default src;
+}
+
+declare module "*.png" {
+   const src: string;
+   export default src;
+}
+
+declare module "*.gif" {
+   const src: string;
+   export default src;
+}
+
+declare module "*.svg" {
+   const src: string;
+   export default src;
+}
+
+declare module "*.webp" {
+   const src: string;
+   export default src;
+}
+
 // Vite import.meta.glob type definitions
 interface ImportMeta {
    glob<T = any>(

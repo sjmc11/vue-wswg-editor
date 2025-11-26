@@ -47,6 +47,7 @@ const blockCount = computed(() => {
 function initSortable() {
    const sortableBlocksWrapper = document.getElementById("available-blocks-list");
    if (!sortableBlocksWrapper) return;
+   if (!blockCount.value) return;
    new Sortable(sortableBlocksWrapper, {
       animation: 150,
       ghostClass: "sortable-ghost",
@@ -63,6 +64,5 @@ function initSortable() {
 
 onMounted(() => {
    initSortable();
-   console.log("pageBuilderBlocks", pageBuilderBlocks.value);
 });
 </script>

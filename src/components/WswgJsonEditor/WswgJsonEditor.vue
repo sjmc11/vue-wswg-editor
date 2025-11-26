@@ -35,12 +35,12 @@
                   <component :is="pageLayout">
                      <template #default>
                         <!-- No blocks found -->
-                        <div v-if="!pageData[blocksKey]?.length" class="p-5">
-                           <div class="wswg-json-editor-canvas-preview-no-blocks">
-                              <p>No blocks found</p>
-                              <p>Add a block to get started</p>
-                           </div>
-                        </div>
+                        <EmptyState
+                           v-if="!pageData[blocksKey]?.length"
+                           v-model:showAddBlockMenu="showAddBlockMenu"
+                           :editable="editable"
+                           @block-added="handleAddBlock"
+                        />
                         <!-- Blocks found -->
                         <div v-else id="page-blocks-wrapper">
                            <div v-for="(block, blockIndex) in pageData[blocksKey]" :key="block.id">
@@ -71,6 +71,7 @@
             v-model:activeBlock="activeBlock"
             v-model:hoveredBlockId="hoveredBlockId"
             v-model:showPageSettings="showPageSettings"
+            v-model:showAddBlockMenu="showAddBlockMenu"
             :editable="editable"
             :blocksKey="blocksKey"
             :settingsKey="settingsKey"
@@ -87,7 +88,8 @@ import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
 import BlockComponent from "../BlockComponent/BlockComponent.vue";
-import { Block, getLayouts } from "../../util/registry";
+import EmptyState from "../EmptyState/EmptyState.vue";
+import { Block, getBlockComponent, getLayouts } from "../../util/registry";
 import Sortable from "sortablejs";
 
 const props = withDefaults(
@@ -111,6 +113,7 @@ const props = withDefaults(
 
 const editorViewport = ref<"desktop" | "mobile">("desktop");
 const showPageSettings = ref(false);
+const showAddBlockMenu = ref(false);
 const activeBlock = ref<any>(null);
 const isSorting = ref(false);
 const hoveredBlockId = ref<string | null>(null);
@@ -167,8 +170,60 @@ const hasPageSettings = computed(() => {
 
 function handleBlockClick(block: Block | null) {
    activeBlock.value = block;
-   hoveredBlockId.value = null;
    showPageSettings.value = false;
+   hoveredBlockId.value = null;
+   showAddBlockMenu.value = false;
+}
+
+function handleAddBlock(blockType: string, insertIndex?: number) {
+   // Ensure blocks array exists
+   if (!pageData.value[props.blocksKey]) {
+      pageData.value[props.blocksKey] = [];
+   }
+
+   // Record if this is an add from the EmptyState
+   const isAddFromEmptyState = insertIndex === undefined;
+
+   // Create a new block object
+   const newBlock = {
+      id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: blockType,
+   };
+
+   // Get the default prop values from the block component
+   const blockComponent = getBlockComponent(blockType);
+   if (blockComponent?.props) {
+      // loop props and set their default value
+      Object.entries(blockComponent.props).forEach(([key, value]) => {
+         if (value.default) {
+            if (typeof value.default === "function") {
+               newBlock[key as keyof typeof newBlock] = value.default();
+            } else {
+               newBlock[key as keyof typeof newBlock] = value.default;
+            }
+         }
+      });
+   }
+
+   // Add the new block at the specified index or at the end
+   if (insertIndex !== undefined) {
+      pageData.value[props.blocksKey].splice(insertIndex, 0, newBlock);
+   } else {
+      pageData.value[props.blocksKey].push(newBlock);
+      // Set the new block as active only when adding to the end (from EmptyState)
+      activeBlock.value = newBlock;
+      showAddBlockMenu.value = false;
+   }
+
+   // finally, if this is an add from the EmptyState, we need to trigger a re-render and initialise the sortable
+   if (isAddFromEmptyState) {
+      nextTick(() => {
+         // The component will re-render with the new block data
+         initSortable();
+      });
+   }
+
+   return newBlock;
 }
 
 function setHoveredBlockId(id: string | null) {
@@ -203,19 +258,8 @@ function initSortable() {
          const blockType = draggedElement.getAttribute("data-block-type");
 
          if (blockType) {
-            // Create a new block object
-            const newBlock = {
-               id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-               type: blockType,
-            };
-
-            // Ensure sections array exists
-            if (!pageData.value[props.blocksKey]) {
-               pageData.value[props.blocksKey] = [];
-            }
-
-            // Insert the new block at the correct position
-            pageData.value[props.blocksKey].splice(newIndex, 0, newBlock);
+            // Use the consolidated handleAddBlock function
+            handleAddBlock(blockType, newIndex);
 
             // Remove the cloned HTML element that SortableJS added
             draggedElement.remove();
@@ -312,19 +356,6 @@ onBeforeMount(() => {
          background: #fff;
          min-width: 300px;
       }
-   }
-
-   &-canvas-preview-no-blocks {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      width: 90%;
-      margin: 2rem auto;
-      background-color: #e4eef5;
-      border-radius: 10px;
-      padding: 2rem;
    }
 }
 </style>

@@ -55,7 +55,6 @@ export interface EditorFieldConfig {
    validator?: ValidatorFunction;
    // Repeater-specific properties
    repeaterFields?: Record<string, EditorFieldConfig>;
-   defaultItems?: number;
    repeaterFieldLabel?: string; // attribute key for the repeater field label
    // String length validation
    minLength?: number;
@@ -153,7 +152,6 @@ export const createField = {
    ): EditorFieldConfig => ({
       type: "repeater",
       repeaterFields,
-      defaultItems: 1,
       ...config,
    }),
 
@@ -165,7 +163,7 @@ export const createField = {
          { label: "Medium", value: "medium", id: "margin-medium" },
          { label: "Large", value: "large", id: "margin-large" },
       ],
-      default: "medium",
+      default: "none",
       description: "Vertical margin spacing",
       group: "settings",
       placeholder: "Select a margin...",
