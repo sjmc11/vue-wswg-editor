@@ -82,7 +82,7 @@
          <button
             v-if="editable && fieldValue.length"
             :disabled="canAddItem"
-            class="ml-auto flex items-center gap-1 rounded-md border border-blue-200 bg-blue-500 px-2.5 py-1.5 text-sm text-blue-500 transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+            class="ml-auto mt-1 flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-sm text-blue-500 transition-all duration-200 hover:bg-blue-100 hover:text-blue-700"
             :class="{ 'cursor-not-allowed opacity-50': canAddItem }"
             @click="addItem"
          >

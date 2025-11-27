@@ -7,6 +7,7 @@
          'hovered-block': hoveredBlockId === block.id,
       }"
       :data-block-index="blockIndex"
+      :data-block-id="block.id"
    >
       <div
          v-if="activeBlock?.id === block.id"
@@ -14,16 +15,15 @@
       >
          <p>Editing</p>
       </div>
-      <component
-         :is="pageBuilderBlocks[toCamelCase(block.type)]"
+      <div
          v-if="pageBuilderBlocks[toCamelCase(block.type)]"
-         v-bind="block"
-         ref="blockComponentRef"
          class="block-component"
          @mouseenter="emit('hoverBlock', block.id)"
          @mouseleave="emit('hoverBlock', null)"
          @click="emit('clickBlock', block)"
-      />
+      >
+         <component :is="pageBuilderBlocks[toCamelCase(block.type)]" v-bind="block" ref="blockComponentRef" />
+      </div>
       <div
          v-else
          class="block-not-found px-3 py-2"
@@ -33,7 +33,7 @@
          <div class="rounded-lg bg-zinc-200 p-5 px-3 text-center text-sm text-zinc-600">
             <p class="mb-2">Block not registered</p>
             <span class="rounded-full bg-zinc-300 px-2 py-1 text-zinc-600">
-               {{ block.type }}
+               {{ toCamelCase(block.type) }}
             </span>
          </div>
       </div>

@@ -13,12 +13,12 @@
                >
                   ← Back
                </button>
-               <h4 class="mt-1 text-lg font-bold">{{ computedActiveBlock.label || computedActiveBlock.name }}</h4>
+               <h4 class="mt-1 text-lg font-bold">{{ computedActiveBlock.label || computedActiveBlock.type }}</h4>
             </div>
             <!-- delete section button -->
             <button
                v-if="activeBlock && editable"
-               class="inline-flex size-7 cursor-pointer items-center justify-center rounded-md border bg-zinc-100 text-zinc-500 hover:border-red-200 hover:bg-blue-100 hover:text-red-600"
+               class="inline-flex size-7 cursor-pointer items-center justify-center rounded-md border bg-zinc-100 text-zinc-500 hover:border-red-200 hover:bg-red-100 hover:text-red-600"
                title="Delete block"
                @click="handleDeleteBlock"
             >
@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { Block, pageBuilderBlocks, toCamelCase } from "../../util/registry";
 import BlockBrowser from "../BlockBrowser/BlockBrowser.vue";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
@@ -207,7 +207,7 @@ function handleShowAddBlockMenu() {
 async function handleDeleteBlock() {
    if (!props.editable) return;
    // confirm delete block (native browser confirm)
-   const blockName = computedActiveBlock.value?.label || computedActiveBlock.value?.name;
+   const blockName = computedActiveBlock.value?.label || computedActiveBlock.value?.type;
    const confirm = window.confirm(
       `Are you sure you want to delete this ${blockName} block?\n\nThis action cannot be undone.`
    );

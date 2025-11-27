@@ -20,8 +20,8 @@
             </div>
 
             <select v-model="pageData.settings.layout" class="form-control" @change="getLayoutSettings">
-               <option v-for="layout in availableLayouts" :key="`layout-${layout.name}`" :value="layout.__name">
-                  {{ layout.name }}
+               <option v-for="layout in availableLayouts" :key="`layout-${layout.__name}`" :value="layout.__name">
+                  {{ layout.label }}
                </option>
             </select>
          </div>
@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeMount, onMounted, ref } from "vue";
-import { getLayouts } from "../../util/registry";
+import { getLayoutFields, getLayouts } from "../../util/registry";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
 
 const emit = defineEmits<{
@@ -60,13 +60,7 @@ const availableLayouts = computed(() => {
 
 function getLayoutSettings() {
    if (!pageData.value.settings.layout) return;
-
-   // Get the data from availableLayouts
-   const layout = Object.values(availableLayouts.value).find(
-      (layout) => layout.__name === pageData.value.settings.layout
-   );
-
-   pageSettingsFields.value = layout?.fields || null;
+   pageSettingsFields.value = getLayoutFields(pageData.value.settings.layout) || null;
 }
 
 onBeforeMount(() => {

@@ -10,7 +10,7 @@
             @mouseleave="setHoveredBlockId(null)"
             @click="emit('block-click', block)"
          >
-            <p>{{ block.label || block.name }}</p>
+            <p>{{ block.label || block.type }}</p>
             <span v-if="!block.__file" class="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500"
                >Not registered</span
             >

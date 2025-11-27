@@ -27,6 +27,7 @@
          <!-- Page preview -->
          <div class="wswg-json-editor-canvas-preview">
             <div
+               id="page-preview-viewport"
                class="mx-auto h-full overflow-hidden rounded-lg bg-white transition-all duration-300"
                :class="{ 'w-full': editorViewport === 'desktop', 'w-96': editorViewport === 'mobile' }"
             >
@@ -100,6 +101,7 @@ const props = withDefaults(
       showBrowserBar?: boolean;
       blocksKey?: string;
       settingsKey?: string;
+      defaultBlockMargin?: "none" | "small" | "medium" | "large";
    }>(),
    {
       editable: false,
@@ -108,6 +110,7 @@ const props = withDefaults(
       showBrowserBar: false,
       blocksKey: "blocks",
       settingsKey: "settings",
+      defaultBlockMargin: "none",
    }
 );
 
@@ -188,8 +191,10 @@ function handleAddBlock(blockType: string, insertIndex?: number) {
    const newBlock = {
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: blockType,
+      margin: props.defaultBlockMargin
+         ? { top: props.defaultBlockMargin, bottom: props.defaultBlockMargin }
+         : undefined,
    };
-
    // Get the default prop values from the block component
    const blockComponent = getBlockComponent(blockType);
    if (blockComponent?.props) {
@@ -238,6 +243,28 @@ watch(
       loadLayout(layoutName);
    },
    { immediate: true }
+);
+
+// Watch for activeBlock changes and scroll to the corresponding block in the preview
+watch(
+   () => activeBlock.value?.id,
+   async (blockId) => {
+      if (!blockId) return;
+
+      // Wait for DOM to update
+      await nextTick();
+
+      // Find the block element by data-block-id
+      const blockElement = document.querySelector(`[data-block-id="${blockId}"]`) as HTMLElement;
+      if (!blockElement) return;
+
+      // Scroll the block into view, centered in the scrollable container
+      blockElement.scrollIntoView({
+         behavior: "smooth",
+         block: "center",
+         inline: "nearest",
+      });
+   }
 );
 
 function initSortable() {

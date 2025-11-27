@@ -1,5 +1,5 @@
 import type { ValidatorFunction } from "./fieldConfig";
-import { getBlockFields, getLayoutFields, toNiceName } from "./registry";
+import { getBlockComponent, getLayoutFields, toNiceName } from "./registry";
 
 export function validateField(value: any, validator: ValidatorFunction) {
    return validator(value);
@@ -76,7 +76,7 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
       // Get the block type
       const blockType = block.type;
       // Get the block editor fields
-      const blockEditorFields = getBlockFields(blockType);
+      const blockComponent = getBlockComponent(blockType);
 
       // Add validation results entry for the section
       validationResults[blockType] = {
@@ -86,13 +86,13 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
       };
 
       // Skip if no editor fields are found
-      if (Object.keys(blockEditorFields).length === 0) {
+      if (Object.keys(blockComponent?.fields || {}).length === 0) {
          continue;
       }
 
       // Loop each field in the block
-      for (const field in blockEditorFields) {
-         const fieldConfig = blockEditorFields[field];
+      for (const field in blockComponent?.fields || {}) {
+         const fieldConfig = blockComponent?.fields?.[field];
          // If the field has a validator, validate it
          if (fieldConfig?.validator) {
             const result = await validateField(block[field], fieldConfig.validator);

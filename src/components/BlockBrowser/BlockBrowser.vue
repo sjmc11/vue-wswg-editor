@@ -16,7 +16,7 @@
       </div>
       <div v-else-if="!filteredBlocks.length" class="p-5 text-center text-sm text-zinc-500">No blocks found</div>
       <div v-else id="available-blocks-list" class="grid grid-cols-1 gap-3 p-5">
-         <AddBlockItem v-for="block in filteredBlocks" :key="block.name" :block="block" />
+         <AddBlockItem v-for="block in filteredBlocks" :key="block.type" :block="block" />
       </div>
    </div>
 </template>
@@ -33,7 +33,7 @@ const filteredBlocks = computed(() => {
    return Object.values(pageBuilderBlocks.value).filter((block: Block) => {
       // against block name and label
       return (
-         block.name.toLowerCase().includes(blockSearch.value.toLowerCase()) ||
+         block.type.toLowerCase().includes(blockSearch.value.toLowerCase()) ||
          block.label?.toLowerCase().includes(blockSearch.value.toLowerCase())
       );
    });
