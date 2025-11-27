@@ -28,7 +28,8 @@
 
 <script setup lang="ts">
 import { computed, defineProps, ref } from "vue";
-import { type Block, getBlockThumbnailUrl } from "../../util/registry";
+import type { Block } from "../../types/Block";
+import { getBlockThumbnailUrl } from "../../util/registry";
 import { CubeTransparentIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps<{

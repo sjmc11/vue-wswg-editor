@@ -1,5 +1,6 @@
 import type { ValidatorFunction } from "./fieldConfig";
-import { getBlockComponent, getLayoutFields, toNiceName } from "./registry";
+import { getBlockComponent, getLayoutFields } from "./registry";
+import { toNiceName } from "./helpers";
 
 export function validateField(value: any, validator: ValidatorFunction) {
    return validator(value);

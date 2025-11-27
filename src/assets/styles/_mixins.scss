@@ -1,0 +1,64 @@
+// Block Margin Utility Mixin
+// Generates margin classes for top and bottom margins
+// Usage: @include block-margin-classes;
+
+@mixin block-margin-classes {
+   // Margin size variables
+   $sm-size: 2rem;
+   $md-size: 4rem;
+   $lg-size: 6rem;
+
+   // Top margin classes
+   &.margin-top-sm {
+      padding-top: $sm-size;
+      &::before {
+         top: 0;
+         height: $sm-size;
+      }
+   }
+   &.margin-top-md {
+      padding-top: $md-size;
+      &::before {
+         top: 0;
+         height: $md-size;
+      }
+   }
+   &.margin-top-lg {
+      padding-top: $lg-size;
+      &::before {
+         top: 0;
+         height: $lg-size;
+      }
+   }
+
+   // Bottom margin classes
+   &.margin-bottom-sm {
+      padding-bottom: $sm-size;
+      &::after {
+         bottom: 0;
+         height: $sm-size;
+      }
+   }
+   &.margin-bottom-md {
+      padding-bottom: $md-size;
+      &::after {
+         bottom: 0;
+         height: $md-size;
+      }
+   }
+   &.margin-bottom-lg {
+      padding-bottom: $lg-size;
+      &::after {
+         bottom: 0;
+         height: $lg-size;
+      }
+   }
+
+   // No margin classes
+   &.margin-top-none::before,
+   &.margin-bottom-none::after {
+      display: none;
+      content: none;
+   }
+}
+

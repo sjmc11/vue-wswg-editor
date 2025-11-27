@@ -43,7 +43,8 @@
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
 import { onClickOutside } from "@vueuse/core";
-import { pageBuilderBlocks, toCamelCase, Block } from "../../util/registry";
+import { pageBuilderBlocks, Block } from "../../util/registry";
+import { toCamelCase } from "../../util/helpers";
 import { onKeyStroke } from "@vueuse/core";
 
 const emit = defineEmits<{
@@ -95,6 +96,7 @@ onKeyStroke("Escape", () => {
 </script>
 
 <style scoped lang="scss">
+@use "../../assets/styles/mixins" as *;
 .block-wrapper {
    position: relative;
    transition: all 0.3s ease;
@@ -173,59 +175,7 @@ onKeyStroke("Escape", () => {
       }
    }
 
-   // Block margin classes
-   // Top margin = ::before, Bottom margin = ::after
-   $sm-size: 2rem;
-   $md-size: 4rem;
-   $lg-size: 6rem;
-   &.margin-top-sm {
-      padding-top: $sm-size;
-      &::before {
-         top: 0;
-         height: $sm-size;
-      }
-   }
-   &.margin-top-md {
-      padding-top: $md-size;
-      &::before {
-         top: 0;
-         height: $md-size;
-      }
-   }
-   &.margin-top-lg {
-      padding-top: $lg-size;
-      &::before {
-         top: 0;
-         height: $lg-size;
-      }
-   }
-   &.margin-bottom-sm {
-      padding-bottom: $sm-size;
-      &::after {
-         bottom: 0;
-         height: $sm-size;
-      }
-   }
-   &.margin-bottom-md {
-      padding-bottom: $md-size;
-      &::after {
-         bottom: 0;
-         height: $md-size;
-      }
-   }
-   &.margin-bottom-lg {
-      padding-bottom: $lg-size;
-      &::after {
-         bottom: 0;
-         height: $lg-size;
-      }
-   }
-
-   // No margin classes
-   &.margin-top-none::before,
-   &.margin-bottom-none::after {
-      display: none;
-      content: none;
-   }
+   // Block margin classes - generated using mixin
+   @include block-margin-classes;
 }
 </style>

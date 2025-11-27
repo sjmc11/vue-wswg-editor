@@ -1,0 +1,23 @@
+// Alternative 3: Runtime registration pattern
+// Components register themselves when imported
+
+import { ref, type Ref } from "vue";
+import type { Component } from "vue";
+
+// Registry store
+export const blockRegistry: Ref<Record<string, Component>> = ref({});
+
+// Registration function
+export function registerBlock(type: string, component: Component) {
+   blockRegistry.value[type] = component;
+}
+
+// In each block component, add:
+// import { registerBlock } from "./blockModules-runtime";
+// registerBlock("hero-section", defineComponent({ ... }));
+
+// Then manually import blocks:
+// import "./blocks/hero-section/hero-section.vue";
+// import "./blocks/cards-section/cards-section.vue";
+// etc.
+

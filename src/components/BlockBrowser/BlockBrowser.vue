@@ -23,8 +23,9 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { pageBuilderBlocks, type Block } from "../../util/registry";
+import { pageBuilderBlocks } from "../../util/registry";
 import AddBlockItem from "../AddBlockItem/AddBlockItem.vue";
+import type { Block } from "../../types/Block";
 import Sortable from "sortablejs";
 
 const blockSearch = ref("");
@@ -33,7 +34,7 @@ const filteredBlocks = computed(() => {
    return Object.values(pageBuilderBlocks.value).filter((block: Block) => {
       // against block name and label
       return (
-         block.type.toLowerCase().includes(blockSearch.value.toLowerCase()) ||
+         block.type?.toLowerCase().includes(blockSearch.value.toLowerCase()) ||
          block.label?.toLowerCase().includes(blockSearch.value.toLowerCase())
       );
    });

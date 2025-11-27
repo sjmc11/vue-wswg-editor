@@ -24,7 +24,8 @@
 
 <script setup lang="ts">
 import { computed, defineEmits, onMounted, ref } from "vue";
-import { Block, pageBuilderBlocks, toCamelCase, toNiceName } from "../../util/registry";
+import { Block, pageBuilderBlocks } from "../../util/registry";
+import { toCamelCase, toNiceName } from "../../util/helpers";
 import Sortable from "sortablejs";
 
 const emit = defineEmits<{
