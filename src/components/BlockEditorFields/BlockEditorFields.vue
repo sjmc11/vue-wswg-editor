@@ -14,7 +14,7 @@
       </div>
 
       <!-- Fields -->
-      <div v-if="blockData" class="flex flex-col gap-3 p-5">
+      <div v-if="blockData && Object.keys(editorFields).length > 0" class="flex flex-col gap-3 p-5">
          <div v-for="(fieldConfig, fieldName) in editorFields" :key="fieldName" class="prop-field">
             <BlockEditorFieldNode
                v-model="blockData[fieldName]"

@@ -7,7 +7,6 @@ import type { EditorFieldConfig } from "./fieldConfig";
 // The consuming app should have: "@page-builder": fileURLToPath(new URL("../page-builder", import.meta.url))
 // Using eager: true to load all modules immediately so we can access component metadata (name, props, icon)
 const blockModules = import.meta.glob("@page-builder/blocks/**/*.vue", { eager: true });
-const blockFieldsModules = import.meta.glob("@page-builder/blocks/**/fields.ts", { eager: true });
 const layoutModules = import.meta.glob("@page-builder/layout/**/*.vue", { eager: true });
 // Load all thumbnail images - Vite will process these as assets and provide URLs
 // For images, Vite returns the URL as the default export when using eager: true
@@ -19,7 +18,6 @@ const thumbnailModules = import.meta.glob("@page-builder/blocks/**/thumbnail.png
  */
 export const pageBuilderBlocks: Ref<Record<string, Block>> = shallowRef({});
 export const pageBuilderLayouts: Ref<Record<string, Layout>> = shallowRef({});
-const pageBuilderBlockFields: Ref<Record<string, any>> = ref({});
 
 /**
  * Custom component type with additional block-specific properties
@@ -33,8 +31,8 @@ export type Block = Component & {
    // Defined in template
    label?: string;
    icon?: string;
-   // fields file
-   fields?: Record<string, any>;
+   // editor fields
+   fields?: Record<string, EditorFieldConfig>;
    // Auto generated from the component path
    directory?: string; // Where the block component is located (e.g., "@page-builder/blocks/hero-section")
    // Margin
@@ -272,40 +270,12 @@ export function getBlockComponent(blockType: string): Block | undefined {
    return undefined;
 }
 
-function getBlockFields(blockName: string): any {
-   try {
-      // Generate path variations for options.ts file
-      const pathVariations = generateFilePathPatterns("../page-builder/blocks/", blockName, "fields.ts");
-      // Find the path that exists in the loaded modules
-      const path = pathVariations.find((path) => blockFieldsModules[path]);
-      if (path && blockFieldsModules[path]) {
-         // Get the block fields
-         const blockFields = (blockFieldsModules[path] as any).default;
-         return blockFields || {};
-      }
-      return {};
-   } catch (error) {
-      console.error("Error getting block fields for block: ", blockName, error);
-      return {};
-   }
-}
-
 export function getLayoutFields(layoutName: string): Record<string, EditorFieldConfig> {
    // Get the data from availableLayouts
    const layout = Object.values(pageBuilderLayouts.value).find((layout) => layout.__name === layoutName);
    if (!layout) return {};
 
    return layout?.fields || {};
-}
-
-function initialiseBlockFieldsRegistry(): void {
-   Object.keys(pageBuilderBlockFields.value).forEach((key) => {
-      delete pageBuilderBlockFields.value[key];
-   });
-   Object.entries(blockFieldsModules).forEach(([path, module]) => {
-      const blockFields = (module as any).default;
-      pageBuilderBlockFields.value[path] = blockFields;
-   });
 }
 
 function initialiseLayoutRegistry(): void {
@@ -335,8 +305,7 @@ function initialiseBlockRegistry(): void {
          // Extract directory path from component path (e.g., "@page-builder/blocks/hero-section/hero-section.vue" -> "@page-builder/blocks/hero-section")
          const directory = path.replace(/\/[^/]+\.vue$/, "");
          const block: Block = {
-            fields: getBlockFields(blockType),
-            ...component, // Component can override fields
+            ...component,
             directory: directory, // directory path where the block component is located (e.g., "@page-builder/blocks/hero-section")
             type: blockType,
          };
@@ -347,7 +316,6 @@ function initialiseBlockRegistry(): void {
 
 export function initialiseRegistry(): void {
    initialiseLayoutRegistry();
-   initialiseBlockFieldsRegistry();
    initialiseBlockRegistry();
 }
 

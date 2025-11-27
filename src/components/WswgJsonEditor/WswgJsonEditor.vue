@@ -27,12 +27,11 @@
          <!-- Page preview -->
          <div class="wswg-json-editor-canvas-preview">
             <div
-               id="page-preview-viewport"
                class="mx-auto h-full overflow-hidden rounded-lg bg-white transition-all duration-300"
                :class="{ 'w-full': editorViewport === 'desktop', 'w-96': editorViewport === 'mobile' }"
             >
                <BrowserNavigation v-if="showBrowserBar" :url="url" />
-               <div v-if="pageLayout" class="h-full overflow-y-auto">
+               <div v-if="pageLayout" id="page-preview-viewport" class="h-full overflow-y-auto">
                   <component :is="pageLayout">
                      <template #default>
                         <!-- No blocks found -->
