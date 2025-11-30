@@ -60,9 +60,6 @@ export default defineConfig({
          // This library uses import.meta.glob with @page-builder paths, which will be resolved
          // by the consuming app's Vite build. The library should be consumed as SOURCE CODE,
          // not as a pre-built package, for the globs to work correctly.
-         // @sano-ui-library is externalized but needs to be resolvable during build
-         // For library dev builds, point to the sano-ui-library directory
-         "@sano-ui-library": fileURLToPath(new URL("../../../sano/sano-ui-library", import.meta.url)),
       },
    },
    build: {
@@ -76,12 +73,7 @@ export default defineConfig({
       rollupOptions: {
          // Externalize dependencies that are provided by consuming apps
          // These will be resolved at runtime from the consuming app's node_modules
-         external: [
-            "vue",
-            "yup",
-            // sano-ui-library is provided by consuming apps, not bundled with the library
-            /^@sano-ui-library/,
-         ],
+         external: ["vue", "yup"],
          output: {
             globals: {
                vue: "Vue",

@@ -49,6 +49,7 @@
    "devDependencies": {
       "@types/jsdom": "^21.1.7",
       "@types/node": "^24.0.8",
+      "@types/sortablejs": "^1.15.9",
       "@vitejs/plugin-vue": "^5.2.4",
       "@vitest/eslint-plugin": "^1.3.5",
       "@vitest/ui": "^2.1.9",
@@ -75,7 +76,8 @@
       "typescript": "~5.8.3",
       "vite": "^5.4.19",
       "vitest": "^2.1.9",
-      "vue-tsc": "^2.2.12"
+      "vue-tsc": "^2.2.12",
+      "yup": "^1.7.1"
    },
    "peerDependencies": {
       "vue": "^3.4.0"

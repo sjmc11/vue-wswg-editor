@@ -133,15 +133,6 @@ onBeforeMount(() => {
    }));
 });
 
-// Helper function to get default value for a field
-function getDefaultValue(fieldConfig: EditorFieldConfig): any {
-   const textBasedFields = ["text", "textarea", "email", "url", "richText"];
-   if (textBasedFields.includes(fieldConfig.type)) {
-      return fieldConfig.default !== undefined ? fieldConfig.default : null;
-   }
-   return fieldConfig.default;
-}
-
 function addItem() {
    if (props.fieldConfig.maxItems && fieldValue.value.length >= props.fieldConfig.maxItems) {
       return;
@@ -216,6 +207,7 @@ const canAddItem = computed(() => {
       height: 0;
       overflow: hidden;
    }
+
    &.is-open {
       .repeater-item-fields {
          @apply p-3 h-auto border-t;

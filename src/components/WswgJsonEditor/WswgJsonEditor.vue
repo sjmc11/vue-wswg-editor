@@ -89,7 +89,8 @@ import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
 import BlockComponent from "../BlockComponent/BlockComponent.vue";
 import EmptyState from "../EmptyState/EmptyState.vue";
-import { Block, getBlockComponent, getLayouts } from "../../util/registry";
+import { getBlockComponent, getLayouts } from "../../util/registry";
+import type { Block } from "../../types/Block";
 import Sortable from "sortablejs";
 
 const props = withDefaults(
@@ -198,7 +199,7 @@ function handleAddBlock(blockType: string, insertIndex?: number) {
    const blockComponent = getBlockComponent(blockType);
    if (blockComponent?.props) {
       // loop props and set their default value
-      Object.entries(blockComponent.props).forEach(([key, value]) => {
+      Object.entries(blockComponent.props).forEach(([key, value]: [string, any]) => {
          if (value.default) {
             if (typeof value.default === "function") {
                newBlock[key as keyof typeof newBlock] = value.default();
@@ -347,40 +348,43 @@ onBeforeMount(() => {
 .wswg-json-editor {
    display: flex;
    flex-direction: column;
-   height: 100vh;
    width: 100%;
    max-width: 100%;
+   height: 100vh;
+
    &-header {
-      background-color: #fff;
       position: sticky;
       top: 0;
       z-index: 20;
+      background-color: #fff;
    }
 
    &-loading {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
    }
 
    &-canvas {
-      overflow-y: auto;
       display: flex;
-      height: 100%;
+      flex: 1;
       flex-grow: 1;
       flex-shrink: 0;
-      flex: 1;
+      height: 100%;
+      overflow-y: auto;
       background-color: #6a6a6a;
+
       &-preview {
-         padding: 2rem;
+         flex: 1;
          flex-grow: 1;
          flex-shrink: 0;
-         flex: 1;
+         padding: 2rem;
       }
+
       &-sidebar {
+         min-width: 300px;
          padding: 2rem;
          background: #fff;
-         min-width: 300px;
       }
    }
 }

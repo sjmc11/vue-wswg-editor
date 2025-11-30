@@ -1,14 +1,7 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "vue"
-  ],
-  "eslint.enable": true
+   "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+   },
+   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
+   "eslint.enable": true
 }
-

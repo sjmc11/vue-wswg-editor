@@ -11,20 +11,25 @@
    // Top margin classes
    &.margin-top-sm {
       padding-top: $sm-size;
+
       &::before {
          top: 0;
          height: $sm-size;
       }
    }
+
    &.margin-top-md {
       padding-top: $md-size;
+
       &::before {
          top: 0;
          height: $md-size;
       }
    }
+
    &.margin-top-lg {
       padding-top: $lg-size;
+
       &::before {
          top: 0;
          height: $lg-size;
@@ -34,20 +39,25 @@
    // Bottom margin classes
    &.margin-bottom-sm {
       padding-bottom: $sm-size;
+
       &::after {
          bottom: 0;
          height: $sm-size;
       }
    }
+
    &.margin-bottom-md {
       padding-bottom: $md-size;
+
       &::after {
          bottom: 0;
          height: $md-size;
       }
    }
+
    &.margin-bottom-lg {
       padding-bottom: $lg-size;
+
       &::after {
          bottom: 0;
          height: $lg-size;
@@ -61,4 +71,3 @@
       content: none;
    }
 }
-

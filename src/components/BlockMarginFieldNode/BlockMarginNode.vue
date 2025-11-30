@@ -122,16 +122,11 @@ onMounted(() => {
 
 <style scoped lang="scss">
 select.form-control {
+   padding-right: 32px;
+   appearance: none;
    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // down chevron
    background-repeat: no-repeat;
    background-position: right 8px center;
    background-size: 20px;
-   padding-right: 32px;
-   appearance: none;
-   -webkit-appearance: none;
-   -moz-appearance: none;
-   -ms-appearance: none;
-   -o-appearance: none;
-   appearance: none;
 }
 </style>

@@ -292,13 +292,13 @@ watch(
       // Text based inputs
       &:is(input:not([type="checkbox"], [type="radio"]), textarea, select) {
          width: 100%;
-         background-color: #fff;
-         border: 1px solid #e0e0e0;
-         border-radius: 5px;
          padding: 8px;
          font-size: 14px;
          color: #333;
          outline: none;
+         background-color: #fff;
+         border: 1px solid #e0e0e0;
+         border-radius: 5px;
          box-shadow: none;
          transition: border-color 0.2s;
       }
@@ -309,17 +309,12 @@ watch(
          input[type="radio"] {
             width: 16px;
             height: 16px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
             padding: 8px;
             font-size: 14px;
             appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            -ms-appearance: none;
-            -o-appearance: none;
-            appearance: none;
             cursor: pointer;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
 
             &:checked {
                @apply bg-blue-700 border-blue-700;
@@ -338,8 +333,9 @@ watch(
          }
 
          &:has(input[type="checkbox"]:disabled, input[type="radio"]:disabled) {
-            opacity: 0.75;
             cursor: not-allowed;
+            opacity: 0.75;
+
             input {
                cursor: not-allowed;
             }
@@ -348,17 +344,12 @@ watch(
 
       // Select input chevron icon
       &:is(select) {
+         padding-right: 32px;
+         appearance: none;
          background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // down chevron
          background-repeat: no-repeat;
          background-position: right 8px center;
          background-size: 20px;
-         padding-right: 32px;
-         appearance: none;
-         -webkit-appearance: none;
-         -moz-appearance: none;
-         -ms-appearance: none;
-         -o-appearance: none;
-         appearance: none;
       }
 
       // Color picker input
@@ -366,11 +357,11 @@ watch(
          width: auto;
          aspect-ratio: 1/1;
          padding: 3px;
-         border: none;
-         border-radius: 5px;
-         background-color: #fff;
-         border: 1px solid #e0e0e0;
          cursor: pointer;
+         background-color: #fff;
+         border: none;
+         border: 1px solid #e0e0e0;
+         border-radius: 5px;
       }
 
       &:hover {
@@ -378,9 +369,9 @@ watch(
       }
 
       &:disabled {
-         opacity: 0.75;
-         background-color: #fff;
          cursor: not-allowed;
+         background-color: #fff;
+         opacity: 0.75;
       }
    }
 }

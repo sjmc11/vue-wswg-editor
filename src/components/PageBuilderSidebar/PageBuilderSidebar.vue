@@ -76,7 +76,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { Block, pageBuilderBlocks } from "../../util/registry";
+import { pageBuilderBlocks } from "../../util/registry";
+import type { Block } from "../../types/Block";
 import { toCamelCase } from "../../util/helpers";
 import BlockBrowser from "../BlockBrowser/BlockBrowser.vue";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";

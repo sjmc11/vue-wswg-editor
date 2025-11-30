@@ -55,15 +55,15 @@ function startResize(event: MouseEvent) {
 <style scoped lang="scss">
 /* Resize handle styles */
 .resize-handle {
+   position: relative;
    top: 0;
    right: 0;
    z-index: 2;
    width: 3px;
    height: 100%;
+   cursor: col-resize;
    background-color: var(--grey-20);
    transition: all 0.2s ease-in-out;
-   position: relative;
-   cursor: col-resize;
 }
 
 .resize-handle:hover {

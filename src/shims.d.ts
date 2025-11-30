@@ -49,3 +49,24 @@ interface ImportMeta {
       }
    ): Record<string, () => Promise<T>> | Record<string, T> | Record<string, string>;
 }
+
+// SortableJS type declaration - reference @types/sortablejs and re-export as ESM default
+/// <reference types="sortablejs" />
+declare module "sortablejs" {
+   // Reference the Sortable class from @types/sortablejs via triple-slash directive
+   // This allows default import with esModuleInterop
+   const Sortable: {
+      new (element: HTMLElement, options?: any): any;
+      active: any;
+      utils: any;
+      mount(...plugins: any[]): void;
+      create(element: HTMLElement, options?: any): any;
+      dragged: HTMLElement | null;
+      ghost: HTMLElement | null;
+      clone: HTMLElement | null;
+      get(element: HTMLElement): any;
+      readonly version: string;
+   };
+   export = Sortable;
+   export default Sortable;
+}

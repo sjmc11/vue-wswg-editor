@@ -43,7 +43,8 @@
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
 import { onClickOutside } from "@vueuse/core";
-import { pageBuilderBlocks, Block } from "../../util/registry";
+import { pageBuilderBlocks } from "../../util/registry";
+import type { Block } from "../../types/Block";
 import { toCamelCase } from "../../util/helpers";
 import { onKeyStroke } from "@vueuse/core";
 
@@ -97,6 +98,7 @@ onKeyStroke("Escape", () => {
 
 <style scoped lang="scss">
 @use "../../assets/styles/mixins" as *;
+
 .block-wrapper {
    position: relative;
    transition: all 0.3s ease;
@@ -124,22 +126,23 @@ onKeyStroke("Escape", () => {
    }
 
    .block-component {
-      cursor: pointer;
       position: relative;
+      cursor: pointer;
+
       // Highlight block overlay
       &::before {
          position: absolute;
-         left: 0;
          top: 0;
+         left: 0;
+         z-index: 2;
          width: 100%;
          height: 100%;
-         content: "";
-         background-color: #9fd0f643;
+         pointer-events: none;
          outline: 2px dashed #638ef1;
          outline-offset: -2px;
-         pointer-events: none;
+         content: "";
+         background-color: #9fd0f643;
          opacity: 0;
-         z-index: 2;
       }
    }
 
@@ -152,6 +155,7 @@ onKeyStroke("Escape", () => {
             opacity: 1;
          }
       }
+
       // Show the margin spacing overlay
       &::after,
       &::before {
@@ -168,6 +172,7 @@ onKeyStroke("Escape", () => {
             opacity: 1;
          }
       }
+
       // Show the margin spacing overlay
       &::after,
       &::before {

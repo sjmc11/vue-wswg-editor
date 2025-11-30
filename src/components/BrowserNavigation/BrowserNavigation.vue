@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { ArrowUpRightIcon } from "@heroicons/vue/24/outline";
 
-const props = defineProps<{
+defineProps<{
    url: string;
 }>();
 </script>
