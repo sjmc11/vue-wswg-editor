@@ -4,7 +4,7 @@
          <div
             v-for="block in pageBlocks"
             :key="block.id"
-            :class="{ 'hovered-block': hoveredBlockId === block.id }"
+            :class="{ 'bg-blue-100 text-blue-600': hoveredBlockId === block.id }"
             class="block-item -mx-2.5 flex cursor-pointer items-center gap-1 rounded-md p-2.5 text-sm text-neutral-900"
             @mouseenter="setHoveredBlockId(block.id)"
             @mouseleave="setHoveredBlockId(null)"
@@ -93,11 +93,3 @@ onMounted(() => {
    initSortable();
 });
 </script>
-
-<style scoped lang="scss">
-.block-item {
-   &.hovered-block {
-      @apply bg-blue-100 text-blue-600;
-   }
-}
-</style>

@@ -2,7 +2,7 @@
    <div
       :data-block-type="block.type"
       draggable="true"
-      class="cursor-pointer rounded-md border bg-zinc-50 p-3 text-sm text-zinc-900 hover:border-zinc-400 hover:text-zinc-900"
+      class="cursor-pointer rounded-md border border-gray-300 bg-zinc-50 p-2 text-sm text-zinc-900 hover:border-zinc-400 hover:text-zinc-900"
       @dragstart="(event) => handleDragStart(event, block)"
    >
       <!-- thumbnail image -->
@@ -14,15 +14,15 @@
             @error="thumbnailError = true"
          />
       </div>
-      <!-- icon -->
-      <div v-else-if="block.icon" class="mb-2 flex h-28 w-full items-center justify-center rounded-md bg-zinc-200">
-         <span>Icon: {{ block.icon }}</span>
+      <!-- emoji -->
+      <div v-else-if="block.emoji" class="mb-2 flex h-28 w-full items-center justify-center rounded-md bg-zinc-200">
+         <span class="text-2xl">{{ block.emoji }}</span>
       </div>
       <!-- placeholder -->
       <div v-else class="mb-2 flex h-28 w-full items-center justify-center rounded-md bg-zinc-200">
          <CubeTransparentIcon class="size-6 text-zinc-400" />
       </div>
-      <p class="font-bold">{{ block.label }}</p>
+      <p class="text-sm">{{ block.label }}</p>
    </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
    <div class="page-settings">
-      <div class="flex items-start justify-between border-b bg-white p-5">
+      <div class="flex items-start justify-between border-b border-gray-300 bg-white p-5">
          <div>
             <button
                class="cursor-pointer text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
@@ -11,7 +11,7 @@
             <h4 class="mt-1 text-lg font-bold">Page settings</h4>
          </div>
       </div>
-      <div class="border-b p-5">
+      <div class="border-b border-gray-300 p-5">
          <!-- Page layout -->
          <div class="editor-field-node">
             <!-- Label -->
@@ -19,7 +19,11 @@
                <label class="mr-auto font-medium first-letter:uppercase">Page layout</label>
             </div>
 
-            <select v-model="pageData.settings.layout" class="form-control" @change="getLayoutSettings">
+            <select
+               v-model="pageData.settings.layout"
+               class="form-control w-full rounded-md border border-gray-300 p-2"
+               @change="getLayoutSettings"
+            >
                <option v-for="layout in availableLayouts" :key="`layout-${layout.__name}`" :value="layout.__name">
                   {{ layout.label }}
                </option>

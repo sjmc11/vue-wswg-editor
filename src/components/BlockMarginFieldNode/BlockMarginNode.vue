@@ -1,7 +1,9 @@
 <template>
    <div class="margin-field flex gap-2" :class="linkedMargin ? '' : 'items-start'">
       <div v-if="linkedMargin" class="field-wrapper relative flex-1" title="Top & Bottom Margin">
-         <span class="pointer-events-none absolute left-0 top-0 inline-flex h-full items-center border-r px-3 text-xs">
+         <span
+            class="pointer-events-none absolute left-0 top-0 inline-flex h-full items-center border-r border-gray-300 px-3 text-xs"
+         >
             <ArrowsUpDownIcon class="size-3" />
          </span>
          <select
@@ -21,7 +23,7 @@
          <div class="flex flex-1 gap-2">
             <div class="field-wrapper relative flex-1" title="Top Margin">
                <span
-                  class="pointer-events-none absolute left-0 top-0 inline-flex h-full items-center justify-center border-r px-3 text-xs"
+                  class="pointer-events-none absolute left-0 top-0 inline-flex h-full items-center justify-center border-r border-gray-300 px-3 text-xs"
                   ><ArrowUpIcon class="size-3"
                /></span>
                <select
@@ -38,7 +40,7 @@
             </div>
             <div class="field-wrapper relative flex-1" title="Bottom Margin">
                <span
-                  class="pointer-events-none absolute left-0 top-0 inline-flex h-full items-center justify-center border-r px-3 text-xs"
+                  class="pointer-events-none absolute left-0 top-0 inline-flex h-full items-center justify-center border-r border-gray-300 px-3 text-xs"
                >
                   <ArrowDownIcon class="size-3" />
                </span>
@@ -59,7 +61,7 @@
       <button
          v-if="editable"
          title="Link Margin (Top & Bottom)"
-         class="inline-flex size-10 shrink-0 items-center justify-center rounded-md border p-2 text-center"
+         class="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-gray-300 p-2 text-center"
          :class="
             linkedMargin
                ? 'bg-blue-50 border-blue-200 hover:bg-blue-100'

@@ -5,7 +5,7 @@
       <!-- Active section-->
       <div v-else-if="activeBlock">
          <!-- back header -->
-         <div class="flex items-start justify-between border-b bg-white p-5">
+         <div class="flex items-start justify-between border-b border-gray-300 bg-white p-5">
             <div>
                <button
                   class="cursor-pointer text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
@@ -18,7 +18,7 @@
             <!-- delete section button -->
             <button
                v-if="activeBlock && editable"
-               class="inline-flex size-7 cursor-pointer items-center justify-center rounded-md border bg-zinc-100 text-zinc-500 hover:border-red-200 hover:bg-red-100 hover:text-red-600"
+               class="inline-flex size-7 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-zinc-100 text-zinc-500 hover:border-red-200 hover:bg-red-100 hover:text-red-600"
                title="Delete block"
                @click="handleDeleteBlock"
             >
@@ -33,7 +33,7 @@
       </div>
       <!-- Add block menu -->
       <div v-else-if="showAddBlockMenu">
-         <div class="flex items-center justify-between border-b bg-white p-5">
+         <div class="flex items-center justify-between border-b border-gray-300 bg-white p-5">
             <div>
                <button
                   class="cursor-pointer text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
@@ -49,11 +49,11 @@
       </div>
       <!-- No active block -->
       <div v-else>
-         <div class="flex items-center justify-between border-b bg-white p-5">
+         <div class="flex items-center justify-between border-b border-gray-300 bg-white p-5">
             <h4 class="text-lg font-bold">Blocks ({{ pageData?.[blocksKey]?.length }})</h4>
             <button
                v-if="editable"
-               class="inline-flex items-center gap-1.5 rounded-md border bg-zinc-50 px-3 py-2 text-xs text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 active:border-blue-600 active:bg-blue-50 active:text-blue-600"
+               class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-zinc-50 px-3 py-2 text-xs text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 active:border-blue-600 active:bg-blue-50 active:text-blue-600"
                title="Add block"
                @click="handleShowAddBlockMenu"
             >
@@ -233,9 +233,14 @@ async function handleDeleteBlock() {
 </script>
 
 <style scoped lang="scss">
+$toolbar-height: 55px;
 .page-builder-sidebar {
-   height: 100%;
-   overflow-y: auto;
+   min-width: 300px;
    background: #fff;
+   overflow-y: auto;
+   position: sticky;
+   top: $toolbar-height;
+   z-index: 20;
+   height: calc(100vh - $toolbar-height);
 }
 </style>

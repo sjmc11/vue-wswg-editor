@@ -1,7 +1,12 @@
 <template>
    <div class="block-browser">
-      <div class="block-browser-header border-b bg-white px-5 py-3">
-         <input v-model="blockSearch" type="text" placeholder="Search blocks" class="form-control" />
+      <div class="block-browser-header border-b border-gray-300 bg-white px-5 py-3">
+         <input
+            v-model="blockSearch"
+            type="text"
+            placeholder="Search blocks"
+            class="w-full rounded-md border border-gray-300 p-2"
+         />
       </div>
       <div v-if="!blockCount" class="p-5 text-center text-sm text-zinc-500">
          <p>Create your first block to get started.</p>
@@ -15,7 +20,7 @@
          </p>
       </div>
       <div v-else-if="!filteredBlocks.length" class="p-5 text-center text-sm text-zinc-500">No blocks found</div>
-      <div v-else id="available-blocks-list" class="grid grid-cols-1 gap-3 p-5">
+      <div v-else id="available-blocks-list" class="available-blocks-grid">
          <AddBlockItem v-for="block in filteredBlocks" :key="block.type" :block="block" />
       </div>
    </div>
@@ -67,3 +72,28 @@ onMounted(() => {
    initSortable();
 });
 </script>
+
+<style scoped>
+.block-browser {
+   container-type: inline-size;
+}
+
+.available-blocks-grid {
+   display: grid;
+   grid-template-columns: 1fr;
+   gap: 0.75rem;
+   padding: 1.25rem;
+}
+
+@container (min-width: 360px) {
+   .available-blocks-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+   }
+}
+
+@container (min-width: 560px) {
+   .available-blocks-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+   }
+}
+</style>

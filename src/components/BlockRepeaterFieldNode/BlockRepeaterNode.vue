@@ -18,7 +18,7 @@
          <div
             v-for="(item, index) in fieldValue"
             :key="`${fieldName}-item-${index}`"
-            class="repeater-item overflow-hidden rounded-lg border bg-white hover:border-zinc-300 hover:shadow-sm"
+            class="repeater-item overflow-hidden rounded-lg border border-gray-300 bg-white hover:border-zinc-300 hover:shadow-sm"
             :class="{ 'is-open': openRepeaterItems.includes(item.id) }"
          >
             <div class="repeater-item-header flex items-center gap-2 bg-zinc-50 p-3">
@@ -210,7 +210,9 @@ const canAddItem = computed(() => {
 
    &.is-open {
       .repeater-item-fields {
-         @apply p-3 h-auto border-t;
+         height: auto;
+         border-top: 1px solid #e5e7eb;
+         padding: 1rem;
       }
    }
 }

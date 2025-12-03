@@ -25,6 +25,7 @@ export type EditorFieldType =
    | "range" // ✅
    | "repeater" // ✅
    | "margin" // ✅
+   | "info" // ✅
    | "custom"; // 🔌 (image, json, video, richtext, etc)
 
 /**
@@ -168,6 +169,12 @@ export const createField = {
       group: "settings",
       placeholder: "Select a margin...",
       label: "Margin",
+      ...config,
+   }),
+
+   // Display an info message
+   info: (config: Partial<EditorFieldConfig> = {}): EditorFieldConfig => ({
+      type: "info",
       ...config,
    }),
 };

@@ -50,6 +50,23 @@ interface ImportMeta {
    ): Record<string, () => Promise<T>> | Record<string, T> | Record<string, string>;
 }
 
+// Virtual modules created by vue-wswg-editor vite plugin
+declare module "vue-wswg-editor:layouts" {
+   export const modules: Record<string, () => Promise<any>>;
+}
+
+declare module "vue-wswg-editor:blocks" {
+   export const modules: Record<string, () => Promise<any>>;
+}
+
+declare module "vue-wswg-editor:fields" {
+   export const modules: Record<string, () => Promise<any>>;
+}
+
+declare module "vue-wswg-editor:thumbnails" {
+   export const modules: Record<string, () => Promise<any>>;
+}
+
 // SortableJS type declaration - reference @types/sortablejs and re-export as ESM default
 /// <reference types="sortablejs" />
 declare module "sortablejs" {

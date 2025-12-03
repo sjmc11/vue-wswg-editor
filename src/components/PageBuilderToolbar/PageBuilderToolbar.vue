@@ -1,6 +1,6 @@
 <template>
    <!-- Control bar -->
-   <div class="flex divide-x border-b">
+   <div class="flex divide-x divide-gray-300 border-b border-gray-300">
       <slot name="default">
          <!-- no default toolbar content -->
       </slot>
@@ -8,7 +8,7 @@
       <!-- Desktop / Mobile view toggle -->
       <div v-if="hasPageSettings" class="ml-auto inline-flex gap-2 px-5 py-2.5">
          <button
-            class="inline-flex items-center rounded-md border px-3 py-2 text-xs"
+            class="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-xs"
             :class="
                showPageSettings
                   ? 'bg-blue-50 text-blue-700 border-blue-800/20'
@@ -25,7 +25,7 @@
       </div>
       <div class="inline-flex gap-2 px-5 py-2.5">
          <button
-            class="inline-flex items-center rounded-md border px-3 py-2 text-xs"
+            class="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-xs"
             :class="
                editorViewport === 'mobile'
                   ? 'bg-blue-50 text-blue-700 border-blue-800/20'
@@ -37,7 +37,7 @@
             <DevicePhoneMobileIcon class="size-4" />
          </button>
          <button
-            class="inline-flex items-center rounded-md border px-3 py-2 text-xs"
+            class="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-xs"
             :class="
                editorViewport === 'desktop'
                   ? 'bg-blue-50 text-blue-700 border-blue-800/20'

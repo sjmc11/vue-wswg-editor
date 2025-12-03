@@ -9,7 +9,7 @@ export type Block = Component & {
    type: string;
    // Defined in template
    label?: string;
-   icon?: string;
+   emoji?: string; // A single emoji character
    // fields file
    fields?: Record<string, any>;
    // Auto generated from the component path

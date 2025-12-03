@@ -23,15 +23,20 @@
          </div>
       </slot>
       <!-- WYSIWYG editor -->
-      <div v-else class="wswg-json-editor-canvas">
+      <div v-else class="wswg-json-editor-body">
          <!-- Page preview -->
-         <div class="wswg-json-editor-canvas-preview">
+         <div class="wswg-json-editor-preview">
             <div
-               class="mx-auto h-full overflow-hidden rounded-lg bg-white transition-all duration-300"
+               class="mx-auto flex h-full flex-col transition-all duration-300"
                :class="{ 'w-full': editorViewport === 'desktop', 'w-96': editorViewport === 'mobile' }"
             >
-               <BrowserNavigation v-if="showBrowserBar" :url="url" />
-               <div v-if="pageLayout" id="page-preview-viewport" class="h-full overflow-y-auto">
+               <BrowserNavigation v-if="showBrowserBar" class="browser-navigation-bar" :url="url" />
+               <div
+                  v-if="pageLayout"
+                  id="page-preview-viewport"
+                  class="overflow-hidden rounded-b-lg bg-white"
+                  :class="{ 'rounded-t-lg': !showBrowserBar }"
+               >
                   <component :is="pageLayout">
                      <template #default>
                         <!-- No blocks found -->
@@ -138,12 +143,10 @@ function handleSidebarWidth(width: number) {
 async function loadLayout(layoutName: string | undefined) {
    // Use "default" layout if no layout is provided
    const layout = layoutName || "default";
-
    try {
-      // Try to import the layout from @page-builder/layout/
-      // This alias is configured in the consuming app (admin)
-      const layoutModule = await import(`@page-builder/layout/${layout}.vue`);
-      pageLayout.value = layoutModule.default;
+      const availableLayouts = getLayouts();
+      const layoutModule = availableLayouts[layout];
+      pageLayout.value = layoutModule;
       await nextTick();
       initSortable();
    } catch (error) {
@@ -345,18 +348,20 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss">
+$editor-background-color: #6a6a6a;
 .wswg-json-editor {
    display: flex;
    flex-direction: column;
    width: 100%;
-   max-width: 100%;
-   height: 100vh;
+   max-width: 100vw;
+   height: 100%;
+   min-height: 100vh;
 
    &-header {
+      background-color: #fff;
       position: sticky;
       top: 0;
       z-index: 20;
-      background-color: #fff;
    }
 
    &-loading {
@@ -365,26 +370,40 @@ onBeforeMount(() => {
       justify-content: center;
    }
 
-   &-canvas {
+   &-body {
       display: flex;
       flex: 1;
       flex-grow: 1;
+      width: 100%;
       flex-shrink: 0;
-      height: 100%;
-      overflow-y: auto;
-      background-color: #6a6a6a;
+      min-height: 0;
+      background-color: $editor-background-color;
+   }
 
-      &-preview {
-         flex: 1;
-         flex-grow: 1;
-         flex-shrink: 0;
-         padding: 2rem;
-      }
+   &-preview {
+      flex: 1;
+      flex-grow: 1;
+      flex-shrink: 0;
+      min-height: 0;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
 
-      &-sidebar {
-         min-width: 300px;
-         padding: 2rem;
-         background: #fff;
+      .browser-navigation-bar {
+         position: sticky;
+         top: 80px;
+         z-index: 12;
+         &:before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: $editor-background-color;
+            z-index: -1;
+         }
       }
    }
 }

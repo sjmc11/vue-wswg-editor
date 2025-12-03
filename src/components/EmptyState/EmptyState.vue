@@ -23,7 +23,7 @@
       <template v-if="editable">
          <button
             v-if="!showAddBlockMenu"
-            class="mb-9 inline-flex items-center gap-1.5 rounded-md border bg-zinc-50 px-3 py-2 text-sm text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 active:border-blue-600 active:bg-blue-50 active:text-blue-600"
+            class="mb-9 inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 active:border-blue-600 active:bg-blue-50 active:text-blue-600"
             @click="showAddBlockMenu = true"
          >
             Add a block to get started

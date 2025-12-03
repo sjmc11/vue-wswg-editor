@@ -4,10 +4,16 @@ import { fileURLToPath, URL } from "url";
 import { defineConfig, type Plugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
+import { vueWswgEditorPlugin } from "./src/vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
    plugins: [
+      // Register the vue-wswg-editor plugin so virtual modules can be resolved during library build
+      // Using a dummy rootDir since the library build doesn't need actual page-builder files
+      vueWswgEditorPlugin({
+         rootDir: "./__dummy__",
+      }),
       vue({
          template: {
             compilerOptions: {

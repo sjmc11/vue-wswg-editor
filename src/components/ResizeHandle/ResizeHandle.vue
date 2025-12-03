@@ -55,25 +55,25 @@ function startResize(event: MouseEvent) {
 <style scoped lang="scss">
 /* Resize handle styles */
 .resize-handle {
-   position: relative;
+   position: sticky;
    top: 0;
    right: 0;
    z-index: 2;
    width: 3px;
    height: 100%;
    cursor: col-resize;
-   background-color: var(--grey-20);
+   background-color: #dbdee0;
    transition: all 0.2s ease-in-out;
 }
 
 .resize-handle:hover {
    width: 3px;
-   background-color: var(--yellow-40);
+   background-color: #fcd34d;
 }
 
 .resize-handle:active {
    width: 3px;
-   background-color: var(--yellow-50);
+   background-color: #fbbf24;
 }
 
 /* Add a subtle indicator when resizing */
@@ -85,8 +85,8 @@ function startResize(event: MouseEvent) {
    width: 14px;
    height: 40px;
    content: "";
-   background-color: var(--yellow-40);
-   border-radius: var(--border-radius-16);
+   background-color: #fcd34d;
+   border-radius: 8px;
    opacity: 0;
    transform: translateY(-50%);
    transition:
@@ -99,7 +99,7 @@ function startResize(event: MouseEvent) {
 }
 
 .resize-handle:active::before {
-   background-color: var(--yellow-50);
+   background-color: #fbbf24;
    opacity: 1;
 }
 </style>

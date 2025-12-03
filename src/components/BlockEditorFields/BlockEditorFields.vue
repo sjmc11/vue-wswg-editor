@@ -1,7 +1,7 @@
 <template>
    <div class="section-editor-fields">
       <!-- Field group tabs-->
-      <div v-if="editorFieldGroups.length" class="field-group-tabs flex gap-2 border-b px-5 pt-3">
+      <div v-if="editorFieldGroups.length" class="field-group-tabs flex gap-2 border-b border-gray-300 px-5 pt-3">
          <button
             v-for="fieldGroupName in editorFieldGroups"
             :key="`fg_${fieldGroupName}`"
@@ -27,7 +27,7 @@
 
       <!-- No fields -->
       <div v-else class="p-5">
-         <div class="rounded-lg bg-zinc-100 px-4 py-3 text-sm font-bold text-zinc-500">
+         <div class="rounded-lg bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-600">
             <p>
                {{ isLayoutBlock ? "No settings available for this layout." : "No options available for this block." }}
             </p>

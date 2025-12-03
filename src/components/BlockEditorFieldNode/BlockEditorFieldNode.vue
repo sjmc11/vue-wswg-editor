@@ -16,7 +16,11 @@
             <span>Clear</span>
          </div>
          <!-- Description -->
-         <div v-if="fieldConfig.description" :title="fieldConfig.description" class="cursor-default">
+         <div
+            v-if="fieldConfig.description && fieldConfig.type !== 'info'"
+            :title="fieldConfig.description"
+            class="cursor-default"
+         >
             <InformationCircleIcon class="size-4 text-zinc-500" />
          </div>
       </div>
@@ -75,14 +79,14 @@
          <label
             v-for="option in fieldConfig.options"
             :key="`${fieldName}_${option.value}`"
-            class="flex cursor-pointer items-center gap-2 rounded-md border p-2"
+            class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 p-2"
          >
             <input
                :id="`${fieldName}_${option.value}`"
                v-model="checkboxValues"
                :value="option.value"
                type="checkbox"
-               class="form-control"
+               class="form-control appearance-none"
                :disabled="!editable"
             />
             <span class="text-sm">{{ option.label }}</span>
@@ -94,7 +98,7 @@
          <label
             v-for="option in fieldConfig.options"
             :key="`${fieldName}_${option.value}`"
-            class="flex cursor-pointer items-center gap-2 rounded-md border p-2"
+            class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 p-2"
          >
             <input
                :id="`${fieldName}_${option.value}`"
@@ -111,19 +115,14 @@
       <!-- Boolean toggle -->
       <template v-else-if="fieldConfig.type === 'boolean'">
          <label
-            tabindex="0"
-            class="group inline-flex h-7 w-14 cursor-pointer items-center gap-2 rounded-full p-1 transition-all duration-200"
-            :class="!!fieldValue ? 'bg-emerald-700 hover:bg-emerald-800' : 'bg-zinc-200 hover:bg-zinc-300'"
+            :for="fieldName"
+            class="has-checked:bg-emerald-700 w-13 relative block h-7 cursor-pointer rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-gray-400/75"
          >
-            <input
-               :id="fieldName"
-               v-model="fieldValue"
-               tabindex="-1"
-               type="checkbox"
-               class="ml-0 size-5 cursor-pointer rounded-full !border-none !bg-white !outline-none !ring-0 !ring-offset-0 transition-all duration-200 checked:ml-7"
-               :disabled="!editable"
-            />
-            <span class="hidden text-sm">{{ fieldConfig.label }}</span>
+            <input :id="fieldName" v-model="fieldValue" type="checkbox" class="peer sr-only" :disabled="!editable" />
+
+            <span
+               class="absolute inset-y-0 start-0 m-1 size-5 rounded-full bg-white transition-[inset-inline-start] peer-checked:start-6"
+            ></span>
          </label>
       </template>
 
@@ -141,6 +140,14 @@
       <div v-else-if="fieldConfig.type === 'margin'">
          <BlockMarginNode v-model="fieldValue" :fieldConfig="fieldConfig" :fieldName="fieldName" :editable="editable" />
       </div>
+
+      <!-- Info -->
+      <template v-else-if="fieldConfig.type === 'info'">
+         <div class="font-base mt-1 rounded-md bg-zinc-100 p-2 text-sm text-zinc-600 md:p-3">
+            <InformationCircleIcon class="float-left mr-1 mt-0.5 inline-block size-4" />
+            {{ fieldConfig.description }}
+         </div>
+      </template>
 
       <!-- Default fallback -->
       <template v-else>
