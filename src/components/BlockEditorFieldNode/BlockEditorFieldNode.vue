@@ -95,21 +95,24 @@
 
       <!-- Radio -->
       <div v-else-if="fieldConfig.type === 'radio'" class="form-control flex flex-col gap-2">
-         <label
-            v-for="option in fieldConfig.options"
-            :key="`${fieldName}_${option.value}`"
-            class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 p-2"
-         >
-            <input
-               :id="`${fieldName}_${option.value}`"
-               v-model="fieldValue"
-               :value="option.value"
-               type="radio"
-               class="form-control"
-               :disabled="!editable"
-            />
-            <span class="text-sm">{{ option.label }}</span>
-         </label>
+         <div v-for="option in fieldConfig.options" :key="`${fieldName}_${option.value}`">
+            <label
+               :for="`${fieldName}_${option.value}`"
+               class="has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 flex cursor-pointer items-center justify-between gap-4 rounded border border-gray-300 bg-white p-3 text-sm font-medium shadow-sm transition-colors hover:bg-gray-50"
+            >
+               <p class="text-gray-700">{{ option.label }}</p>
+
+               <input
+                  :id="`${fieldName}_${option.value}`"
+                  v-model="fieldValue"
+                  type="radio"
+                  :name="fieldName"
+                  class="sr-only"
+                  :value="option.value"
+                  :checked="fieldValue === option.value"
+               />
+            </label>
+         </div>
       </div>
 
       <!-- Boolean toggle -->

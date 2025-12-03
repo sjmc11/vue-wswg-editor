@@ -57,10 +57,10 @@ function startResize(event: MouseEvent) {
 .resize-handle {
    position: sticky;
    top: 0;
+   z-index: 14;
+   height: var(--editor-height);
    right: 0;
-   z-index: 2;
    width: 3px;
-   height: 100%;
    cursor: col-resize;
    background-color: #dbdee0;
    transition: all 0.2s ease-in-out;
@@ -81,7 +81,7 @@ function startResize(event: MouseEvent) {
    position: absolute;
    top: 50%;
    left: -6px;
-   z-index: 20;
+   z-index: 50;
    width: 14px;
    height: 40px;
    content: "";

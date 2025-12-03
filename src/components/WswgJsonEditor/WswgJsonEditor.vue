@@ -1,25 +1,19 @@
 <template>
    <div class="wswg-json-editor">
-      <div class="wswg-json-editor-header">
-         <!-- header slot for custom control elements -->
-         <slot name="header">
-            <!-- no default header content -->
-         </slot>
-         <!-- wswg toolbar-->
-         <PageBuilderToolbar
-            v-model:editorViewport="editorViewport"
-            v-model:showPageSettings="showPageSettings"
-            v-model:activeBlock="activeBlock"
-            :hasPageSettings="hasPageSettings"
-         >
-            <slot name="toolbar">
-               <!-- no default toolbar content -->
-            </slot>
-         </PageBuilderToolbar>
-      </div>
       <slot v-if="loading" name="loading">
-         <div class="wswg-json-editor-loading">
-            <span>Loading...</span>
+         <div class="wswg-json-editor-loading flex h-full flex-col items-center justify-center gap-4">
+            <svg
+               class="size-9 animate-[spin_2000ms_linear_infinite]"
+               viewBox="0 0 24 24"
+               fill="none"
+               xmlns="http://www.w3.org/2000/svg"
+            >
+               <path
+                  d="M13 2a1 1 0 0 0-2 0v4.167a1 1 0 1 0 2 0V2ZM13 17.833a1 1 0 0 0-2 0V22a1 1 0 1 0 2 0v-4.167ZM16.834 12a1 1 0 0 1 1-1H22a1 1 0 0 1 0 2h-4.166a1 1 0 0 1-1-1ZM2 11a1 1 0 0 0 0 2h4.167a1 1 0 1 0 0-2H2ZM19.916 4.085a1 1 0 0 1 0 1.414l-2.917 2.917A1 1 0 1 1 15.585 7l2.917-2.916a1 1 0 0 1 1.414 0ZM8.415 16.999a1 1 0 0 0-1.414-1.414L4.084 18.5A1 1 0 1 0 5.5 19.916l2.916-2.917ZM15.585 15.585a1 1 0 0 1 1.414 0l2.917 2.916a1 1 0 1 1-1.414 1.415l-2.917-2.917a1 1 0 0 1 0-1.414ZM5.499 4.085a1 1 0 0 0-1.415 1.414l2.917 2.917A1 1 0 0 0 8.415 7L5.5 4.085Z"
+                  fill="#000000"
+               />
+            </svg>
+            <span>Loading</span>
          </div>
       </slot>
       <!-- WYSIWYG editor -->
@@ -71,24 +65,36 @@
          <ResizeHandle @sidebar-width="handleSidebarWidth" />
 
          <!-- Sidebar -->
-         <PageBuilderSidebar
-            v-model="pageData"
-            v-model:activeBlock="activeBlock"
-            v-model:hoveredBlockId="hoveredBlockId"
-            v-model:showPageSettings="showPageSettings"
-            v-model:showAddBlockMenu="showAddBlockMenu"
-            :editable="editable"
-            :blocksKey="blocksKey"
-            :settingsKey="settingsKey"
-            :style="{ width: sidebarWidth + 'px' }"
-         />
+         <div class="page-builder-sidebar-wrapper bg-white" :style="{ width: sidebarWidth + 'px' }">
+            <PageBuilderSidebar
+               v-model="pageData"
+               v-model:activeBlock="activeBlock"
+               v-model:hoveredBlockId="hoveredBlockId"
+               v-model:showPageSettings="showPageSettings"
+               v-model:showAddBlockMenu="showAddBlockMenu"
+               v-model:editorViewport="editorViewport"
+               :hasPageSettings="hasPageSettings"
+               :editable="editable"
+               :blocksKey="blocksKey"
+               :settingsKey="settingsKey"
+            />
+         </div>
       </div>
    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, withDefaults, watch, type Component, onBeforeMount, nextTick, computed } from "vue";
-import PageBuilderToolbar from "../PageBuilderToolbar/PageBuilderToolbar.vue";
+import {
+   ref,
+   shallowRef,
+   withDefaults,
+   watch,
+   type Component,
+   onBeforeMount,
+   nextTick,
+   computed,
+   onMounted,
+} from "vue";
 import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
@@ -128,7 +134,7 @@ const hoveredBlockId = ref<string | null>(null);
 const sidebarWidth = ref(380); // Default sidebar width (380px)
 
 // Model value for the JSON page data
-const pageData = defineModel<any>();
+const pageData = defineModel<Record<string, any>>();
 
 // Layout component - dynamically imported from page-builder directory
 // Using shallowRef to avoid making the component reactive (performance optimization)
@@ -245,7 +251,7 @@ watch(
    (layoutName) => {
       loadLayout(layoutName);
    },
-   { immediate: true }
+   { immediate: false }
 );
 
 // Watch for activeBlock changes and scroll to the corresponding block in the preview
@@ -314,6 +320,10 @@ function initSortable() {
 }
 
 onBeforeMount(() => {
+   if (!pageData.value) {
+      pageData.value = {};
+   }
+
    if (!pageData.value?.[props.settingsKey]) {
       if (pageData.value) {
          pageData.value[props.settingsKey] = {};
@@ -345,24 +355,21 @@ onBeforeMount(() => {
       }
    }
 });
+
+onMounted(() => {
+   loadLayout(pageData.value?.[props.settingsKey]?.layout);
+});
 </script>
 
 <style lang="scss">
 $editor-background-color: #6a6a6a;
 .wswg-json-editor {
-   display: flex;
-   flex-direction: column;
+   --editor-height: calc(100vh);
    width: 100%;
    max-width: 100vw;
-   height: 100%;
-   min-height: 100vh;
-
-   &-header {
-      background-color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-   }
+   position: relative;
+   overflow-y: auto;
+   height: var(--editor-height);
 
    &-loading {
       display: flex;
@@ -372,11 +379,7 @@ $editor-background-color: #6a6a6a;
 
    &-body {
       display: flex;
-      flex: 1;
-      flex-grow: 1;
       width: 100%;
-      flex-shrink: 0;
-      min-height: 0;
       background-color: $editor-background-color;
    }
 
@@ -389,15 +392,16 @@ $editor-background-color: #6a6a6a;
       display: flex;
       flex-direction: column;
       position: relative;
+      height: 100%;
 
       .browser-navigation-bar {
          position: sticky;
-         top: 80px;
+         top: 1.5rem;
          z-index: 12;
          &:before {
             content: "";
             position: absolute;
-            top: -50%;
+            top: -1.5rem;
             left: 0;
             width: 100%;
             height: 100%;
@@ -405,6 +409,14 @@ $editor-background-color: #6a6a6a;
             z-index: -1;
          }
       }
+   }
+
+   .page-builder-sidebar-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      overflow-y: auto;
+      height: var(--editor-height);
    }
 }
 </style>

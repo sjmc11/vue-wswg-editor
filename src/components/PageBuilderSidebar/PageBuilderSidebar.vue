@@ -1,7 +1,21 @@
 <template>
    <div id="page-builder-sidebar" class="page-builder-sidebar">
+      <!-- Toolbar -->
+      <PageBuilderToolbar
+         v-model:editorViewport="editorViewport"
+         v-model:showPageSettings="showPageSettings"
+         v-model:activeBlock="activeBlock"
+         class="z-12 sticky top-0 bg-white"
+         :hasPageSettings="hasPageSettings"
+      />
       <!-- Page settings -->
-      <PageSettings v-if="showPageSettings" v-model="pageData" :editable="editable" @close="showPageSettings = false" />
+      <PageSettings
+         v-if="showPageSettings"
+         v-model="pageData"
+         :editable="editable"
+         :settingsKey="settingsKey"
+         @close="showPageSettings = false"
+      />
       <!-- Active section-->
       <div v-else-if="activeBlock">
          <!-- back header -->
@@ -84,24 +98,28 @@ import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
 import PageBlockList from "../PageBlockList/PageBlockList.vue";
 import PageSettings from "../PageSettings/PageSettings.vue";
 import { TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
+import PageBuilderToolbar from "../PageBuilderToolbar/PageBuilderToolbar.vue";
 // Models
 const pageData = defineModel<any>();
 const activeBlock = defineModel<any>("activeBlock");
 const hoveredBlockId = defineModel<string | null>("hoveredBlockId");
 const showPageSettings = defineModel<boolean>("showPageSettings");
 const showAddBlockMenu = defineModel<boolean>("showAddBlockMenu");
+const editorViewport = defineModel<"desktop" | "mobile">("editorViewport");
 
-// Editable prop
+// Props
 const props = withDefaults(
    defineProps<{
       editable?: boolean;
       blocksKey?: string;
       settingsKey?: string;
+      hasPageSettings?: boolean;
    }>(),
    {
       editable: true,
       blocksKey: "blocks",
       settingsKey: "settings",
+      hasPageSettings: false,
    }
 );
 
@@ -233,14 +251,12 @@ async function handleDeleteBlock() {
 </script>
 
 <style scoped lang="scss">
-$toolbar-height: 55px;
+$toolbar-height: 0px;
 .page-builder-sidebar {
    min-width: 300px;
    background: #fff;
-   overflow-y: auto;
-   position: sticky;
-   top: $toolbar-height;
-   z-index: 20;
-   height: calc(100vh - $toolbar-height);
+   // position: sticky;
+   // top: 0;
+   // z-index: 12;
 }
 </style>

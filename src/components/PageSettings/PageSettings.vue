@@ -20,7 +20,7 @@
             </div>
 
             <select
-               v-model="pageData.settings.layout"
+               v-model="pageData[settingsKey].layout"
                class="form-control w-full rounded-md border border-gray-300 p-2"
                @change="getLayoutSettings"
             >
@@ -33,7 +33,7 @@
       <!-- Page settings -->
       <div class="editor-field-node">
          <BlockEditorFields
-            v-model="pageData.settings"
+            v-model="pageData[settingsKey]"
             :fields="pageSettingsFields"
             :editable="true"
             :isLayoutBlock="true"
@@ -54,21 +54,25 @@ const emit = defineEmits<{
 const pageData = defineModel<any>();
 const pageSettingsFields = ref<any>({});
 
-defineProps<{
-   title?: string;
-}>();
-
+const props = withDefaults(
+   defineProps<{
+      settingsKey?: string;
+   }>(),
+   {
+      settingsKey: "settings",
+   }
+);
 const availableLayouts = computed(() => {
    return getLayouts();
 });
 
 function getLayoutSettings() {
-   if (!pageData.value.settings.layout) return;
-   pageSettingsFields.value = getLayoutFields(pageData.value.settings.layout) || null;
+   if (!pageData.value[props.settingsKey].layout) return;
+   pageSettingsFields.value = getLayoutFields(pageData.value[props.settingsKey].layout) || null;
 }
 
 onBeforeMount(() => {
-   if (!pageData.value.settings) {
+   if (!pageData.value[props.settingsKey]) {
       pageData.value.settings = null;
    }
 });
