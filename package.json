@@ -32,6 +32,9 @@
       "dev": "concurrently \"vite build --watch\" \"vite build --config vite-plugin.config.ts --watch\"",
       "build": "vite build && vite build --config vite-plugin.config.ts && vue-tsc --declaration --emitDeclarationOnly",
       "preview": "vite preview",
+      "docs:dev": "vitepress dev docs",
+      "docs:build": "vitepress build docs",
+      "docs:preview": "vitepress preview docs",
       "test:unit": "vitest",
       "test:unit:ui": "vitest --ui",
       "test:unit:ci": "vitest run",
@@ -84,6 +87,7 @@
       "tailwindcss": "^3.4.10",
       "typescript": "~5.8.3",
       "vite": "^5.4.19",
+      "vitepress": "^1.6.4",
       "vitest": "^2.1.9",
       "vue-tsc": "^2.2.12",
       "yup": "^1.7.1"
