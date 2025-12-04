@@ -6,7 +6,7 @@ hero:
    text: WYSIWYG JSON Editor
    tagline: A powerful Vue 3 component library for building visual page builders
    image:
-      src: /logo.png
+      src: /assets.hero.jpg
       alt: vue-wswg-editor
    actions:
       - theme: brand
@@ -14,7 +14,7 @@ hero:
         link: /guide/getting-started
       - theme: alt
         text: View on GitHub
-        link: https://github.com/your-org/vue-wswg-editor
+        link: https://github.com/sjmc11/vue-wswg-editor
 
 features:
    - icon: 🎨
@@ -41,7 +41,6 @@ features:
    - icon: 🔌
      title: Vite Plugin
      details: Automatic block, layout, and field discovery via Vite plugin
-
 ---
 
 ## Quick Start
@@ -54,11 +53,7 @@ npm install vue-wswg-editor
 
 ```vue
 <template>
-   <WswgJsonEditor
-      v-model="pageData"
-      :editable="true"
-      :showBrowserBar="true"
-   />
+   <WswgJsonEditor v-model="pageData" :editable="true" :showBrowserBar="true" />
 </template>
 
 <script setup lang="ts">
@@ -95,4 +90,3 @@ const pageData = ref({
 - 🔌 **Vite Plugin** - Automatic component discovery
 
 Ready to get started? Check out the [Getting Started Guide](/guide/getting-started).
-

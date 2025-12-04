@@ -170,6 +170,7 @@ import type { EditorFieldConfig } from "../../util/fieldConfig";
 import BlockRepeaterNode from "../BlockRepeaterFieldNode/BlockRepeaterNode.vue";
 import BlockMarginNode from "../BlockMarginFieldNode/BlockMarginNode.vue";
 import { InformationCircleIcon } from "@heroicons/vue/24/outline";
+import { createGenericValidator, combineValidators } from "../../util/validation";
 import * as yup from "yup";
 
 const fieldValue = defineModel<any>();
@@ -260,9 +261,20 @@ const canClearFieldValue = computed(() => {
  */
 
 async function validateField(): Promise<void> {
-   if (!props.fieldConfig.validator) return;
+   // Create generic validator from field config properties (minLength, maxLength, etc.)
+   const genericValidator = createGenericValidator(props.fieldConfig);
+
+   // Combine generic validator with custom validator if provided
+   const combinedValidator = combineValidators(genericValidator, props.fieldConfig.validator);
+
+   // If no validator exists, clear any error message
+   if (!combinedValidator) {
+      validationErrorMessage.value = null;
+      return;
+   }
+
    try {
-      const result = await props.fieldConfig.validator(fieldValue.value);
+      const result = await combinedValidator(fieldValue.value);
       // True = valid, false = invalid, string = error message
       if (result === true) {
          validationErrorMessage.value = null;
@@ -280,7 +292,6 @@ async function validateField(): Promise<void> {
 function clearFieldValue(): void {
    fieldValue.value = null;
    validationErrorMessage.value = null;
-   //    validateField();
 }
 
 // Watch the field value and validate it

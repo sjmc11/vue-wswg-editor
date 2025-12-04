@@ -1,14 +1,13 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-   title: "vue-wswg-editor",
+   title: "Vue WSWG Editor",
    description: "A powerful Vue 3 WYSIWYG JSON editor component library for building visual page builders",
    base: "/vue-wswg-editor/",
    themeConfig: {
       nav: [
          { text: "Home", link: "/" },
          { text: "Guide", link: "/guide/getting-started" },
-         { text: "API", link: "/api/components" },
          { text: "Examples", link: "/examples/" },
       ],
       sidebar: {
@@ -57,13 +56,10 @@ export default defineConfig({
             },
          ],
       },
-      socialLinks: [
-         // Add your GitHub repo link here
-         // { icon: "github", link: "https://github.com/your-org/vue-wswg-editor" },
-      ],
+      socialLinks: [{ icon: "github", link: "https://github.com/sjmc11/vue-wswg-editor" }],
       footer: {
          message: "Released under the MIT License.",
-         copyright: "Copyright © 2024",
+         copyright: "Copyright © 2025",
       },
    },
 });
