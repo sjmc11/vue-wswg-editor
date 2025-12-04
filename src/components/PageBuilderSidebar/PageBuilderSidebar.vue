@@ -252,11 +252,9 @@ async function handleDeleteBlock() {
 
 <style scoped lang="scss">
 $toolbar-height: 0px;
+
 .page-builder-sidebar {
    min-width: 300px;
    background: #fff;
-   // position: sticky;
-   // top: 0;
-   // z-index: 12;
 }
 </style>

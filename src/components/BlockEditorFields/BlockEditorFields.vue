@@ -79,13 +79,13 @@ const editorFieldGroups = computed(() => {
 
 watch(editorFieldGroups, () => {
    if (editorFieldGroups.value.length > 0) {
-      activeFieldGroup.value = editorFieldGroups.value[0];
+      activeFieldGroup.value = editorFieldGroups.value[0] || "";
    }
 });
 
 onBeforeMount(() => {
    if (editorFieldGroups.value.length > 0) {
-      activeFieldGroup.value = editorFieldGroups.value[0];
+      activeFieldGroup.value = editorFieldGroups.value[0] || "";
    }
 });
 </script>

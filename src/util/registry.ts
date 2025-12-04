@@ -3,14 +3,6 @@ import type { EditorFieldConfig } from "./fieldConfig";
 import type { Block } from "../types/Block";
 import type { Layout } from "../types/Layout";
 import { generateNameVariations, toCamelCase } from "./helpers";
-// Dynamic imports for all page builder blocks and layouts
-// IMPORTANT: These globs use the @page-builder alias which must be configured in the CONSUMING APP's vite.config.ts
-// The globs are evaluated by the consuming app's Vite build, so they resolve relative to the consuming app's project root
-// The consuming app should have: "@page-builder": fileURLToPath(new URL("../page-builder", import.meta.url))
-import { modules as layoutModules } from "vue-wswg-editor:layouts";
-import { modules as blockModules } from "vue-wswg-editor:blocks";
-import { modules as fieldModules } from "vue-wswg-editor:fields";
-import { modules as thumbnailModules } from "vue-wswg-editor:thumbnails";
 
 // Load all thumbnail images - Vite will process these as assets and provide URLs
 // For images, Vite returns the URL as the default export when using eager: true
@@ -22,6 +14,8 @@ import { modules as thumbnailModules } from "vue-wswg-editor:thumbnails";
 export const pageBuilderBlocks: Ref<Record<string, Block>> = shallowRef({});
 export const pageBuilderLayouts: Ref<Record<string, Layout>> = shallowRef({});
 const pageBuilderBlockFields: Ref<Record<string, any>> = ref({});
+// Store thumbnail modules after lazy loading
+let thumbnailModulesCache: Record<string, any> | null = null;
 
 ////////////////////////////////////////////////////////////
 // Helper Functions
@@ -98,11 +92,11 @@ export function getLayouts(): Record<string, Layout> {
  * @returns Thumbnail URL or undefined if not found
  */
 export function getBlockThumbnailUrl(directory: string | undefined): string | undefined {
-   if (!directory) return undefined;
+   if (!directory || !thumbnailModulesCache) return undefined;
    // Construct the thumbnail path from the directory
    const thumbnailPath = `${directory}/thumbnail.png`;
    // Look up the thumbnail in the preloaded modules
-   const thumbnailModule = thumbnailModules[thumbnailPath];
+   const thumbnailModule = thumbnailModulesCache[thumbnailPath];
    if (!thumbnailModule) return undefined;
    // For images, Vite returns an object with a default property containing the URL
    // When using eager: true, the module is already loaded
@@ -152,6 +146,9 @@ async function initialiseBlockFieldsRegistry(): Promise<void> {
       delete pageBuilderBlockFields.value[key];
    });
 
+   // Lazy load virtual modules to prevent initialization order issues
+   const { modules: fieldModules } = await import("vue-wswg-editor:fields");
+
    for (const [path, module] of Object.entries(fieldModules)) {
       let resolvedModule = module;
       // If module is a function (lazy-loaded), call it to get the actual module
@@ -169,19 +166,21 @@ async function initialiseLayoutRegistry(): Promise<void> {
       delete pageBuilderLayouts.value[key];
    });
 
-   // Use layoutModules if available (from vite plugin), otherwise fall back to layoutModules
-   const modulesToUse = layoutModules;
+   // Lazy load virtual modules to prevent initialization order issues
+   const { modules: layoutModules } = await import("vue-wswg-editor:layouts");
 
    // Handle both eager-loaded modules and lazy-loaded modules (functions)
-   for (const [, module] of Object.entries(modulesToUse)) {
+   for (const [, module] of Object.entries(layoutModules)) {
       let resolvedModule = module;
       // If module is a function (lazy-loaded), call it to get the actual module
       if (typeof module === "function") {
          resolvedModule = await module();
       }
       const layout = getModuleDefault(resolvedModule);
-      // exclude modules without name
-      if (!layout || !layout.label) return;
+      // exclude modules without name or label - use continue instead of return to skip this iteration
+      if (!layout || !layout.label) {
+         continue;
+      }
       // Mark layout component as raw to prevent Vue from making it reactive
       pageBuilderLayouts.value[layout.__name] = markRaw(layout);
    }
@@ -192,6 +191,9 @@ async function initialiseBlockRegistry(): Promise<void> {
    Object.keys(pageBuilderBlocks.value).forEach((key) => {
       delete pageBuilderBlocks.value[key];
    });
+
+   // Lazy load virtual modules to prevent initialization order issues
+   const { modules: blockModules } = await import("vue-wswg-editor:blocks");
 
    // Load all blocks from the glob pattern
    // With eager: true, module is the actual module object, not a loader function
@@ -220,11 +222,16 @@ async function initialiseBlockRegistry(): Promise<void> {
 }
 
 export async function initialiseRegistry(): Promise<void> {
-   await initialiseLayoutRegistry();
-   await initialiseBlockFieldsRegistry();
-   await initialiseBlockRegistry();
-}
+   try {
+      // Lazy load thumbnail modules for getBlockThumbnailUrl
+      const { modules: thumbnailModules } = await import("vue-wswg-editor:thumbnails");
+      thumbnailModulesCache = thumbnailModules;
 
-// Initialise the registry when the module is loaded
-// Use void to handle the promise without blocking
-void initialiseRegistry();
+      await initialiseLayoutRegistry();
+      await initialiseBlockFieldsRegistry();
+      await initialiseBlockRegistry();
+   } catch (error) {
+      console.error("[vue-wswg-editor:registry] Error during registry initialization:", error);
+      throw error;
+   }
+}

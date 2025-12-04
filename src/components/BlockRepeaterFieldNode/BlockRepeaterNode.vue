@@ -211,8 +211,8 @@ const canAddItem = computed(() => {
    &.is-open {
       .repeater-item-fields {
          height: auto;
-         border-top: 1px solid #e5e7eb;
          padding: 1rem;
+         border-top: 1px solid #e5e7eb;
       }
    }
 }

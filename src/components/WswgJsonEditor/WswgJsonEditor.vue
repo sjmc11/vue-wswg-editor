@@ -35,7 +35,7 @@
                      <template #default>
                         <!-- No blocks found -->
                         <EmptyState
-                           v-if="!pageData[blocksKey]?.length"
+                           v-if="!pageData?.[blocksKey]?.length"
                            v-model:showAddBlockMenu="showAddBlockMenu"
                            :editable="editable"
                            @block-added="handleAddBlock"
@@ -84,23 +84,13 @@
 </template>
 
 <script setup lang="ts">
-import {
-   ref,
-   shallowRef,
-   withDefaults,
-   watch,
-   type Component,
-   onBeforeMount,
-   nextTick,
-   computed,
-   onMounted,
-} from "vue";
+import { ref, shallowRef, withDefaults, watch, type Component, onBeforeMount, nextTick, computed } from "vue";
 import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
 import BlockComponent from "../BlockComponent/BlockComponent.vue";
 import EmptyState from "../EmptyState/EmptyState.vue";
-import { getBlockComponent, getLayouts } from "../../util/registry";
+import { getBlockComponent, getLayouts, initialiseRegistry } from "../../util/registry";
 import type { Block } from "../../types/Block";
 import Sortable from "sortablejs";
 
@@ -165,6 +155,7 @@ async function loadLayout(layoutName: string | undefined) {
 // Check if the page has settings
 const hasPageSettings = computed(() => {
    // Show page settings if there are multiple layouts to choose from
+   // Note: This computed might run before registry is initialized, so we check if layouts exist
    const layouts = getLayouts();
    if (Object.keys(layouts).length > 1) {
       return true;
@@ -188,6 +179,8 @@ function handleBlockClick(block: Block | null) {
 }
 
 function handleAddBlock(blockType: string, insertIndex?: number) {
+   if (!pageData.value) return;
+
    // Ensure blocks array exists
    if (!pageData.value[props.blocksKey]) {
       pageData.value[props.blocksKey] = [];
@@ -319,7 +312,10 @@ function initSortable() {
    });
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+   // Initialize the registry first
+   await initialiseRegistry();
+
    if (!pageData.value) {
       pageData.value = {};
    }
@@ -354,22 +350,22 @@ onBeforeMount(() => {
          pageData.value[props.blocksKey] = [];
       }
    }
-});
 
-onMounted(() => {
    loadLayout(pageData.value?.[props.settingsKey]?.layout);
 });
 </script>
 
 <style lang="scss">
 $editor-background-color: #6a6a6a;
+
 .wswg-json-editor {
    --editor-height: calc(100vh);
+
+   position: relative;
    width: 100%;
    max-width: 100vw;
-   position: relative;
-   overflow-y: auto;
    height: var(--editor-height);
+   overflow-y: auto;
 
    &-loading {
       display: flex;
@@ -384,29 +380,30 @@ $editor-background-color: #6a6a6a;
    }
 
    &-preview {
+      position: relative;
+      display: flex;
       flex: 1;
       flex-grow: 1;
       flex-shrink: 0;
+      flex-direction: column;
+      height: 100%;
       min-height: 0;
       padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      height: 100%;
 
       .browser-navigation-bar {
          position: sticky;
          top: 1.5rem;
          z-index: 12;
-         &:before {
-            content: "";
+
+         &::before {
             position: absolute;
             top: -1.5rem;
             left: 0;
+            z-index: -1;
             width: 100%;
             height: 100%;
+            content: "";
             background-color: $editor-background-color;
-            z-index: -1;
          }
       }
    }
@@ -415,8 +412,8 @@ $editor-background-color: #6a6a6a;
       position: sticky;
       top: 0;
       z-index: 12;
-      overflow-y: auto;
       height: var(--editor-height);
+      overflow-y: auto;
    }
 }
 </style>

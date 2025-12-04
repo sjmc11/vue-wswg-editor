@@ -1,3 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/****
+* Wrap Tailwind v3 utilities in a custom layer with lower priority
+* This allows Tailwind v4 utilities to override v3 utilities when both exist
+****/
+
+@layer vue-wswg-editor-library {
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+}

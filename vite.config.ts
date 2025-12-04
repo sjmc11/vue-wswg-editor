@@ -4,16 +4,10 @@ import { fileURLToPath, URL } from "url";
 import { defineConfig, type Plugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import { vueWswgEditorPlugin } from "./src/vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
    plugins: [
-      // Register the vue-wswg-editor plugin so virtual modules can be resolved during library build
-      // Using a dummy rootDir since the library build doesn't need actual page-builder files
-      vueWswgEditorPlugin({
-         rootDir: "./__dummy__",
-      }),
       vue({
          template: {
             compilerOptions: {
@@ -79,7 +73,18 @@ export default defineConfig({
       rollupOptions: {
          // Externalize dependencies that are provided by consuming apps
          // These will be resolved at runtime from the consuming app's node_modules
-         external: ["vue", "yup"],
+         external: (id) => {
+            // Externalize regular dependencies
+            if (id === "vue" || id === "yup") {
+               return true;
+            }
+            // Virtual modules must be external so they can be resolved by the consuming app's vite plugin
+            // These are not real modules - they're virtual modules created by the vite plugin
+            if (id.startsWith("vue-wswg-editor:")) {
+               return true;
+            }
+            return false;
+         },
          output: {
             globals: {
                vue: "Vue",
