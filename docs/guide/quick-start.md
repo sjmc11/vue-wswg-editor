@@ -201,4 +201,4 @@ For more details on components, see the [Components Guide](/guide/components).
 - Learn more about [Blocks](/guide/blocks)
 - Understand [Fields](/guide/fields)
 - Explore [Data Management](/guide/data-management)
-- Explore the [API Reference](/api)
+- Explore the [API Reference](/api/)
