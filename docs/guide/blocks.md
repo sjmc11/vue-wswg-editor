@@ -16,7 +16,7 @@ src/page-builder/blocks/
 
 ## Block Component Structure
 
-A block component is a standard Vue component:
+A block component is a standard Vue component that **should** define a `label` in `defineOptions` for display in the editor:
 
 ```vue
 <template>
@@ -27,6 +27,10 @@ A block component is a standard Vue component:
 </template>
 
 <script setup lang="ts">
+defineOptions({
+   label: "Hero Section", // Used for display in the block browser
+});
+
 defineProps<{
    heading: string;
    description: string;
@@ -34,11 +38,31 @@ defineProps<{
 </script>
 ```
 
+### Label in defineOptions
+
+The `label` property in `defineOptions` is used to display the block name in the editor's block browser. While not strictly required (the block will still work without it), providing a label improves the user experience by showing a friendly name instead of the block type.
+
+```vue
+<script setup lang="ts">
+defineOptions({
+   label: "Hero Section", // Display name in block browser
+   // Optional: emoji for visual identification
+   emoji: "🎯",
+});
+</script>
+```
+
+**Benefits:**
+- **Better UX** - Users see friendly names like "Hero Section" instead of "heroSection"
+- **Consistency** - Matches the pattern used by layouts
+- **Accessibility** - Clearer identification for screen readers
+
 ## Block Naming Convention
 
 - Block directories should use **kebab-case** (e.g., `hero-section`)
 - Block components should use **PascalCase** matching the directory name (e.g., `HeroSection.vue`)
 - The library automatically matches block types to components using name variations
+- **Recommended:** Use `defineOptions` with a `label` property for display in the editor
 
 ## Block Fields
 

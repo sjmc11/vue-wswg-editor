@@ -360,6 +360,7 @@ $editor-background-color: #6a6a6a;
 
 .wswg-json-editor {
    --editor-height: calc(100vh);
+   --editor-bg-color: #6a6a6a;
 
    position: relative;
    width: 100%;
@@ -376,7 +377,7 @@ $editor-background-color: #6a6a6a;
    &-body {
       display: flex;
       width: 100%;
-      background-color: $editor-background-color;
+      background-color: var(--editor-bg-color, $editor-background-color);
    }
 
    &-preview {
@@ -403,7 +404,7 @@ $editor-background-color: #6a6a6a;
             width: 100%;
             height: 100%;
             content: "";
-            background-color: $editor-background-color;
+            background-color: var(--editor-bg-color, $editor-background-color);
          }
       }
    }

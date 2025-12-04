@@ -23,6 +23,7 @@ export default defineConfig({
             {
                text: "Concepts",
                items: [
+                  { text: "Components", link: "/guide/components" },
                   { text: "Blocks", link: "/guide/blocks" },
                   { text: "Layouts", link: "/guide/layouts" },
                   { text: "Fields", link: "/guide/fields" },
@@ -32,6 +33,7 @@ export default defineConfig({
             {
                text: "Advanced",
                items: [
+                  { text: "Data Management", link: "/guide/data-management" },
                   { text: "Vite Plugin", link: "/guide/vite-plugin" },
                   { text: "Custom Fields", link: "/guide/custom-fields" },
                   { text: "Styling", link: "/guide/styling" },
@@ -39,6 +41,10 @@ export default defineConfig({
             },
          ],
          "/api/": [
+            {
+               text: "API Reference",
+               items: [{ text: "Overview", link: "/api/" }],
+            },
             {
                text: "Components",
                items: [

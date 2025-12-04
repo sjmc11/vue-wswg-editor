@@ -3,64 +3,59 @@
 // Usage: @include block-margin-classes;
 
 @mixin block-margin-classes {
-   // Margin size variables
-   $sm-size: 2rem;
-   $md-size: 4rem;
-   $lg-size: 6rem;
-
    // Top margin classes
    &.margin-top-sm {
-      padding-top: $sm-size;
+      padding-top: var(--block-margin-sm, 2rem);
 
       &::before {
          top: 0;
-         height: $sm-size;
+         height: var(--block-margin-sm, 2rem);
       }
    }
 
    &.margin-top-md {
-      padding-top: $md-size;
+      padding-top: var(--block-margin-md, 4rem);
 
       &::before {
          top: 0;
-         height: $md-size;
+         height: var(--block-margin-md, 4rem);
       }
    }
 
    &.margin-top-lg {
-      padding-top: $lg-size;
+      padding-top: var(--block-margin-lg, 6rem);
 
       &::before {
          top: 0;
-         height: $lg-size;
+         height: var(--block-margin-lg, 6rem);
       }
    }
 
    // Bottom margin classes
    &.margin-bottom-sm {
-      padding-bottom: $sm-size;
+      padding-bottom: var(--block-margin-sm, 2rem);
 
       &::after {
          bottom: 0;
-         height: $sm-size;
+         height: var(--block-margin-sm, 2rem);
       }
    }
 
    &.margin-bottom-md {
-      padding-bottom: $md-size;
+      padding-bottom: var(--block-margin-md, 4rem);
 
       &::after {
          bottom: 0;
-         height: $md-size;
+         height: var(--block-margin-md, 4rem);
       }
    }
 
    &.margin-bottom-lg {
-      padding-bottom: $lg-size;
+      padding-bottom: var(--block-margin-lg, 6rem);
 
       &::after {
          bottom: 0;
-         height: $lg-size;
+         height: var(--block-margin-lg, 6rem);
       }
    }
 

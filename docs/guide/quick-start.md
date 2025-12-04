@@ -72,6 +72,10 @@ Create your first block component:
 </template>
 
 <script setup lang="ts">
+defineOptions({
+   label: "Hero Section", // Display name in the block browser
+});
+
 defineProps<{
    heading: string;
    description: string;
@@ -133,9 +137,68 @@ const pageData = ref({
 </script>
 ```
 
+## 7. Handle Data (Optional)
+
+The editor uses `v-model` for two-way data binding. You can watch for changes and save them:
+
+```vue
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { WswgJsonEditor } from "vue-wswg-editor";
+
+const pageData = ref({
+   blocks: [],
+   settings: { layout: "default" },
+});
+
+// Watch for changes and save
+watch(
+   pageData,
+   async (newData) => {
+      await fetch("/api/pages/123", {
+         method: "PUT",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(newData),
+      });
+   },
+   { deep: true }
+);
+</script>
+```
+
+For more advanced data management patterns (autosaving, versioning, publishing), see the [Data Management Guide](/guide/data-management).
+
+## 8. Render Pages (Production)
+
+To display pages without the editor interface, use the `PageRenderer` component:
+
+```vue
+<template>
+   <PageRenderer :blocks="pageData.blocks" :layout="pageData.settings.layout" :settings="pageData.settings" />
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { PageRenderer } from "vue-wswg-editor";
+
+const pageData = ref({ blocks: [], settings: {} });
+
+onMounted(async () => {
+   const response = await fetch("/api/pages/123");
+   const data = await response.json();
+   pageData.value = data;
+});
+</script>
+```
+
+The `PageRenderer` component is lightweight and designed for production use. It renders pages without any editing capabilities.
+
+For more details on components, see the [Components Guide](/guide/components).
+
 ## Next Steps
 
+- Learn about [Components](/guide/components) - Editor and PageRenderer
 - Learn more about [Blocks](/guide/blocks)
 - Understand [Fields](/guide/fields)
-- Explore the [API Reference](/api/components)
-
+- Explore [Data Management](/guide/data-management)
+- Explore the [API Reference](/api)

@@ -37,7 +37,7 @@ const props = withDefaults(
    {
       layout: "default",
       settings: () => ({}),
-      withLayout: true,
+      withLayout: false,
    }
 );
 

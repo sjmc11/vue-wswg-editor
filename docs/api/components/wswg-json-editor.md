@@ -18,7 +18,6 @@ The main editor component for building and editing pages.
 ## Slots
 
 - `header` - Custom header content above the editor
-- `toolbar` - Custom toolbar content
 - `loading` - Custom loading state
 
 ## Events
@@ -29,19 +28,13 @@ The main editor component for building and editing pages.
 
 ```vue
 <template>
-   <WswgJsonEditor
-      v-model="pageData"
-      :editable="true"
-      :showBrowserBar="true"
-      defaultBlockMargin="small"
-   >
-      <template #header>
-         <div class="custom-header">My Page Editor</div>
-      </template>
-      <template #toolbar>
+   <div>
+      <header class="editor-header">
+         <h1>My Page Editor</h1>
          <button @click="save">Save</button>
-      </template>
-   </WswgJsonEditor>
+      </header>
+      <WswgJsonEditor v-model="pageData" :editable="true" :showBrowserBar="true" defaultBlockMargin="small" />
+   </div>
 </template>
 
 <script setup lang="ts">
@@ -53,9 +46,29 @@ const pageData = ref({
    settings: {},
 });
 
-function save() {
-   // Save logic here
+async function save() {
+   try {
+      const response = await fetch("/api/pages/123", {
+         method: "PUT",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(pageData.value),
+      });
+      if (!response.ok) throw new Error("Save failed");
+      alert("Saved successfully!");
+   } catch (error) {
+      alert("Failed to save: " + error);
+   }
 }
 </script>
 ```
 
+## Data Management
+
+The component uses Vue's `v-model` for two-way data binding. When the page data changes, the component emits `update:modelValue`. You can:
+
+- **Watch for changes** and save automatically
+- **Implement autosave** with debouncing
+- **Handle versioning** and publishing workflows
+- **Manage edit/view modes**
+
+For comprehensive data management patterns, see the [Data Management Guide](/guide/data-management).

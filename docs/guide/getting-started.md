@@ -29,4 +29,4 @@ Before diving in, it's helpful to understand a few key concepts:
 - [Quick Start](/guide/quick-start) - Create your first page builder
 - [Blocks](/guide/blocks) - Learn how to create custom blocks
 - [Fields](/guide/fields) - Understand field configuration
-
+- [Validation](/guide/validation) - Learn about field validation
