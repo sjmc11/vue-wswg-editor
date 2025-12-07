@@ -49,7 +49,7 @@ function markComponentsAsRaw(obj: any): any {
  * Extract the default export from a module, handling different module formats
  * Works with both eager and lazy-loaded modules from import.meta.glob
  */
-function getModuleDefault(module: any): any {
+export function getModuleDefault(module: any): any {
    if (!module) return undefined;
 
    // If module is a function (lazy-loaded), we'd need to await it, but with eager: true it should be resolved

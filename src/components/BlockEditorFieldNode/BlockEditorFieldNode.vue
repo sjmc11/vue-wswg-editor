@@ -62,7 +62,9 @@
 
       <!-- Range input -->
       <div v-else-if="fieldConfig.type === 'range'" class="flex items-center gap-2">
-         <span class="rounded-full bg-zinc-100 px-2 py-1 text-sm font-bold text-zinc-600">{{ fieldValue }}</span>
+         <span class="rounded-full bg-zinc-100 px-2 py-1 text-sm font-bold text-zinc-600"
+            >{{ fieldValue }}{{ fieldConfig.valueSuffix || "" }}</span
+         >
          <input
             v-model="fieldValue"
             type="range"
@@ -139,6 +141,11 @@
          />
       </div>
 
+      <!-- Image -->
+      <div v-else-if="fieldConfig.type === 'image'">
+         <BlockImageNode v-model="fieldValue" :fieldConfig="fieldConfig" :fieldName="fieldName" :editable="editable" />
+      </div>
+
       <!-- Margin -->
       <div v-else-if="fieldConfig.type === 'margin'">
          <BlockMarginNode v-model="fieldValue" :fieldConfig="fieldConfig" :fieldName="fieldName" :editable="editable" />
@@ -169,8 +176,9 @@ import { ref, computed, watch } from "vue";
 import type { EditorFieldConfig } from "../../util/fieldConfig";
 import BlockRepeaterNode from "../BlockRepeaterFieldNode/BlockRepeaterNode.vue";
 import BlockMarginNode from "../BlockMarginFieldNode/BlockMarginNode.vue";
+import BlockImageNode from "../BlockImageFieldNode/BlockImageNode.vue";
 import { InformationCircleIcon } from "@heroicons/vue/24/outline";
-import { createGenericValidator, combineValidators } from "../../util/validation";
+import { validateField as validateFieldUtil } from "../../util/validation";
 import * as yup from "yup";
 
 const fieldValue = defineModel<any>();
@@ -258,23 +266,12 @@ const canClearFieldValue = computed(() => {
  * minItems // For repeater fields
  * maxItems // For repeater fields
  * required // For all fields
+ * validator // Custom validation function
  */
 
 async function validateField(): Promise<void> {
-   // Create generic validator from field config properties (minLength, maxLength, etc.)
-   const genericValidator = createGenericValidator(props.fieldConfig);
-
-   // Combine generic validator with custom validator if provided
-   const combinedValidator = combineValidators(genericValidator, props.fieldConfig.validator);
-
-   // If no validator exists, clear any error message
-   if (!combinedValidator) {
-      validationErrorMessage.value = null;
-      return;
-   }
-
    try {
-      const result = await combinedValidator(fieldValue.value);
+      const result = await validateFieldUtil(fieldValue.value, props.fieldConfig);
       // True = valid, false = invalid, string = error message
       if (result === true) {
          validationErrorMessage.value = null;

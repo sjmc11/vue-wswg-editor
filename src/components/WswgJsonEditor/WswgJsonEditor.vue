@@ -28,10 +28,10 @@
                <div
                   v-if="pageLayout"
                   id="page-preview-viewport"
-                  class="overflow-hidden rounded-b-lg bg-white"
+                  class="relative overflow-hidden rounded-b-lg bg-white"
                   :class="{ 'rounded-t-lg': !showBrowserBar }"
                >
-                  <component :is="pageLayout">
+                  <component :is="pageLayout" v-bind="pageData?.[settingsKey]">
                      <template #default>
                         <!-- No blocks found -->
                         <EmptyState
@@ -41,7 +41,7 @@
                            @block-added="handleAddBlock"
                         />
                         <!-- Blocks found -->
-                        <div v-else id="page-blocks-wrapper">
+                        <div v-else id="page-blocks-wrapper" ref="pageBlocksWrapperRef">
                            <div v-for="(block, blockIndex) in pageData[blocksKey]" :key="block.id">
                               <BlockComponent
                                  :block="block"
@@ -57,7 +57,36 @@
                      </template>
                   </component>
                </div>
-               <p v-else>No layout component found</p>
+               <!-- No layout found -->
+               <div v-else class="rounded-b-lg bg-white px-5 py-12 md:py-20">
+                  <div class="mx-auto max-w-md pb-7 text-center">
+                     <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="mx-auto size-20 text-gray-400"
+                     >
+                        <path
+                           stroke-linecap="round"
+                           stroke-linejoin="round"
+                           d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                        ></path>
+                     </svg>
+
+                     <h2 class="text-2xl font-bold text-gray-900">No layout found</h2>
+
+                     <p class="mt-4 text-pretty text-gray-700">
+                        Get started by creating your first layout. It only takes a few seconds.
+                     </p>
+
+                     <p class="mt-6 text-sm text-gray-700">
+                        <a href="#" class="underline hover:text-gray-900">Learn how</a> or
+                        <a href="#" class="underline hover:text-gray-900">view examples</a>
+                     </p>
+                  </div>
+               </div>
             </div>
          </div>
 
@@ -65,7 +94,11 @@
          <ResizeHandle @sidebar-width="handleSidebarWidth" />
 
          <!-- Sidebar -->
-         <div class="page-builder-sidebar-wrapper bg-white" :style="{ width: sidebarWidth + 'px' }">
+         <div
+            id="page-builder-sidebar"
+            class="page-builder-sidebar-wrapper bg-white"
+            :style="{ width: sidebarWidth + 'px' }"
+         >
             <PageBuilderSidebar
                v-model="pageData"
                v-model:activeBlock="activeBlock"
@@ -84,7 +117,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, withDefaults, watch, type Component, onBeforeMount, nextTick, computed } from "vue";
+import {
+   ref,
+   shallowRef,
+   withDefaults,
+   watch,
+   type Component,
+   onBeforeMount,
+   onMounted,
+   nextTick,
+   computed,
+} from "vue";
 import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
@@ -122,6 +165,9 @@ const activeBlock = ref<any>(null);
 const isSorting = ref(false);
 const hoveredBlockId = ref<string | null>(null);
 const sidebarWidth = ref(380); // Default sidebar width (380px)
+const sortableInstance = ref<InstanceType<typeof Sortable> | null>(null);
+const pageBlocksWrapperRef = ref<HTMLElement | null>(null);
+const isInitializingSortable = ref(false); // Prevent concurrent initialization
 
 // Model value for the JSON page data
 const pageData = defineModel<Record<string, any>>();
@@ -143,8 +189,8 @@ async function loadLayout(layoutName: string | undefined) {
       const availableLayouts = getLayouts();
       const layoutModule = availableLayouts[layout];
       pageLayout.value = layoutModule;
-      await nextTick();
-      initSortable();
+      // Don't initialize Sortable here - let the watcher handle it
+      // The watcher will react to pageLayout.value changing and check all conditions
    } catch (error) {
       // Layout doesn't exist, return undefined
       console.warn(`Layout "${layout}" not found in @page-builder/layout/`, error);
@@ -178,7 +224,7 @@ function handleBlockClick(block: Block | null) {
    showAddBlockMenu.value = false;
 }
 
-function handleAddBlock(blockType: string, insertIndex?: number) {
+async function handleAddBlock(blockType: string, insertIndex?: number) {
    if (!pageData.value) return;
 
    // Ensure blocks array exists
@@ -224,10 +270,8 @@ function handleAddBlock(blockType: string, insertIndex?: number) {
 
    // finally, if this is an add from the EmptyState, we need to trigger a re-render and initialise the sortable
    if (isAddFromEmptyState) {
-      nextTick(() => {
-         // The component will re-render with the new block data
-         initSortable();
-      });
+      await nextTick();
+      await initSortable();
    }
 
    return newBlock;
@@ -269,47 +313,165 @@ watch(
    }
 );
 
-function initSortable() {
-   const sortableBlocksWrapper = document.getElementById("page-blocks-wrapper");
-   if (!sortableBlocksWrapper) return;
-   new Sortable(sortableBlocksWrapper, {
-      animation: 150,
-      ghostClass: "sortable-ghost",
-      chosenClass: "sortable-chosen",
-      dragClass: "sortable-drag",
-      group: "page-blocks",
-      onStart: () => {
-         isSorting.value = true;
-      },
-      onAdd: (event: any) => {
-         // This fires when an item is added from another list (drag from sidebar)
-         const { item: draggedElement, newIndex } = event;
-         const blockType = draggedElement.getAttribute("data-block-type");
+// Watch for the pageBlocksWrapperRef element to become available
+watch(
+   pageBlocksWrapperRef,
+   async (element) => {
+      if (element) {
+         // Element is now in the DOM, initialize Sortable
+         await nextTick(); // One more tick to ensure it's fully rendered
+         await initSortable();
+      }
+   },
+   { immediate: true }
+);
 
-         if (blockType) {
-            // Use the consolidated handleAddBlock function
-            handleAddBlock(blockType, newIndex);
+// Also watch for both pageLayout and blocks array changes to trigger re-initialization
+// But only if Sortable isn't already initialized or currently sorting
+watch(
+   () => [pageLayout.value, pageData.value?.[props.blocksKey]?.length],
+   async ([layout, blockCount], [oldLayout, oldBlockCount]) => {
+      // Skip if already initializing or sorting
+      if (isInitializingSortable.value || isSorting.value) {
+         return;
+      }
 
-            // Remove the cloned HTML element that SortableJS added
-            draggedElement.remove();
+      // Only initialize Sortable if both layout exists and blocks exist
+      // And only if the layout changed or blocks were added/removed (not just reordered)
+      const layoutChanged = layout !== oldLayout;
+      const blocksChanged = blockCount !== oldBlockCount;
+      const shouldInitialize = layout && blockCount && blockCount > 0 && !props.loading && pageBlocksWrapperRef.value;
 
-            // Force Vue to re-render by triggering reactivity
-            nextTick(() => {
-               // The component will re-render with the new block data
-            });
-         }
-      },
-      onEnd: (event: any) => {
-         isSorting.value = false;
-         const { oldIndex, newIndex } = event;
+      // Only re-initialize if layout changed or blocks were added/removed
+      // Don't re-initialize on reorder (same count, just different order)
+      if (shouldInitialize && (layoutChanged || blocksChanged || !sortableInstance.value)) {
+         // Wait for the dynamic component to fully mount and render
+         await nextTick();
+         await nextTick();
+         await initSortable();
+      }
+   },
+   { immediate: false }
+);
 
-         // Only handle reordering if this wasn't an add operation (oldIndex will be null for adds)
-         if (oldIndex !== null && oldIndex !== newIndex) {
-            const movedBlock = pageData.value?.[props.blocksKey]?.splice(oldIndex, 1)[0];
-            pageData.value?.[props.blocksKey]?.splice(newIndex, 0, movedBlock);
-         }
-      },
-   });
+async function initSortable() {
+   // Don't re-initialize if already sorting or initializing (prevents conflicts)
+   if (isSorting.value || isInitializingSortable.value) {
+      return;
+   }
+
+   // Check prerequisites before attempting to initialize
+   if (props.loading) {
+      console.warn("Cannot initialize Sortable: component is still loading");
+      return;
+   }
+
+   if (!pageLayout.value) {
+      console.warn("Cannot initialize Sortable: pageLayout is not set");
+      return;
+   }
+
+   const blockCount = pageData.value?.[props.blocksKey]?.length;
+   if (!blockCount || blockCount === 0) {
+      console.warn("Cannot initialize Sortable: no blocks exist");
+      return;
+   }
+
+   // Use the template ref first, fallback to getElementById
+   const sortableBlocksWrapper = pageBlocksWrapperRef.value || document.getElementById("page-blocks-wrapper");
+
+   if (!sortableBlocksWrapper) {
+      console.warn("page-blocks-wrapper element not found. Conditions:", {
+         loading: props.loading,
+         hasPageLayout: !!pageLayout.value,
+         blockCount: pageData.value?.[props.blocksKey]?.length,
+         hasRef: !!pageBlocksWrapperRef.value,
+         pagePreviewViewportExists: !!document.getElementById("page-preview-viewport"),
+      });
+      return;
+   }
+
+   // If Sortable is already initialized and working, don't re-initialize
+   if (sortableInstance.value) {
+      // Check if the instance is still valid by checking if the element is still attached
+      const { el } = sortableInstance.value;
+      if (el && el.isConnected && el === sortableBlocksWrapper) {
+         // Sortable is already initialized and valid, no need to re-initialize
+         return;
+      }
+      // Instance exists but element is disconnected or different, destroy it
+      try {
+         sortableInstance.value.destroy();
+      } catch {
+         // Ignore errors during destruction
+      }
+      sortableInstance.value = null;
+   }
+
+   isInitializingSortable.value = true;
+   try {
+      sortableInstance.value = new Sortable(sortableBlocksWrapper, {
+         animation: 150,
+         ghostClass: "sortable-ghost",
+         chosenClass: "sortable-chosen",
+         dragClass: "sortable-drag",
+         group: "page-blocks",
+         forceFallback: false, // Use native HTML5 drag if available
+         fallbackOnBody: true, // Append fallback element to body
+         swapThreshold: 0.7, // Threshold for swap
+         onStart: () => {
+            isSorting.value = true;
+         },
+         onAdd: (event: any) => {
+            // This fires when an item is added from another list (drag from sidebar)
+            const { item: draggedElement, newIndex } = event;
+            const blockType = draggedElement.getAttribute("data-block-type");
+
+            if (blockType) {
+               // Use the consolidated handleAddBlock function
+               handleAddBlock(blockType, newIndex);
+
+               // Remove the cloned HTML element that SortableJS added
+               draggedElement.remove();
+
+               // Force Vue to re-render by triggering reactivity
+               nextTick(() => {
+                  // The component will re-render with the new block data
+               });
+            }
+         },
+         onEnd: async (event: any) => {
+            const { oldIndex, newIndex } = event;
+
+            // Only handle reordering if this wasn't an add operation (oldIndex will be null for adds)
+            if (
+               oldIndex !== null &&
+               oldIndex !== undefined &&
+               newIndex !== null &&
+               newIndex !== undefined &&
+               oldIndex !== newIndex &&
+               pageData.value?.[props.blocksKey]
+            ) {
+               // Wait for SortableJS to finish its DOM cleanup before we modify the array
+               await nextTick();
+
+               // Get the block data from the DOM element before Vue re-renders
+               const movedBlock = pageData.value[props.blocksKey][oldIndex];
+               if (movedBlock) {
+                  // Update the array - this will trigger Vue to re-render
+                  pageData.value[props.blocksKey].splice(oldIndex, 1);
+                  pageData.value[props.blocksKey].splice(newIndex, 0, movedBlock);
+               }
+            }
+
+            // Reset sorting state after a small delay to ensure DOM is stable
+            await nextTick();
+            isSorting.value = false;
+         },
+      });
+   } finally {
+      isInitializingSortable.value = false;
+   }
 }
 
 onBeforeMount(async () => {
@@ -352,6 +514,19 @@ onBeforeMount(async () => {
    }
 
    loadLayout(pageData.value?.[props.settingsKey]?.layout);
+});
+
+// Initialize Sortable after component is mounted - watcher will handle the initialization
+// This is just a fallback in case the watcher didn't fire
+onMounted(async () => {
+   await nextTick();
+   await nextTick();
+   // Trigger the watcher by checking conditions
+   // The watcher will handle initialization if all conditions are met
+   if (pageData.value?.[props.blocksKey]?.length && pageLayout.value && !props.loading) {
+      await nextTick();
+      await initSortable();
+   }
 });
 </script>
 

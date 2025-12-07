@@ -2,8 +2,18 @@ import type { EditorFieldConfig, ValidatorFunction } from "./fieldConfig";
 import { getBlockComponent, getLayoutFields } from "./registry";
 import { toNiceName } from "./helpers";
 
-export function validateField(value: any, validator: ValidatorFunction) {
-   return validator(value);
+export function validateField(value: any, fieldConfig: EditorFieldConfig) {
+   // Create generic validator from field config properties (minLength, maxLength, etc.)
+   const genericValidator = createGenericValidator(fieldConfig);
+
+   // Combine generic validator with custom validator if provided
+   const combinedValidator = combineValidators(genericValidator, fieldConfig.validator);
+
+   // If no validator exists, clear any error message
+   if (!combinedValidator) return true;
+
+   // Validate the value
+   return combinedValidator(value);
 }
 
 export interface ValidationResult {
@@ -54,7 +64,7 @@ async function validateSettings(value: any, settingsKey: string = "settings"): P
       const fieldConfig = layoutOptions[field];
       // If the field has a validator, validate it
       if (fieldConfig?.validator) {
-         const result = await validateField(value[settingsKey][field], fieldConfig.validator);
+         const result = await validateField(value[settingsKey][field], fieldConfig);
          // If validation fails (returns false or a string), add to validation results
          if (result !== true) {
             validationResult.errors[field] = result;
@@ -81,7 +91,7 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
 
       // Add validation results entry for the section
       validationResults[blockType] = {
-         title: toNiceName(blockType),
+         title: blockComponent.label || toNiceName(blockType),
          isValid: true,
          errors: {},
       };
@@ -94,14 +104,13 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
       // Loop each field in the block
       for (const field in blockComponent?.fields || {}) {
          const fieldConfig = blockComponent?.fields?.[field];
-         // If the field has a validator, validate it
-         if (fieldConfig?.validator) {
-            const result = await validateField(block[field], fieldConfig.validator);
-            // If validation fails (returns false or a string), add to validation results
-            if (result !== true) {
-               validationResults[blockType].errors[field] = result;
-               validationResults[blockType].isValid = false;
-            }
+         if (!fieldConfig) continue;
+         // Validate
+         const result = await validateField(block[field], fieldConfig);
+         // If validation fails (returns false or a string), add to validation results
+         if (result !== true) {
+            validationResults[blockType].errors[fieldConfig.label || field] = result;
+            validationResults[blockType].isValid = false;
          }
       }
    }

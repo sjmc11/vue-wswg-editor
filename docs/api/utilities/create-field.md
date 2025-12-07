@@ -21,7 +21,7 @@ createField.text({
    placeholder: "Enter title",
    minLength: 3,
    maxLength: 100,
-})
+});
 ```
 
 ### Textarea
@@ -31,7 +31,7 @@ createField.textarea({
    label: "Description",
    rows: 4,
    maxLength: 500,
-})
+});
 ```
 
 ### Number
@@ -43,7 +43,7 @@ createField.number({
    max: 100,
    step: 1,
    default: 0,
-})
+});
 ```
 
 ### Boolean
@@ -52,7 +52,7 @@ createField.number({
 createField.boolean({
    label: "Enable Feature",
    default: false,
-})
+});
 ```
 
 ### Email
@@ -62,7 +62,7 @@ createField.email({
    label: "Email Address",
    required: true,
    placeholder: "user@example.com",
-})
+});
 ```
 
 ### URL
@@ -71,7 +71,7 @@ createField.email({
 createField.url({
    label: "Website URL",
    placeholder: "https://example.com",
-})
+});
 ```
 
 ### Select
@@ -86,7 +86,7 @@ createField.select(
       label: "Select Option",
       default: "option1",
    }
-)
+);
 ```
 
 ### Radio
@@ -101,7 +101,7 @@ createField.radio(
       label: "Enable Feature",
       default: true,
    }
-)
+);
 ```
 
 ### Checkbox
@@ -115,7 +115,7 @@ createField.checkbox(
    {
       label: "Select Options",
    }
-)
+);
 ```
 
 ### Color
@@ -124,19 +124,20 @@ createField.checkbox(
 createField.color({
    label: "Background Color",
    default: "#ffffff",
-})
+});
 ```
 
 ### Range
 
 ```typescript
 createField.range({
-   label: "Opacity",
-   min: 0,
-   max: 100,
-   step: 1,
-   default: 50,
-})
+   label: "Logo Width",
+   min: 50,
+   max: 300,
+   step: 5,
+   default: 144,
+   valueSuffix: "px", // Optional: displays "144px" instead of "144"
+});
 ```
 
 ### Repeater
@@ -152,8 +153,44 @@ createField.repeater(
       minItems: 1,
       maxItems: 10,
    }
-)
+);
 ```
+
+### Image
+
+```typescript
+createField.image({
+   label: "Hero Image",
+   required: true,
+   description: "Upload a hero image",
+   responsive: false, // Optional: whether image is responsive
+});
+```
+
+The image field provides:
+
+- **Drag & drop** file upload
+- **Click to upload** functionality
+- **Image preview** thumbnail
+- **Replace image** option
+- **Remove image** button
+- Returns a URL string after upload
+
+::: warning Production Use
+The built-in `image` field works by converting uploaded images to base64 data URLs. This is suitable for development and testing, but **not recommended for production use** due to:
+
+- Large file sizes embedded in JSON data
+- Performance issues with large images
+- Increased storage and bandwidth costs
+
+**For production applications**, it is **strongly recommended** to create a custom image field component that:
+
+- Uploads images to your server or a third-party service (e.g., AWS S3, Cloudinary, Imgix)
+- Returns an explicit URL string pointing to the uploaded image
+- Handles image processing, optimization, and CDN delivery
+
+The field should always return an explicit URL (e.g., `https://cdn.example.com/images/hero.jpg`) rather than a base64 data URL. See the [Custom Fields Guide](/guide/custom-fields) for examples of creating custom image upload components.
+:::
 
 ### Margin
 
@@ -161,7 +198,7 @@ createField.repeater(
 createField.margin({
    label: "Margin",
    default: { top: "small", bottom: "small" },
-})
+});
 ```
 
 ### Info
@@ -170,7 +207,7 @@ createField.margin({
 createField.info({
    label: "Information",
    description: "This is a read-only information field",
-})
+});
 ```
 
 ### Custom
@@ -180,33 +217,35 @@ createField.custom({
    label: "Custom Field",
    component: MyCustomComponent,
    required: true,
-})
+});
 ```
 
 ## Field Configuration Options
 
 All field types accept these common options:
 
-| Option        | Type                        | Description                        |
-| ------------- | --------------------------- | ---------------------------------- |
-| `label`       | `string`                    | Field label                        |
-| `description` | `string`                    | Help text below field              |
-| `placeholder` | `string`                    | Input placeholder                  |
-| `required`    | `boolean`                   | Whether field is required          |
-| `default`     | `any`                       | Default value                      |
-| `hidden`      | `boolean`                   | Hide field from editor             |
-| `group`       | `string`                    | Group field in sidebar             |
-| `clearable`   | `boolean`                   | Show clear button                  |
-| `validator`   | `ValidatorFunction`         | Custom validation function         |
-| `minLength`   | `number`                    | Minimum string length              |
-| `maxLength`   | `number`                    | Maximum string length              |
-| `min`         | `number`                    | Minimum numeric value              |
-| `max`         | `number`                    | Maximum numeric value              |
-| `step`        | `number`                    | Step for number/range              |
-| `rows`        | `number`                    | Rows for textarea                  |
-| `minItems`    | `number`                    | Minimum repeater items            |
-| `maxItems`    | `number`                    | Maximum repeater items            |
-| `component`   | `Component`                 | Custom component (for custom type) |
+| Option        | Type                | Description                              |
+| ------------- | ------------------- | ---------------------------------------- |
+| `label`       | `string`            | Field label                              |
+| `description` | `string`            | Help text below field                    |
+| `placeholder` | `string`            | Input placeholder                        |
+| `required`    | `boolean`           | Whether field is required                |
+| `default`     | `any`               | Default value                            |
+| `hidden`      | `boolean`           | Hide field from editor                   |
+| `group`       | `string`            | Group field in sidebar                   |
+| `clearable`   | `boolean`           | Show clear button                        |
+| `validator`   | `ValidatorFunction` | Custom validation function               |
+| `minLength`   | `number`            | Minimum string length                    |
+| `maxLength`   | `number`            | Maximum string length                    |
+| `min`         | `number`            | Minimum numeric value                    |
+| `max`         | `number`            | Maximum numeric value                    |
+| `step`        | `number`            | Step for number/range                    |
+| `rows`        | `number`            | Rows for textarea                        |
+| `minItems`    | `number`            | Minimum repeater items                   |
+| `maxItems`    | `number`            | Maximum repeater items                   |
+| `component`   | `Component`         | Custom component (for custom type)       |
+| `valueSuffix` | `string`            | Suffix for range value (e.g., "px", "%") |
+| `responsive`  | `boolean`           | Whether image is responsive (image type) |
 
 ## Complete Example
 
@@ -264,4 +303,3 @@ export default {
 - [Fields Guide](/guide/fields) - Learn about field types and configuration
 - [Validation Guide](/guide/validation) - Learn about field validation
 - [Custom Fields Guide](/guide/custom-fields) - Learn about creating custom field components
-

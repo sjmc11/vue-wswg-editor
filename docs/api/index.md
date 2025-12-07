@@ -52,7 +52,8 @@ Type-safe utility for creating field configurations. Provides helper methods for
 - `checkbox` - Checkbox group
 - `radio` - Radio button group
 - `color` - Color picker
-- `range` - Range slider
+- `range` - Range slider with optional value suffix
+- `image` - Image upload with preview and drag & drop
 - `repeater` - Repeating field groups
 - `margin` - Margin configuration
 - `info` - Read-only information display

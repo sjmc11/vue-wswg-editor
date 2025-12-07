@@ -26,6 +26,7 @@ export type EditorFieldType =
    | "repeater" // ✅
    | "margin" // ✅
    | "info" // ✅
+   | "image" // ✅
    | "custom"; // 🔌 (image, json, video, richtext, etc)
 
 /**
@@ -69,6 +70,9 @@ export interface EditorFieldConfig {
    // Image specific
    // Whether the image is responsive eg: xs, sm, md, lg, xl, primary
    responsive?: boolean;
+   // Range specific
+   // Suffix to display after the range value (e.g., "px", "%", "rem")
+   valueSuffix?: string;
 }
 
 /**
@@ -153,6 +157,11 @@ export const createField = {
    ): EditorFieldConfig => ({
       type: "repeater",
       repeaterFields,
+      ...config,
+   }),
+
+   image: (config: Partial<EditorFieldConfig> = {}): EditorFieldConfig => ({
+      type: "image",
       ...config,
    }),
 

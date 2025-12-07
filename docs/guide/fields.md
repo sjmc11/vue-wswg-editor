@@ -37,7 +37,9 @@ export default {
 - `checkbox` - Checkbox group
 - `radio` - Radio button group
 - `color` - Color picker
-- `range` - Range slider
+- `range` - Range slider with optional value suffix
+- `image` - Image upload with preview and drag & drop
+   - ⚠️ Not recommended for production - uses base64 encoding ([read more](/api/utilities/create-field#image))
 - `repeater` - Repeating field groups
 - `margin` - Margin configuration (top/bottom)
 - `info` - Read-only information display
@@ -45,22 +47,24 @@ export default {
 
 ## Field Options
 
-| Option        | Type                        | Description                        |
-| ------------- | --------------------------- | ---------------------------------- |
-| `type`        | `EditorFieldType`           | Field type (required)              |
-| `label`       | `string`                    | Field label                        |
-| `description` | `string`                    | Help text below field              |
-| `placeholder` | `string`                    | Input placeholder                  |
-| `required`    | `boolean`                   | Whether field is required          |
-| `default`     | `any`                       | Default value                      |
-| `hidden`      | `boolean`                   | Hide field from editor             |
-| `group`       | `string`                    | Group field in sidebar             |
-| `options`     | `Array<{label, value, id}>` | Options for select/radio/checkbox  |
-| `min` / `max` | `number`                    | Min/max for number/range           |
-| `step`        | `number`                    | Step for number/range              |
-| `rows`        | `number`                    | Rows for textarea                  |
-| `validator`   | `ValidatorFunction`         | Custom validation function         |
-| `component`   | `Component`                 | Custom component for `custom` type |
+| Option        | Type                        | Description                                           |
+| ------------- | --------------------------- | ----------------------------------------------------- |
+| `type`        | `EditorFieldType`           | Field type (required)                                 |
+| `label`       | `string`                    | Field label                                           |
+| `description` | `string`                    | Help text below field                                 |
+| `placeholder` | `string`                    | Input placeholder                                     |
+| `required`    | `boolean`                   | Whether field is required                             |
+| `default`     | `any`                       | Default value                                         |
+| `hidden`      | `boolean`                   | Hide field from editor                                |
+| `group`       | `string`                    | Group field in sidebar                                |
+| `options`     | `Array<{label, value, id}>` | Options for select/radio/checkbox                     |
+| `min` / `max` | `number`                    | Min/max for number/range                              |
+| `step`        | `number`                    | Step for number/range                                 |
+| `rows`        | `number`                    | Rows for textarea                                     |
+| `validator`   | `ValidatorFunction`         | Custom validation function                            |
+| `component`   | `Component`                 | Custom component for `custom` type                    |
+| `valueSuffix` | `string`                    | Suffix to display after range value (e.g., "px", "%") |
+| `responsive`  | `boolean`                   | Whether image is responsive                           |
 
 ## Validation
 
@@ -144,5 +148,41 @@ export default {
 For detailed validation examples, see the [Validation Guide](/guide/validation).
 
 ## Field Examples
+
+### Image Field Example
+
+```typescript
+export default {
+   logo: createField.image({
+      label: "Logo",
+      required: true,
+      description: "Upload your company logo",
+      responsive: false,
+   }),
+};
+```
+
+The image field provides a compact upload interface with:
+
+- Thumbnail preview (64x64px)
+- Drag & drop support
+- Click to upload/replace
+- Remove image functionality
+- Returns a URL string after upload
+
+### Range Field with Suffix Example
+
+```typescript
+export default {
+   logoWidth: createField.range({
+      label: "Logo Width",
+      min: 50,
+      max: 300,
+      step: 5,
+      default: 144,
+      valueSuffix: "px", // Displays "144px" in the slider
+   }),
+};
+```
 
 See the [API Reference](/api/utilities/create-field) for detailed examples of each field type.

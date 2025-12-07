@@ -11,10 +11,14 @@ Custom fields are Vue components that you provide to handle specific editing nee
 Consider custom fields when you need:
 
 - **Rich text editing** - WYSIWYG editors like TinyMCE, Quill, or TipTap
-- **Image/media uploads** - File uploaders with preview and management
+- **Advanced image/media uploads** - Custom upload workflows, multiple files, or specialized processing
 - **Complex data structures** - JSON editors, code editors, or nested forms
 - **Third-party integrations** - Date pickers, color palettes, or specialized controls
 - **Custom UI patterns** - Any interface that doesn't fit standard input types
+
+::: tip Built-in Image Field
+For basic image uploads, use the built-in `image` field type instead of creating a custom field. See the [Fields Guide](/guide/fields) for details.
+:::
 
 ## Creating a Custom Field Component
 

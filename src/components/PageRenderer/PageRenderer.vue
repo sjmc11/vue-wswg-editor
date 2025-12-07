@@ -1,7 +1,21 @@
 <template>
-   <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings">
-      <template #default>
-         <div id="page-blocks-wrapper">
+   <div class="page-renderer-wrapper">
+      <template v-if="isReady">
+         <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings">
+            <template #default>
+               <div id="page-blocks-wrapper">
+                  <div
+                     v-for="block in blocks"
+                     :key="block.id"
+                     class="block-wrapper"
+                     :class="{ [getMarginClass(block)]: true }"
+                  >
+                     <component :is="getBlock(block.type)" v-bind="block" :key="`block-${block.id}`" />
+                  </div>
+               </div>
+            </template>
+         </component>
+         <div v-else id="page-blocks-wrapper">
             <div
                v-for="block in blocks"
                :key="block.id"
@@ -10,21 +24,17 @@
             >
                <component :is="getBlock(block.type)" v-bind="block" :key="`block-${block.id}`" />
             </div>
+            <pre>{{ blocks }}</pre>
          </div>
       </template>
-   </component>
-   <div v-else id="page-blocks-wrapper">
-      <div v-for="block in blocks" :key="block.id" class="block-wrapper" :class="{ [getMarginClass(block)]: true }">
-         <component :is="getBlock(block.type)" v-bind="block" :key="`block-${block.id}`" />
-      </div>
    </div>
 </template>
 
 <script setup lang="ts">
-import { type Component, computed, withDefaults } from "vue";
+import { type Component, computed, withDefaults, onBeforeMount, ref } from "vue";
 import { generateNameVariations } from "../../util/helpers";
-import { blockModules } from "./blockModules";
-import { layoutModules } from "./layoutModules";
+import { getBlockModule, loadBlockModules } from "./blockModules";
+import { loadLayoutModules, getLayoutModule } from "./layoutModules";
 import type { Block } from "../../types/Block";
 
 const props = withDefaults(
@@ -41,24 +51,16 @@ const props = withDefaults(
    }
 );
 
+const isReady = ref(false);
+
 function getBlock(blockType: string): Component | undefined {
-   // Generate name variations and try to find a match in blockModules keys (file paths)
+   // Generate name variations and try to find a match
    const nameVariations = generateNameVariations(blockType);
 
-   // Iterate through all blockModules entries
-   for (const [filePath, module] of Object.entries(blockModules)) {
-      // Check if any variation matches the file path
-      for (const variation of nameVariations) {
-         // Check if the file path contains the variation followed by .vue
-         // e.g., "hero-section" matches "blocks/hero-section/hero-section.vue"
-         if (filePath.includes(`${variation}.vue`)) {
-            // Extract the default export (the Vue component)
-            const component = (module as any).default;
-            if (component) {
-               return component;
-            }
-         }
-      }
+   // Try each variation to find the block component
+   for (const variation of nameVariations) {
+      const module = getBlockModule(variation);
+      if (module) return module;
    }
 
    return undefined;
@@ -68,20 +70,10 @@ function getLayout(layoutName: string): Component | undefined {
    // Generate name variations and try to find a match in layoutModules keys (file paths)
    const nameVariations = generateNameVariations(layoutName);
 
-   // Iterate through all layoutModules entries
-   for (const [filePath, module] of Object.entries(layoutModules)) {
-      // Check if any variation matches the file path
-      for (const variation of nameVariations) {
-         // Check if the file path contains the variation followed by .vue
-         // e.g., "default" matches "layout/default.vue" or "layout/default/default.vue"
-         if (filePath.includes(`${variation}.vue`)) {
-            // Extract the default export (the Vue component)
-            const component = (module as any).default;
-            if (component) {
-               return component;
-            }
-         }
-      }
+   // Try each variation to find the block component
+   for (const variation of nameVariations) {
+      const module = getLayoutModule(variation);
+      if (module) return module;
    }
 
    return undefined;
@@ -107,6 +99,13 @@ function getMarginClass(block: Block): string {
 
    return [getClass(top, "top"), getClass(bottom, "bottom")].join(" ");
 }
+
+onBeforeMount(async () => {
+   isReady.value = false;
+   await loadBlockModules();
+   await loadLayoutModules();
+   isReady.value = true;
+});
 </script>
 
 <style scoped lang="scss">

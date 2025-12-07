@@ -1,5 +1,5 @@
 <template>
-   <div id="page-builder-sidebar" class="page-builder-sidebar">
+   <div class="page-builder-sidebar">
       <!-- Toolbar -->
       <PageBuilderToolbar
          v-model:editorViewport="editorViewport"
