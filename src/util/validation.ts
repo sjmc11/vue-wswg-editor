@@ -43,8 +43,8 @@ export async function validateAllFields(
    }
 
    // Validate blocks
-   // const blockResults = await validateBlocks(value, blocksKey);
-   // Object.assign(validationResults, blockResults);
+   const blockResults = await validateBlocks(value, blocksKey);
+   Object.assign(validationResults, blockResults);
 
    return validationResults;
 }
