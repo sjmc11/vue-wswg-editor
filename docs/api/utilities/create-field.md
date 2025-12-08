@@ -156,6 +156,46 @@ createField.repeater(
 );
 ```
 
+### Object
+
+The `object` field variant allows you to target nested object data, such as `details.title` and `details.image`. This is useful when your block data structure contains nested objects.
+
+```typescript
+createField.object(
+   {
+      title: createField.text({
+         label: "Title",
+         required: true,
+         placeholder: "Enter title",
+      }),
+      image: createField.image({
+         label: "Image",
+         description: "Upload an image",
+      }),
+      description: createField.textarea({
+         label: "Description",
+         rows: 3,
+      }),
+   },
+   {
+      label: "Details",
+      description: "Configure the details section",
+   }
+);
+```
+
+This creates a nested structure in your block data:
+
+```json
+{
+   "details": {
+      "title": "My Title",
+      "image": "https://example.com/image.jpg",
+      "description": "My description"
+   }
+}
+```
+
 ### Image
 
 ```typescript

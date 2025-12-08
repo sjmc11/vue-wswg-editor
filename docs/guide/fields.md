@@ -41,6 +41,7 @@ export default {
 - `image` - Image upload with preview and drag & drop
    - ⚠️ Not recommended for production - uses base64 encoding ([read more](/api/utilities/create-field#image))
 - `repeater` - Repeating field groups
+- `object` - Nested object fields for targeting nested data (e.g., `details.title`, `details.image`)
 - `margin` - Margin configuration (top/bottom)
 - `info` - Read-only information display
 - `custom` - Custom field component
@@ -183,6 +184,60 @@ export default {
       valueSuffix: "px", // Displays "144px" in the slider
    }),
 };
+```
+
+### Object Field Example
+
+The `object` field variant allows you to target nested object data, such as `details.title` and `details.image`. This is useful when your block data structure contains nested objects.
+
+```typescript
+export default {
+   details: createField.object(
+      {
+         title: createField.text({
+            label: "Title",
+            required: true,
+            placeholder: "Enter title",
+         }),
+         image: createField.image({
+            label: "Image",
+            description: "Upload an image",
+         }),
+         description: createField.textarea({
+            label: "Description",
+            rows: 3,
+         }),
+      },
+      {
+         label: "Details",
+         description: "Configure the details section",
+      }
+   ),
+};
+```
+
+In your block component, you can access these nested properties:
+
+```vue
+<template>
+   <div>
+      <h2>{{ block.details?.title }}</h2>
+      <img v-if="block.details?.image" :src="block.details.image" alt="" />
+      <p>{{ block.details?.description }}</p>
+   </div>
+</template>
+```
+
+The object field creates a nested structure in your block data:
+
+```json
+{
+   "details": {
+      "title": "My Title",
+      "image": "https://example.com/image.jpg",
+      "description": "My description"
+   }
+}
 ```
 
 See the [API Reference](/api/utilities/create-field) for detailed examples of each field type.
