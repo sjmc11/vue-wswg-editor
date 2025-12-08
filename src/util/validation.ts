@@ -2,24 +2,114 @@ import type { EditorFieldConfig, ValidatorFunction } from "./fieldConfig";
 import { getBlockComponent, getLayoutFields } from "./registry";
 import { toNiceName } from "./helpers";
 
-export function validateField(value: any, fieldConfig: EditorFieldConfig) {
+export async function validateField(
+   value: any,
+   fieldConfig: EditorFieldConfig
+): Promise<boolean | string | ValidationResult> {
    // Create generic validator from field config properties (minLength, maxLength, etc.)
    const genericValidator = createGenericValidator(fieldConfig);
 
    // Combine generic validator with custom validator if provided
    const combinedValidator = combineValidators(genericValidator, fieldConfig.validator);
 
-   // If no validator exists, clear any error message
-   if (!combinedValidator) return true;
+   // Validate the field itself first
+   if (combinedValidator) {
+      const result = await combinedValidator(value);
+      if (result !== true) {
+         return result;
+      }
+   }
 
-   // Validate the value
-   return combinedValidator(value);
+   // Handle nested structures
+   // For repeater fields, validate each item's fields
+   if (fieldConfig.type === "repeater" && fieldConfig.repeaterFields && Array.isArray(value)) {
+      const nestedValidationResult: ValidationResult = {
+         title: fieldConfig.label || "Items",
+         isValid: true,
+         errors: {},
+      };
+
+      for (let i = 0; i < value.length; i++) {
+         const item = value[i];
+         if (!item) continue;
+
+         const itemValidationResult: ValidationResult = {
+            title: `Item ${i + 1}`,
+            isValid: true,
+            errors: {},
+         };
+
+         for (const fieldName of Object.keys(fieldConfig.repeaterFields)) {
+            const nestedFieldConfig: EditorFieldConfig | undefined = fieldConfig.repeaterFields[fieldName];
+            if (!nestedFieldConfig) continue;
+            const nestedValue = item[fieldName];
+            const nestedResult = await validateField(nestedValue, nestedFieldConfig);
+            if (nestedResult !== true) {
+               const fieldLabel = nestedFieldConfig.label || fieldName;
+               // If nested result is a ValidationResult, nest it; otherwise use as string
+               if (typeof nestedResult === "object" && "isValid" in nestedResult) {
+                  itemValidationResult.errors[fieldLabel] = nestedResult;
+               } else {
+                  itemValidationResult.errors[fieldLabel] = nestedResult;
+               }
+               itemValidationResult.isValid = false;
+            }
+         }
+
+         if (!itemValidationResult.isValid) {
+            nestedValidationResult.errors[`Item ${i + 1}`] = itemValidationResult;
+            nestedValidationResult.isValid = false;
+         }
+      }
+
+      if (!nestedValidationResult.isValid) {
+         return nestedValidationResult;
+      }
+   }
+
+   // For object fields, validate each nested field
+   if (
+      fieldConfig.type === "object" &&
+      fieldConfig.objectFields &&
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value)
+   ) {
+      const nestedValidationResult: ValidationResult = {
+         title: fieldConfig.label || "Object",
+         isValid: true,
+         errors: {},
+      };
+
+      for (const fieldName of Object.keys(fieldConfig.objectFields)) {
+         const nestedFieldConfig: EditorFieldConfig | undefined = fieldConfig.objectFields[fieldName];
+         if (!nestedFieldConfig) continue;
+         const nestedValue = value[fieldName];
+         const nestedResult = await validateField(nestedValue, nestedFieldConfig);
+         if (nestedResult !== true) {
+            const fieldLabel = nestedFieldConfig.label || fieldName;
+            // If nested result is a ValidationResult, nest it; otherwise use as string
+            if (typeof nestedResult === "object" && "isValid" in nestedResult) {
+               nestedValidationResult.errors[fieldLabel] = nestedResult;
+            } else {
+               nestedValidationResult.errors[fieldLabel] = nestedResult;
+            }
+            nestedValidationResult.isValid = false;
+         }
+      }
+
+      if (!nestedValidationResult.isValid) {
+         return nestedValidationResult;
+      }
+   }
+
+   return true;
 }
 
 export interface ValidationResult {
    title: string;
    isValid: boolean;
-   errors: Record<string, string | boolean>;
+   errors: Record<string, string | boolean | ValidationResult>;
 }
 
 /**
@@ -63,7 +153,7 @@ async function validateSettings(value: any, settingsKey: string = "settings"): P
       const fieldConfig = layoutOptions[field];
       if (!fieldConfig) continue;
       const result = await validateField(value[settingsKey][field], fieldConfig);
-      // If validation fails (returns false or a string), add to validation results
+      // If validation fails (returns false, string, or ValidationResult), add to validation results
       if (result !== true) {
          validationResult.errors[fieldConfig.label || field] = result;
          validationResult.isValid = false;
@@ -104,7 +194,7 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
          if (!fieldConfig) continue;
          // Validate
          const result = await validateField(block[field], fieldConfig);
-         // If validation fails (returns false or a string), add to validation results
+         // If validation fails (returns false, string, or ValidationResult), add to validation results
          if (result !== true) {
             validationResults[blockType].errors[fieldConfig.label || field] = result;
             validationResults[blockType].isValid = false;

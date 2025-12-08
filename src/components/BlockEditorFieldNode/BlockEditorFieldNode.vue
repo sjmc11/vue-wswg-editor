@@ -177,8 +177,11 @@
       </template>
 
       <!-- Validation error message -->
-      <div v-if="validationErrorMessage" class="rounded-sm bg-red-50 p-2 px-3 text-xs text-red-600">
-         {{ validationErrorMessage }}
+      <div
+         v-if="validationError && typeof validationError === 'string'"
+         class="rounded-sm bg-red-50 p-2 px-3 text-xs text-red-600"
+      >
+         {{ validationError }}
       </div>
    </div>
 </template>
@@ -191,7 +194,7 @@ import BlockMarginNode from "../BlockMarginFieldNode/BlockMarginNode.vue";
 import BlockImageNode from "../BlockImageFieldNode/BlockImageNode.vue";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
 import { InformationCircleIcon } from "@heroicons/vue/24/outline";
-import { validateField as validateFieldUtil } from "../../util/validation";
+import { validateField as validateFieldUtil, type ValidationResult } from "../../util/validation";
 import * as yup from "yup";
 
 const fieldValue = defineModel<any>();
@@ -202,7 +205,7 @@ const props = defineProps<{
    editable: boolean;
 }>();
 
-const validationErrorMessage = ref<string | null>(null);
+const validationError = ref<string | null | ValidationResult>(null);
 
 // Computed property for checkbox values (array of selected values)
 const checkboxValues = computed({
@@ -301,15 +304,15 @@ async function validateField(): Promise<void> {
       const result = await validateFieldUtil(fieldValue.value, props.fieldConfig);
       // True = valid, false = invalid, string = error message
       if (result === true) {
-         validationErrorMessage.value = null;
+         validationError.value = null;
       } else {
          // result is either false or a string error message
          // TODO: i18n
-         validationErrorMessage.value = result === false ? "Field is invalid" : result;
+         validationError.value = result === false ? "Field is invalid" : result;
       }
    } catch (error) {
       const validationErrorsList = error as yup.ValidationError;
-      validationErrorMessage.value = validationErrorsList.errors[0] || "Field is invalid";
+      validationError.value = validationErrorsList.errors[0] || "Field is invalid";
    }
 }
 
