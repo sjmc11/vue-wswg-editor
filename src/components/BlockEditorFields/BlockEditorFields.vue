@@ -1,7 +1,11 @@
 <template>
    <div class="section-editor-fields">
       <!-- Field group tabs-->
-      <div v-if="editorFieldGroups.length" class="field-group-tabs flex gap-2 border-b border-gray-300 px-5 pt-3">
+      <div
+         v-if="editorFieldGroups.length"
+         class="field-group-tabs flex gap-2 border-b border-gray-300"
+         :class="nested ? 'px-0 pt-0' : 'px-5 pt-3'"
+      >
          <button
             v-for="fieldGroupName in editorFieldGroups"
             :key="`fg_${fieldGroupName}`"
@@ -14,7 +18,11 @@
       </div>
 
       <!-- Fields -->
-      <div v-if="blockData && Object.keys(editorFields).length > 0" class="flex flex-col gap-3 p-5">
+      <div
+         v-if="blockData && Object.keys(editorFields).length > 0"
+         class="flex flex-col gap-3"
+         :class="nested ? 'p-0' : 'p-5'"
+      >
          <div v-for="(fieldConfig, fieldName) in editorFields" :key="fieldName" class="prop-field">
             <BlockEditorFieldNode
                v-model="blockData[fieldName]"
@@ -26,7 +34,7 @@
       </div>
 
       <!-- No fields -->
-      <div v-else class="p-5">
+      <div v-else :class="nested ? 'p-0' : 'p-5'">
          <div class="rounded-lg bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-600">
             <p>
                {{ isLayoutBlock ? "No settings available for this layout." : "No options available for this block." }}
@@ -47,6 +55,7 @@ const { fields, editable } = defineProps<{
    fields?: Record<string, EditorFieldConfig>;
    editable: boolean;
    isLayoutBlock?: boolean;
+   nested?: boolean;
 }>();
 
 const editorFields = computed(() => {

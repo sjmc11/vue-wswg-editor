@@ -17,7 +17,7 @@ Consider custom fields when you need:
 - **Custom UI patterns** - Any interface that doesn't fit standard input types
 
 ::: tip Built-in Image Field
-For basic image uploads, use the built-in `image` field type instead of creating a custom field. See the [Fields Guide](/guide/fields) for details.
+For image uploads, the built-in `image` field type is suitable for development and testing. For production, a custom image field component is recommended. See the [Fields Guide](/guide/fields) for details.
 :::
 
 ## Creating a Custom Field Component
@@ -28,14 +28,14 @@ A custom field component is a standard Vue component that receives specific prop
 
 Your custom component will receive:
 
-| Prop          | Type      | Description                                    |
-| ------------- | --------- | ---------------------------------------------- |
-| `modelValue`  | `any`     | The current field value (for `v-model`)        |
-| `editable`    | `boolean` | Whether the field is editable                  |
-| `label`       | `string`  | Field label (from field config)                |
-| `description` | `string`  | Field description (from field config)           |
-| `required`    | `boolean` | Whether the field is required                  |
-| `...`         | `any`     | All other properties from `EditorFieldConfig`  |
+| Prop          | Type      | Description                                   |
+| ------------- | --------- | --------------------------------------------- |
+| `modelValue`  | `any`     | The current field value (for `v-model`)       |
+| `editable`    | `boolean` | Whether the field is editable                 |
+| `label`       | `string`  | Field label (from field config)               |
+| `description` | `string`  | Field description (from field config)         |
+| `required`    | `boolean` | Whether the field is required                 |
+| `...`         | `any`     | All other properties from `EditorFieldConfig` |
 
 ### Component Requirements
 
@@ -54,12 +54,7 @@ Your custom component will receive:
          <button v-if="editable" @click="clearImage">Remove</button>
       </div>
       <div v-else>
-         <input
-            v-if="editable"
-            type="file"
-            accept="image/*"
-            @change="handleFileSelect"
-         />
+         <input v-if="editable" type="file" accept="image/*" @change="handleFileSelect" />
          <p v-else class="text-gray-500">No image selected</p>
       </div>
    </div>
@@ -166,13 +161,7 @@ export default {
 <!-- src/components/JsonEditorField.vue -->
 <template>
    <div class="json-editor-field">
-      <textarea
-         v-if="editable"
-         v-model="jsonString"
-         @blur="updateValue"
-         class="font-mono text-sm"
-         rows="10"
-      ></textarea>
+      <textarea v-if="editable" v-model="jsonString" @blur="updateValue" class="font-mono text-sm" rows="10"></textarea>
       <pre v-else class="text-sm">{{ formattedJson }}</pre>
    </div>
 </template>
@@ -218,17 +207,9 @@ function updateValue() {
 <template>
    <div class="date-range-field">
       <div v-if="editable" class="flex gap-2">
-         <input
-            v-model="startDate"
-            type="date"
-            @change="updateValue"
-         />
+         <input v-model="startDate" type="date" @change="updateValue" />
          <span>to</span>
-         <input
-            v-model="endDate"
-            type="date"
-            @change="updateValue"
-         />
+         <input v-model="endDate" type="date" @change="updateValue" />
       </div>
       <div v-else>
          {{ formattedRange }}
@@ -454,4 +435,3 @@ createField.custom({
 - [Fields Guide](/guide/fields) - Learn about built-in field types
 - [Validation Guide](/guide/validation) - Learn about field validation
 - [Components Guide](/guide/components) - Learn about using the editor component
-

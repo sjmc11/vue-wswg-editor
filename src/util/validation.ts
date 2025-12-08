@@ -43,8 +43,8 @@ export async function validateAllFields(
    }
 
    // Validate blocks
-   const blockResults = await validateBlocks(value, blocksKey);
-   Object.assign(validationResults, blockResults);
+   // const blockResults = await validateBlocks(value, blocksKey);
+   // Object.assign(validationResults, blockResults);
 
    return validationResults;
 }
@@ -58,18 +58,15 @@ async function validateSettings(value: any, settingsKey: string = "settings"): P
 
    if (!value[settingsKey]) return validationResult;
    const layoutOptions = getLayoutFields(value[settingsKey].layout);
-
    // Loop each field in the settings
    for (const field in value[settingsKey]) {
       const fieldConfig = layoutOptions[field];
-      // If the field has a validator, validate it
-      if (fieldConfig?.validator) {
-         const result = await validateField(value[settingsKey][field], fieldConfig);
-         // If validation fails (returns false or a string), add to validation results
-         if (result !== true) {
-            validationResult.errors[field] = result;
-            validationResult.isValid = false;
-         }
+      if (!fieldConfig) continue;
+      const result = await validateField(value[settingsKey][field], fieldConfig);
+      // If validation fails (returns false or a string), add to validation results
+      if (result !== true) {
+         validationResult.errors[fieldConfig.label || field] = result;
+         validationResult.isValid = false;
       }
    }
 
@@ -161,7 +158,7 @@ export function createGenericValidator(fieldConfig: EditorFieldConfig): Validato
          validations.push(async (value: any) => {
             if (value === null || value === undefined || value === "") return true; // Skip if empty
             const strValue = String(value);
-            if (strValue.length > fieldConfig.maxLength!) {
+            if (strValue.length >= fieldConfig.maxLength!) {
                return `Must be no more than ${fieldConfig.maxLength} characters`;
             }
             return true;

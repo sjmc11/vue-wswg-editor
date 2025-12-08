@@ -1,5 +1,5 @@
 <template>
-   <div class="page-renderer-wrapper">
+   <div id="page-viewport" class="page-renderer-wrapper relative">
       <template v-if="isReady">
          <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings">
             <template #default>

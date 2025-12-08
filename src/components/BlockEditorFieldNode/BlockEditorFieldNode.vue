@@ -141,6 +141,18 @@
          />
       </div>
 
+      <!-- Object Input -->
+      <div v-else-if="fieldConfig.type === 'object' && fieldConfig.objectFields">
+         <div class="mt-3 border-t border-gray-300 pt-3">
+            <BlockEditorFields
+               v-model="objectFieldValue"
+               :fields="fieldConfig.objectFields"
+               :editable="editable"
+               :nested="true"
+            />
+         </div>
+      </div>
+
       <!-- Image -->
       <div v-else-if="fieldConfig.type === 'image'">
          <BlockImageNode v-model="fieldValue" :fieldConfig="fieldConfig" :fieldName="fieldName" :editable="editable" />
@@ -177,6 +189,7 @@ import type { EditorFieldConfig } from "../../util/fieldConfig";
 import BlockRepeaterNode from "../BlockRepeaterFieldNode/BlockRepeaterNode.vue";
 import BlockMarginNode from "../BlockMarginFieldNode/BlockMarginNode.vue";
 import BlockImageNode from "../BlockImageFieldNode/BlockImageNode.vue";
+import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
 import { InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { validateField as validateFieldUtil } from "../../util/validation";
 import * as yup from "yup";
@@ -208,6 +221,20 @@ const checkboxValues = computed({
    set: (newValues: any[]) => {
       // Update fieldValue with the array of selected values
       fieldValue.value = newValues.length > 0 ? newValues : [];
+   },
+});
+
+// Computed property for object field values - ensure it's always an object
+const objectFieldValue = computed({
+   get: () => {
+      // Ensure fieldValue is always an object for object fields
+      if (typeof fieldValue.value !== "object" || fieldValue.value === null || Array.isArray(fieldValue.value)) {
+         return {};
+      }
+      return fieldValue.value;
+   },
+   set: (newValue: Record<string, any>) => {
+      fieldValue.value = newValue;
    },
 });
 

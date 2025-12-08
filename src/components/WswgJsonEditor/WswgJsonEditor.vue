@@ -27,7 +27,7 @@
                <BrowserNavigation v-if="showBrowserBar" class="browser-navigation-bar" :url="url" />
                <div
                   v-if="pageLayout"
-                  id="page-preview-viewport"
+                  id="page-viewport"
                   class="relative overflow-hidden rounded-b-lg bg-white"
                   :class="{ 'rounded-t-lg': !showBrowserBar }"
                >
@@ -386,7 +386,7 @@ async function initSortable() {
          hasPageLayout: !!pageLayout.value,
          blockCount: pageData.value?.[props.blocksKey]?.length,
          hasRef: !!pageBlocksWrapperRef.value,
-         pagePreviewViewportExists: !!document.getElementById("page-preview-viewport"),
+         pagePreviewViewportExists: !!document.getElementById("page-viewport"),
       });
       return;
    }
@@ -569,7 +569,7 @@ $editor-background-color: #6a6a6a;
       .browser-navigation-bar {
          position: sticky;
          top: 1.5rem;
-         z-index: 12;
+         z-index: 30;
 
          &::before {
             position: absolute;

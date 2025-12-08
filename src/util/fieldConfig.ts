@@ -27,6 +27,7 @@ export type EditorFieldType =
    | "margin" // ✅
    | "info" // ✅
    | "image" // ✅
+   | "object" // ✅
    | "custom"; // 🔌 (image, json, video, richtext, etc)
 
 /**
@@ -58,6 +59,8 @@ export interface EditorFieldConfig {
    // Repeater-specific properties
    repeaterFields?: Record<string, EditorFieldConfig>;
    repeaterFieldLabel?: string; // attribute key for the repeater field label
+   // Object-specific properties
+   objectFields?: Record<string, EditorFieldConfig>; // nested fields for object type
    // String length validation
    minLength?: number;
    maxLength?: number;
@@ -184,6 +187,16 @@ export const createField = {
    // Display an info message
    info: (config: Partial<EditorFieldConfig> = {}): EditorFieldConfig => ({
       type: "info",
+      ...config,
+   }),
+
+   // Object field for nested properties (e.g., meta.description)
+   object: (
+      objectFields: Record<string, EditorFieldConfig>,
+      config: Partial<EditorFieldConfig> = {}
+   ): EditorFieldConfig => ({
+      type: "object",
+      objectFields,
       ...config,
    }),
 };
