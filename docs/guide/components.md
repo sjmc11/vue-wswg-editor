@@ -246,7 +246,7 @@ For landing pages, funnel pages, or pages with unique headers/footers, include t
 
 ```vue
 <template>
-   <!-- For pages with unique headers/footers -->
+   <!-- For pages with unique headers/footers contained in the layout -->
    <PageRenderer
       :blocks="pageData.blocks"
       :layout="pageData.settings.layout"

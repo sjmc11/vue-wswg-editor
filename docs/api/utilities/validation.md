@@ -69,9 +69,16 @@ A `Record<string, ValidationResult>` where each key is a block type or `"setting
 interface ValidationResult {
    title: string; // Display name for the section
    isValid: boolean; // Whether all fields are valid
-   errors: Record<string, string | boolean>; // Field errors
+   errors: Record<string, string | boolean | ValidationResult>; // Field errors (can be nested for repeater/object fields)
 }
 ```
+
+The `errors` field can contain:
+- `string` - A specific error message for a field
+- `boolean` - A generic error (typically `false`)
+- `ValidationResult` - A nested validation result for `repeater` or `object` fields
+
+When validating `repeater` or `object` fields, validation errors are returned as nested `ValidationResult` objects. This allows you to pinpoint exactly where validation errors occur within complex nested data structures.
 
 ### Example
 
@@ -102,6 +109,78 @@ const results = await validateAllFields(pageData);
 //     }
 //   }
 // }
+```
+
+### Nested Validation Example
+
+When validating repeater or object fields, the results are nested:
+
+```typescript
+const pageData = {
+   blocks: [
+      {
+         id: "block-1",
+         type: "feature-grid",
+         features: [
+            {
+               heading: "", // Invalid: required
+               description: "Short", // Invalid: minLength
+            },
+            {
+               heading: "Valid heading",
+               description: "", // Invalid: required
+            },
+         ],
+      },
+   ],
+};
+
+const results = await validateAllFields(pageData);
+
+// results = {
+//   "feature-grid": {
+//     title: "Feature grid",
+//     isValid: false,
+//     errors: {
+//       "Features": {  // Repeater field - nested ValidationResult
+//         title: "Features",
+//         isValid: false,
+//         errors: {
+//           "Item 1": {  // First repeater item - nested ValidationResult
+//             title: "Item 1",
+//             isValid: false,
+//             errors: {
+//               "Heading": "This field is required",
+//               "Description": "Must be at least 10 characters"
+//             }
+//           },
+//           "Item 2": {  // Second repeater item - nested ValidationResult
+//             title: "Item 2",
+//             isValid: false,
+//             errors: {
+//               "Description": "This field is required"
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+```
+
+When displaying validation errors, you'll need to recursively traverse the nested structure:
+
+```typescript
+function hasAnyErrors(result: ValidationResult): boolean {
+   if (!result.isValid) return true;
+   for (const error of Object.values(result.errors)) {
+      if (typeof error === "object" && "isValid" in error) {
+         // Nested ValidationResult
+         if (hasAnyErrors(error)) return true;
+      }
+   }
+   return false;
+}
 ```
 
 ## Built-in Validations

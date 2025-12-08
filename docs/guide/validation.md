@@ -524,6 +524,85 @@ async function handleSave() {
 
 This validates all fields across all blocks and settings according to their field configurations, allowing you to block save/publish workflows when validation errors exist.
 
+### Nested Validation Results
+
+When validating fields that contain nested structures (like `repeater` or `object` fields), the validation results are returned as a nested `ValidationResult` structure. This allows you to pinpoint exactly where validation errors occur within complex data structures.
+
+The `ValidationResult` interface supports nested errors:
+
+```typescript
+interface ValidationResult {
+   title: string; // Display name for the section
+   isValid: boolean; // Whether all fields are valid
+   errors: Record<string, string | boolean | ValidationResult>; // Field errors (can be nested)
+}
+```
+
+**Example: Repeater Field Validation**
+
+For repeater fields, each item's validation errors are nested under the repeater field:
+
+```typescript
+const validation = await validateAllFields(pageData);
+
+// If a repeater field has validation errors:
+// validation = {
+//   "feature-grid": {
+//     title: "Feature grid",
+//     isValid: false,
+//     errors: {
+//       "Features": {  // Repeater field
+//         title: "Features",
+//         isValid: false,
+//         errors: {
+//           "Item 1": {  // First repeater item
+//             title: "Item 1",
+//             isValid: false,
+//             errors: {
+//               "Heading": "This field is required",
+//               "Description": "Must be at least 10 characters"
+//             }
+//           },
+//           "Item 2": {  // Second repeater item
+//             title: "Item 2",
+//             isValid: false,
+//             errors: {
+//               "Icon": "This field is required"
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+```
+
+**Example: Object Field Validation**
+
+For object fields, nested field errors are grouped under the object field:
+
+```typescript
+// If an object field has validation errors:
+// validation = {
+//   "hero": {
+//     title: "Hero",
+//     isValid: false,
+//     errors: {
+//       "Details": {  // Object field
+//         title: "Details",
+//         isValid: false,
+//         errors: {
+//           "Title": "This field is required",
+//           "Image": "Invalid image URL"
+//         }
+//       }
+//     }
+//   }
+// }
+```
+
+When displaying validation errors to users, you'll need to recursively traverse the nested `ValidationResult` structure to show all errors at every level.
+
 For comprehensive guidance on validating all fields, displaying validation errors to users, and blocking workflows, see the [Data Management guide](/guide/data-management#validating-all-fields).
 
 ## Best Practices

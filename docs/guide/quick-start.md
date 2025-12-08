@@ -37,6 +37,7 @@ src/
   page-builder/
     blocks/          # Block components
     layout/          # Layout components
+    fields/          # Custom field components (optional)
 ```
 
 ## 3. Create a Layout Component
@@ -194,6 +195,10 @@ onMounted(async () => {
 The `PageRenderer` component is lightweight and designed for production use. It renders pages without any editing capabilities.
 
 For more details on components, see the [Components Guide](/guide/components).
+
+## Starter Kit
+
+Want to get started faster? Check out the [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) repository, which provides a complete reference implementation with example blocks, custom fields, and layouts. This starter kit is extracted from the [vue-wswg-demos](https://github.com/sjmc11/vue-wswg-demos) project and includes everything you need to start building pages with vue-wswg-editor.
 
 ## Next Steps
 
