@@ -66,3 +66,71 @@
       content: none;
    }
 }
+
+// Hover Overlay Mixin
+// Creates a pure CSS hover overlay effect using box-shadow inset
+// No pseudo-elements or position: relative required
+// Uses CSS custom properties from .wswg-json-editor element
+// Usage: @include hover-overlay($overlay-color, $border-color, $border-width, $transition-duration);
+@mixin hover-overlay(
+   $overlay-color: var(--block-hover-color, #9fd0f643),
+   $border-color: var(--block-border-color, #638ef1),
+   $border-width: 2px,
+   $border-style: dashed,
+   $transition-duration: 0.3s
+) {
+   transition: box-shadow $transition-duration ease, outline $transition-duration ease;
+   box-shadow: 0 0 0 0 transparent;
+
+   &:hover {
+      box-shadow: inset 0 0 0 9999px $overlay-color;
+      outline: $border-width $border-style $border-color;
+      outline-offset: -$border-width;
+   }
+}
+
+// Hover Overlay with Active/Hovered States
+// Includes classes for active and hovered states
+// Matches block component active/hovered states
+// Uses CSS custom properties from .wswg-json-editor element
+// Usage: @include hover-overlay-with-states($overlay-color, $border-color);
+@mixin hover-overlay-with-states(
+   $overlay-color: var(--block-hover-color, #9fd0f643),
+   $border-color: var(--block-border-color, #638ef1),
+   $border-width: 2px,
+   $border-style: dashed,
+   $transition-duration: 0.3s
+) {
+   @include hover-overlay($overlay-color, $border-color, $border-width, $border-style, $transition-duration);
+
+   $active-color: var(--block-active-color, $overlay-color);
+
+   &.active,
+   &.active-block {
+      box-shadow: inset 0 0 0 9999px $active-color;
+      outline: $border-width $border-style $border-color;
+      outline-offset: -$border-width;
+   }
+
+   &.hovered,
+   &.hovered-block {
+      box-shadow: inset 0 0 0 9999px $overlay-color;
+      outline: $border-width $border-style $border-color;
+      outline-offset: -$border-width;
+   }
+}
+
+// Apply Hover Overlay Styles (Helper)
+// Applies the overlay styles directly - useful when state classes are on parent
+// Uses CSS custom properties from .wswg-json-editor element
+// Usage: @include hover-overlay-apply($overlay-color, $border-color);
+@mixin hover-overlay-apply(
+   $overlay-color: var(--block-hover-color, #9fd0f643),
+   $border-color: var(--block-border-color, #638ef1),
+   $border-width: 2px,
+   $border-style: dashed
+) {
+   box-shadow: inset 0 0 0 9999px $overlay-color;
+   outline: $border-width $border-style $border-color;
+   outline-offset: -$border-width;
+}

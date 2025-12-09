@@ -14,6 +14,7 @@
          v-model="pageData"
          :editable="editable"
          :settingsKey="settingsKey"
+         :activeTab="activeSettingsTab"
          @close="showPageSettings = false"
       />
       <!-- Active section-->
@@ -114,12 +115,14 @@ const props = withDefaults(
       blocksKey?: string;
       settingsKey?: string;
       hasPageSettings?: boolean;
+      activeSettingsTab?: string;
    }>(),
    {
       editable: true,
       blocksKey: "blocks",
       settingsKey: "settings",
       hasPageSettings: false,
+      activeSettingsTab: undefined,
    }
 );
 

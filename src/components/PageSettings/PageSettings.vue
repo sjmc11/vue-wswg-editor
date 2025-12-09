@@ -37,6 +37,7 @@
             :fields="pageSettingsFields"
             :editable="true"
             :isLayoutBlock="true"
+            :activeTab="activeTab"
          />
       </div>
    </div>
@@ -57,9 +58,11 @@ const pageSettingsFields = ref<any>({});
 const props = withDefaults(
    defineProps<{
       settingsKey?: string;
+      activeTab?: string;
    }>(),
    {
       settingsKey: "settings",
+      activeTab: undefined,
    }
 );
 const availableLayouts = computed(() => {

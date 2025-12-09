@@ -10,18 +10,18 @@
       :data-block-id="block.id"
    >
       <div
-         v-if="activeBlock?.id === block.id"
-         class="absolute -top-3 right-4 z-10 rounded-full bg-blue-500 px-2 py-1 text-xs text-white"
-      >
-         <p>Editing</p>
-      </div>
-      <div
          v-if="pageBuilderBlocks[toCamelCase(block.type)]"
          class="block-component"
          @mouseenter="emit('hoverBlock', block.id)"
          @mouseleave="emit('hoverBlock', null)"
          @click="emit('clickBlock', block)"
       >
+         <div
+            v-if="activeBlock?.id === block.id"
+            class="editing-badge absolute right-2 top-2 z-40 rounded-full px-2 py-1 text-xs text-white"
+         >
+            <span>Editing</span>
+         </div>
          <component :is="pageBuilderBlocks[toCamelCase(block.type)]" v-bind="block" ref="blockComponentRef" />
       </div>
       <div
@@ -117,8 +117,8 @@ onKeyStroke("Escape", () => {
       font-weight: 500;
       color: #888017;
       content: "Spacing";
-      background-color: #f7efac;
-      border: 2px dashed #d2c564;
+      background-color: var(--margin-color, #9ff6a543);
+      border: 2px dashed var(--margin-border-color, rgba(63, 165, 76, 0.5));
       border-radius: 7px;
       opacity: 0;
       transform: scaleY(0.9) scaleX(0.98);
@@ -128,32 +128,20 @@ onKeyStroke("Escape", () => {
    .block-component {
       position: relative;
       cursor: pointer;
-
-      // Highlight block overlay
-      &::before {
-         position: absolute;
-         top: 0;
-         left: 0;
-         z-index: 2;
-         width: 100%;
-         height: 100%;
-         pointer-events: none;
-         outline: 2px dashed #638ef1;
-         outline-offset: -2px;
-         content: "";
-         background-color: #9fd0f643;
-         opacity: 0;
-      }
+      @include hover-overlay;
    }
 
-   // Active state
+   .editing-badge {
+      background-color: var(--block-badge-color, #3363d4);
+   }
+
+   // Active state - apply overlay and show margin spacing
    &.active-block {
       .block-component {
-         &::before {
-            background-color: #9fd0f643;
-            border-color: #638ef1;
-            opacity: 1;
-         }
+         @include hover-overlay-apply(
+            var(--block-active-color, var(--block-hover-color, #9fd0f643)),
+            var(--block-border-color, #638ef1)
+         );
       }
 
       // Show the margin spacing overlay
@@ -163,14 +151,10 @@ onKeyStroke("Escape", () => {
       }
    }
 
-   // Hovered state
+   // Hovered state - apply overlay and show margin spacing
    &.hovered-block {
       .block-component {
-         &::before {
-            background-color: #9fd0f643;
-            border-color: #638ef1;
-            opacity: 1;
-         }
+         @include hover-overlay-apply;
       }
 
       // Show the margin spacing overlay

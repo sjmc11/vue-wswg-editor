@@ -51,11 +51,12 @@ import type { EditorFieldConfig } from "../../util/fieldConfig";
 
 const blockData = defineModel<any>();
 const activeFieldGroup = ref<string>("");
-const { fields, editable } = defineProps<{
+const { fields, editable, activeTab } = defineProps<{
    fields?: Record<string, EditorFieldConfig>;
    editable: boolean;
    isLayoutBlock?: boolean;
    nested?: boolean;
+   activeTab?: string;
 }>();
 
 const editorFields = computed(() => {
@@ -88,13 +89,32 @@ const editorFieldGroups = computed(() => {
 
 watch(editorFieldGroups, () => {
    if (editorFieldGroups.value.length > 0) {
-      activeFieldGroup.value = editorFieldGroups.value[0] || "";
+      // If activeTab prop is provided and exists in groups, use it; otherwise use first group
+      if (activeTab && editorFieldGroups.value.includes(activeTab)) {
+         activeFieldGroup.value = activeTab;
+      } else {
+         activeFieldGroup.value = editorFieldGroups.value[0] || "";
+      }
    }
 });
 
+watch(
+   () => activeTab,
+   (newTab) => {
+      if (newTab && editorFieldGroups.value.includes(newTab)) {
+         activeFieldGroup.value = newTab;
+      }
+   }
+);
+
 onBeforeMount(() => {
    if (editorFieldGroups.value.length > 0) {
-      activeFieldGroup.value = editorFieldGroups.value[0] || "";
+      // If activeTab prop is provided and exists in groups, use it; otherwise use first group
+      if (activeTab && editorFieldGroups.value.includes(activeTab)) {
+         activeFieldGroup.value = activeTab;
+      } else {
+         activeFieldGroup.value = editorFieldGroups.value[0] || "";
+      }
    }
 });
 </script>

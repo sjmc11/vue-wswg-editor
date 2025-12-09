@@ -1,5 +1,5 @@
 <template>
-   <div class="wswg-json-editor">
+   <div ref="editorRef" class="wswg-json-editor" :class="{ 'settings-open': showPageSettings }">
       <slot v-if="loading" name="loading">
          <div class="wswg-json-editor-loading flex h-full flex-col items-center justify-center gap-4">
             <svg
@@ -110,6 +110,7 @@
                :editable="editable"
                :blocksKey="blocksKey"
                :settingsKey="settingsKey"
+               :activeSettingsTab="activeSettingsTab"
             />
          </div>
       </div>
@@ -125,6 +126,7 @@ import {
    type Component,
    onBeforeMount,
    onMounted,
+   onBeforeUnmount,
    nextTick,
    computed,
 } from "vue";
@@ -164,10 +166,12 @@ const showAddBlockMenu = ref(false);
 const activeBlock = ref<any>(null);
 const isSorting = ref(false);
 const hoveredBlockId = ref<string | null>(null);
+const activeSettingsTab = ref<string | undefined>(undefined);
 const sidebarWidth = ref(380); // Default sidebar width (380px)
 const sortableInstance = ref<InstanceType<typeof Sortable> | null>(null);
 const pageBlocksWrapperRef = ref<HTMLElement | null>(null);
 const isInitializingSortable = ref(false); // Prevent concurrent initialization
+const editorRef = ref<HTMLElement | null>(null);
 
 // Model value for the JSON page data
 const pageData = defineModel<Record<string, any>>();
@@ -527,15 +531,69 @@ onMounted(async () => {
       await nextTick();
       await initSortable();
    }
+
+   // Add click event listener for data-partial elements
+   setupDataPartialClickHandler();
+});
+
+// Handle clicks on elements with data-partial attribute
+let dataPartialClickHandler: ((event: Event) => void) | null = null;
+
+function setupDataPartialClickHandler() {
+   if (!editorRef.value) return;
+
+   dataPartialClickHandler = (event: Event) => {
+      const target = event.target as HTMLElement;
+      const partialElement = target.closest("[data-partial]") as HTMLElement | null;
+
+      if (partialElement) {
+         const partialValue = partialElement.getAttribute("data-partial");
+         const hasValue = partialValue !== null && partialValue !== "";
+
+         // Show the settings sidebar when a partial is clicked
+         showPageSettings.value = true;
+         // Clear active block when clicking on a partial
+         activeBlock.value = null;
+         hoveredBlockId.value = null;
+         showAddBlockMenu.value = false;
+
+         // If partial has a value (e.g., "header"), set it as the active tab
+         if (hasValue && partialValue) {
+            activeSettingsTab.value = partialValue;
+         } else {
+            activeSettingsTab.value = undefined;
+         }
+      }
+   };
+
+   editorRef.value.addEventListener("click", dataPartialClickHandler);
+}
+
+// Cleanup event listener on unmount
+onBeforeUnmount(() => {
+   if (dataPartialClickHandler && editorRef.value) {
+      editorRef.value.removeEventListener("click", dataPartialClickHandler);
+      dataPartialClickHandler = null;
+   }
 });
 </script>
 
 <style lang="scss">
+@use "../../assets/styles/mixins" as *;
 $editor-background-color: #6a6a6a;
 
 .wswg-json-editor {
    --editor-height: calc(100vh);
    --editor-bg-color: #6a6a6a;
+   --block-badge-color: #3363d4;
+   --block-hover-color: #a4c7ea43;
+   --block-active-color: #a4c7ea43;
+   --block-border-color: #638ef1;
+   --partial-hover-color: #a4c7ea43;
+   --partial-active-color: #a4c7ea43;
+   --partial-border-color: #638ef1;
+   --margin-color: #faf6d5e0;
+   --margin-border-color: #cbc59c;
 
    position: relative;
    width: 100%;
@@ -590,6 +648,22 @@ $editor-background-color: #6a6a6a;
       z-index: 12;
       height: var(--editor-height);
       overflow-y: auto;
+   }
+
+   // target elements any data-partial="header" or empty data-partial attribute
+   [data-partial] {
+      @include hover-overlay(var(--partial-hover-color), var(--partial-border-color, rgb(63, 165, 76)));
+      cursor: pointer;
+   }
+
+   // When settings sidebar is open, show overlay on all partial elements using active color
+   &.settings-open {
+      [data-partial] {
+         @include hover-overlay-apply(
+            var(--partial-active-color, var(--partial-hover-color)),
+            var(--partial-border-color, rgb(63, 165, 76))
+         );
+      }
    }
 }
 </style>
