@@ -6,13 +6,22 @@ The library provides limited styling customization options. Most styling should 
 
 The editor uses CSS custom properties that you can override:
 
-| Property            | Default Value | Description                    |
-| ------------------- | ------------- | ------------------------------ |
-| `--editor-height`   | `calc(100vh)` | Height of the editor container |
-| `--editor-bg-color` | `#6a6a6a`     | Background color of the editor |
-| `--block-margin-sm` | `2rem`        | Small block margin gap         |
-| `--block-margin-md` | `4rem`        | Medium block margin gap        |
-| `--block-margin-lg` | `6rem`        | Large block margin gap         |
+| Property                  | Default Value | Description                                    |
+| ------------------------- | ------------- | ---------------------------------------------- |
+| `--editor-height`        | `calc(100vh)` | Height of the editor container                 |
+| `--editor-bg-color`      | `#6a6a6a`     | Background color of the editor                 |
+| `--block-margin-sm`      | `2rem`        | Small block margin gap                         |
+| `--block-margin-md`      | `4rem`        | Medium block margin gap                        |
+| `--block-margin-lg`      | `6rem`        | Large block margin gap                         |
+| `--block-badge-color`    | `#3363d4`     | Color for the "Editing" badge on active blocks |
+| `--block-hover-color`    | `#a4c7ea43`   | Overlay color when hovering over blocks         |
+| `--block-active-color`   | `#a4c7ea43`   | Overlay color for active/selected blocks        |
+| `--block-border-color`   | `#638ef1`     | Border color for block overlays                |
+| `--partial-hover-color` | `#a4c7ea43`   | Overlay color when hovering over partials      |
+| `--partial-active-color` | `#a4c7ea43`   | Overlay color for active partials              |
+| `--partial-border-color` | `#638ef1`     | Border color for partial overlays              |
+| `--margin-color`         | `#faf6d5e0`   | Background color for margin spacing indicators |
+| `--margin-border-color`  | `#cbc59c`     | Border color for margin spacing indicators      |
 
 ## Editor Height
 
@@ -102,6 +111,66 @@ Or customize globally:
    --block-margin-sm: 1rem;
    --block-margin-md: 2rem;
    --block-margin-lg: 3rem;
+}
+```
+
+## Overlay Colors and Borders
+
+You can customize the visual feedback colors for blocks and partials (layout elements) using CSS custom properties:
+
+### Block Overlays
+
+Customize the colors used when hovering over or selecting blocks:
+
+```css
+.wswg-json-editor {
+   --block-hover-color: rgba(164, 199, 234, 0.26);  /* Hover overlay */
+   --block-active-color: rgba(164, 199, 234, 0.26); /* Active/selected overlay */
+   --block-border-color: #638ef1;                    /* Border color */
+   --block-badge-color: #3363d4;                     /* "Editing" badge color */
+}
+```
+
+### Partial Overlays
+
+Customize the colors for layout elements (partials) that are marked with `data-partial`:
+
+```css
+.wswg-json-editor {
+   --partial-hover-color: rgba(164, 199, 234, 0.26);  /* Hover overlay */
+   --partial-active-color: rgba(164, 199, 234, 0.26); /* Active overlay */
+   --partial-border-color: #638ef1;                   /* Border color */
+}
+```
+
+### Margin Spacing Indicators
+
+Customize the colors for the margin spacing indicators shown between blocks:
+
+```css
+.wswg-json-editor {
+   --margin-color: rgba(250, 246, 213, 0.88); /* Background color */
+   --margin-border-color: #cbc59c;             /* Border color */
+}
+```
+
+### Example: Custom Theme
+
+```css
+.wswg-json-editor {
+   /* Block overlays - purple theme */
+   --block-hover-color: rgba(219, 117, 190, 0.26);
+   --block-active-color: rgba(219, 129, 117, 0.26);
+   --block-border-color: #9b59b6;
+   
+   /* Partial overlays - green theme */
+   --partial-hover-color: rgba(159, 246, 165, 0.26);
+   --partial-active-color: rgba(159, 246, 165, 0.26);
+   --partial-border-color: rgb(63, 165, 76);
+   
+   /* Margin indicators - yellow theme */
+   --margin-color: rgba(250, 246, 213, 0.88);
+   --margin-border-color: #cbc59c;
 }
 ```
 

@@ -171,3 +171,144 @@ This approach maintains proper separation of concerns - your application handles
 
 Layouts can have settings that are editable through the page settings panel. Define these in your layout component's props.
 
+## Interactive Layout Elements with `data-partial`
+
+You can make specific elements in your layout interactive in the editor by adding the `data-partial` attribute. This allows users to click on layout elements (like headers, footers, or other sections) to quickly navigate to their corresponding settings in the page settings panel.
+
+### Basic Usage
+
+Add `data-partial` to any element in your layout to make it interactive:
+
+```vue
+<template>
+   <div class="page-layout">
+      <header data-partial>
+         <!-- Header content -->
+         <nav>...</nav>
+      </header>
+      <main>
+         <slot />
+      </main>
+      <footer data-partial>
+         <!-- Footer content -->
+         <p>Footer content</p>
+      </footer>
+   </div>
+</template>
+```
+
+### Linking to Field Groups
+
+To link a partial element to a specific field group in your layout settings, add a value to the `data-partial` attribute that matches the field group name:
+
+```vue
+<template>
+   <div class="page-layout">
+      <header data-partial="header">
+         <!-- Header content -->
+         <nav>...</nav>
+      </header>
+      <main>
+         <slot />
+      </main>
+      <footer data-partial="footer">
+         <!-- Footer content -->
+         <p>Footer content</p>
+      </footer>
+   </div>
+</template>
+
+<script setup lang="ts">
+defineOptions({
+   label: "Default Layout",
+   fields: {
+      headerTitle: {
+         type: "text",
+         label: "Header Title",
+         group: "header", // This group will be activated when header is clicked
+      },
+      headerLogo: {
+         type: "text",
+         label: "Logo URL",
+         group: "header",
+      },
+      footerText: {
+         type: "textarea",
+         label: "Footer Text",
+         group: "footer", // This group will be activated when footer is clicked
+      },
+   },
+});
+</script>
+```
+
+### How It Works
+
+1. **Visual Feedback**: Elements with `data-partial` are highlighted in the editor, making it clear which parts of the layout are editable
+2. **Click Interaction**: Clicking a partial element opens the page settings sidebar
+3. **Tab Navigation**: If the partial has a value (e.g., `data-partial="header"`), the editor automatically switches to the matching field group tab in the settings panel
+4. **Hover States**: Partial elements show overlay colors on hover, indicating they're interactive
+
+### Example: Complete Layout with Partials
+
+```vue
+<template>
+   <div class="page-layout">
+      <!-- Header partial - links to "header" field group -->
+      <header data-partial="header" class="site-header">
+         <div class="container">
+            <img :src="headerLogo" :alt="headerTitle" />
+            <h1>{{ headerTitle }}</h1>
+         </div>
+      </header>
+      
+      <main>
+         <slot />
+      </main>
+      
+      <!-- Footer partial - links to "footer" field group -->
+      <footer data-partial="footer" class="site-footer">
+         <div class="container">
+            <p>{{ footerText }}</p>
+         </div>
+      </footer>
+   </div>
+</template>
+
+<script setup lang="ts">
+defineOptions({
+   label: "Marketing Layout",
+   fields: {
+      headerTitle: {
+         type: "text",
+         label: "Header Title",
+         group: "header",
+         default: "My Site",
+      },
+      headerLogo: {
+         type: "text",
+         label: "Logo URL",
+         group: "header",
+      },
+      footerText: {
+         type: "textarea",
+         label: "Footer Text",
+         group: "footer",
+         default: "© 2024 My Company",
+      },
+   },
+});
+
+const props = defineProps<{
+   headerTitle?: string;
+   headerLogo?: string;
+   footerText?: string;
+}>();
+</script>
+```
+
+In this example:
+- Clicking the header element opens the page settings and automatically switches to the "header" tab
+- Clicking the footer element opens the page settings and automatically switches to the "footer" tab
+- Users can quickly navigate to edit specific sections of the layout without manually finding the right tab
+
