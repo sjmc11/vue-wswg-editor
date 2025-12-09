@@ -24,7 +24,6 @@
             >
                <component :is="getBlock(block.type)" v-bind="block" :key="`block-${block.id}`" />
             </div>
-            <pre>{{ blocks }}</pre>
          </div>
       </template>
    </div>

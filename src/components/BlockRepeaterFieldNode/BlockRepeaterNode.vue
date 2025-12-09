@@ -127,10 +127,15 @@ const openRepeaterItems = ref<string[]>([]);
 
 // Ensure fieldValue is always an array with id attribute
 onBeforeMount(() => {
-   fieldValue.value = fieldValue.value.map((item) => ({
-      id: item.id || crypto.randomUUID(),
-      ...item,
-   }));
+   // Ensure fieldValue is an array before calling map
+   if (!Array.isArray(fieldValue.value)) {
+      fieldValue.value = [];
+   }
+   fieldValue.value =
+      fieldValue.value?.map((item) => ({
+         id: item.id || crypto.randomUUID(),
+         ...item,
+      })) ?? [];
 });
 
 function addItem() {

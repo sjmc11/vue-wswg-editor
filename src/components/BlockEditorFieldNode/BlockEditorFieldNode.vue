@@ -1,6 +1,6 @@
 <template>
    <!-- Field -->
-   <div class="editor-field-node" :class="{ 'border-red-500': validationErrorMessage }">
+   <div class="editor-field-node">
       <div class="mb-1 flex items-center gap-1.5">
          <!-- Label -->
          <label class="mr-auto text-sm font-medium first-letter:uppercase">
@@ -318,7 +318,6 @@ async function validateField(): Promise<void> {
 
 function clearFieldValue(): void {
    fieldValue.value = null;
-   validationErrorMessage.value = null;
 }
 
 // Watch the field value and validate it
