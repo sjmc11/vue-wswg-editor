@@ -106,6 +106,24 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
    const parentStylesheets = extractParentStylesheets();
    const parentCSSVariables = extractParentCSSVariables();
    const vueCdnUrl = "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+   // Get parent origin to use as base URL for relative asset paths
+   const parentOrigin = typeof window !== "undefined" ? window.location.origin : "";
+
+   // Define Vue feature flags before Vue is loaded
+   // These must be defined as global constants before any Vue code runs
+   const vueFeatureFlagsScript = `<script>
+      // Define Vue feature flags to prevent warnings
+      // These must be defined before Vue or the library code is imported
+      // Using var to make them available globally (not just on window)
+      var __VUE_OPTIONS_API__ = true;
+      var __VUE_PROD_DEVTOOLS__ = false;
+      var __VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
+      
+      // Also set on window for compatibility
+      window.__VUE_OPTIONS_API__ = true;
+      window.__VUE_PROD_DEVTOOLS__ = false;
+      window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
+   </script>`;
 
    // Generate script that loads Vue and initializes the iframe app
    const appScript = iframeAppModuleUrl
@@ -160,6 +178,7 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Page Preview</title>
+   ${parentOrigin ? `<base href="${parentOrigin}/">` : ""}
    ${parentStylesheets}
    ${parentCSSVariables}
    <style>
@@ -184,6 +203,7 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
 </head>
 <body>
    <div id="app"></div>
+   ${vueFeatureFlagsScript}
    ${appScript}
 </body>
 </html>`;
