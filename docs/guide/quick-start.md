@@ -30,7 +30,7 @@ export default defineConfig({
 
 ## 2. Create the Page Builder Directory Structure
 
-Create a `page-builder` directory in your project:
+Create a `page-builder` directory in your project. This directory is the main place where you'll create page blocks, custom fields, and layouts to build pages with:
 
 ```
 src/
@@ -39,6 +39,14 @@ src/
     layout/          # Layout components
     fields/          # Custom field components (optional)
 ```
+
+The `page-builder` directory serves as the central location for all your page builder components:
+
+- **Blocks** (`blocks/`) - Reusable page sections like hero sections, feature lists, testimonials, etc.
+- **Layouts** (`layout/`) - Page templates that wrap blocks and define overall page structure
+- **Fields** (`fields/`) - Custom field components for specialized input types (optional)
+
+💡 **Tip**: Need a complete example? Check out the [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) repository for a reference implementation with example blocks, layouts, and directory structure.
 
 ## 3. Create a Layout Component
 

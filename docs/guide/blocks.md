@@ -53,6 +53,7 @@ defineOptions({
 ```
 
 **Benefits:**
+
 - **Better UX** - Users see friendly names like "Hero Section" instead of "heroSection"
 - **Consistency** - Matches the pattern used by layouts
 - **Accessibility** - Clearer identification for screen readers
@@ -71,4 +72,3 @@ Blocks can define editable fields using a `fields.ts` file. See the [Fields Guid
 ## Block Thumbnails
 
 You can add a `thumbnail.png` image to your block directory to display a preview in the block browser.
-

@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
-import { onClickOutside } from "@vueuse/core";
 import { pageBuilderBlocks } from "../../util/registry";
 import type { Block } from "../../types/Block";
 import { toCamelCase } from "../../util/helpers";
@@ -78,16 +77,6 @@ function getMarginClass(block: Block): string {
    return [getClass(top, "top"), getClass(bottom, "bottom")].join(" ");
 }
 
-// Click outside detection
-onClickOutside(
-   blockComponentRef,
-   () => {
-      // Unset active block
-      emit("clickBlock", null);
-   },
-   { ignore: ["#page-builder-sidebar", "#page-builder-resize-handle", "button"] }
-);
-
 // On escape key press
 onKeyStroke("Escape", () => {
    if (!props.activeBlock) return;
@@ -117,8 +106,8 @@ onKeyStroke("Escape", () => {
       font-weight: 500;
       color: #888017;
       content: "Spacing";
-      background-color: var(--margin-color, #9ff6a543);
-      border: 2px dashed var(--margin-border-color, rgba(63, 165, 76, 0.5));
+      background-color: var(--margin-color, #faf6d5e0);
+      border: 2px dashed var(--margin-border-color, #cbc59c);
       border-radius: 7px;
       opacity: 0;
       transform: scaleY(0.9) scaleX(0.98);
@@ -128,20 +117,16 @@ onKeyStroke("Escape", () => {
    .block-component {
       position: relative;
       cursor: pointer;
-      @include hover-overlay;
    }
 
    .editing-badge {
-      background-color: var(--block-badge-color, #3363d4);
+      background-color: var(--block-badge-color, #638ef1);
    }
 
    // Active state - apply overlay and show margin spacing
    &.active-block {
       .block-component {
-         @include hover-overlay-apply(
-            var(--block-active-color, var(--block-hover-color, #9fd0f643)),
-            var(--block-border-color, #638ef1)
-         );
+         @include overlay-apply;
       }
 
       // Show the margin spacing overlay
@@ -154,7 +139,7 @@ onKeyStroke("Escape", () => {
    // Hovered state - apply overlay and show margin spacing
    &.hovered-block {
       .block-component {
-         @include hover-overlay-apply;
+         @include overlay-apply;
       }
 
       // Show the margin spacing overlay

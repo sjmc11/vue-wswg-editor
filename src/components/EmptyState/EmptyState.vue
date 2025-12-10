@@ -21,19 +21,11 @@
 
       <h2 class="mb-3 text-xl font-bold">No blocks found</h2>
       <template v-if="editable">
-         <button
-            v-if="!showAddBlockMenu"
-            class="mb-9 inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 active:border-blue-600 active:bg-blue-50 active:text-blue-600"
-            @click="showAddBlockMenu = true"
+         <p
+            class="mb-9 inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-500"
          >
             Add a block to get started
-         </button>
-         <span
-            v-else
-            class="mb-9 inline-flex items-center gap-1.5 border border-transparent px-3 py-2 text-sm text-zinc-500"
-         >
-            Select a block from the sidebar
-         </span>
+         </p>
       </template>
       <!-- empty state image from assets -->
       <img :src="emptyStateImage" alt="Empty state" class="mx-auto h-auto w-full max-w-xs" />
@@ -49,7 +41,6 @@
 import { ref } from "vue";
 import emptyStateImage from "../../assets/images/empty-state.jpg";
 
-const showAddBlockMenu = defineModel<boolean>("showAddBlockMenu");
 const isDraggingOver = ref(false);
 const emit = defineEmits<{
    (e: "blockAdded", blockType: string): void;

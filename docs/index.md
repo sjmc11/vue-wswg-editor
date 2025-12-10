@@ -13,6 +13,9 @@ hero:
         text: Get Started
         link: /guide/getting-started
       - theme: alt
+        text: View on npm
+        link: https://www.npmjs.com/package/vue-wswg-editor
+      - theme: alt
         text: View on GitHub
         link: https://github.com/sjmc11/vue-wswg-editor
 
@@ -50,6 +53,8 @@ Install the library and start building:
 ```bash
 npm install vue-wswg-editor
 ```
+
+📦 **Package**: [vue-wswg-editor on npm](https://www.npmjs.com/package/vue-wswg-editor)
 
 ```vue
 <template>

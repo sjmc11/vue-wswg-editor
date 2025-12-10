@@ -121,7 +121,7 @@
       <template v-else-if="fieldConfig.type === 'boolean'">
          <label
             :for="fieldName"
-            class="has-checked:bg-emerald-700 w-13 relative block h-7 cursor-pointer rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-gray-400/75"
+            class="has-checked:bg-emerald-700 w-13 relative block h-7 cursor-pointer rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-gray-400/75 has-[:checked]:hover:bg-emerald-800"
          >
             <input :id="fieldName" v-model="fieldValue" type="checkbox" class="peer sr-only" :disabled="!editable" />
 

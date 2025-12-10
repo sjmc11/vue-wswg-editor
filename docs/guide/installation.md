@@ -14,6 +14,8 @@ or
 yarn add vue-wswg-editor
 ```
 
+📦 **Package**: [vue-wswg-editor on npm](https://www.npmjs.com/package/vue-wswg-editor)
+
 ## Peer Dependencies
 
 The library requires Vue 3.4.0 or higher:
@@ -35,4 +37,3 @@ The plugin is included with the library, so no additional installation is needed
 ## Next Steps
 
 Once installed, proceed to the [Quick Start Guide](/guide/quick-start) to create your first page builder.
-

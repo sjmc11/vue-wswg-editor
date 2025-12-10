@@ -1,15 +1,23 @@
 <template>
-   <div
-      id="page-builder-resize-handle"
-      ref="resizeHandle"
-      class="resize-handle shrink-0 cursor-col-resize transition-colors duration-200"
-      @mousedown="startResize"
-   ></div>
+   <div class="resize-handle-wrapper group">
+      <div
+         id="page-builder-resize-handle"
+         ref="resizeHandle"
+         class="resize-handle shrink-0 cursor-col-resize transition-colors duration-200"
+         @mousedown="startResize"
+      ></div>
+      <span
+         class="viewport-size absolute right-1 top-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      >
+         <div class="rounded-sm bg-yellow-400 px-1.5 py-1 font-mono text-xs font-medium text-gray-900">
+            {{ computedViewportSize }}
+         </div>
+      </span>
+   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { defineEmits } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 
 const emit = defineEmits<{
    (e: "sidebarWidth", width: number): void;
@@ -18,6 +26,9 @@ const emit = defineEmits<{
 const resizeHandle = ref<HTMLElement | null>(null);
 const sidebarWidth = ref(380); // Default sidebar width (380px)
 const isResizing = ref(false);
+const viewportWidth = ref<number>(0);
+let resizeObserver: ResizeObserver | null = null;
+let updateViewportWidthFn: (() => void) | null = null;
 
 // Resize functionality
 function startResize(event: MouseEvent) {
@@ -50,15 +61,62 @@ function startResize(event: MouseEvent) {
    document.body.style.cursor = "col-resize";
    document.body.style.userSelect = "none";
 }
+
+// Calculate viewport width based on #page-viewport element
+const computedViewportSize = computed(() => {
+   return viewportWidth.value > 0 ? `${viewportWidth.value}px` : "0px";
+});
+
+// Setup ResizeObserver to watch #page-viewport element
+onMounted(() => {
+   updateViewportWidthFn = () => {
+      const viewportElement = document.getElementById("page-preview-container");
+      if (viewportElement) {
+         viewportWidth.value = viewportElement.offsetWidth;
+      }
+   };
+
+   // Initial measurement
+   updateViewportWidthFn();
+
+   // Use ResizeObserver to watch for size changes
+   const viewportElement = document.getElementById("page-preview-container");
+   if (viewportElement) {
+      resizeObserver = new ResizeObserver(() => {
+         if (updateViewportWidthFn) {
+            updateViewportWidthFn();
+         }
+      });
+      resizeObserver.observe(viewportElement);
+   }
+
+   // Also listen for window resize events as a fallback
+   window.addEventListener("resize", updateViewportWidthFn);
+});
+
+onBeforeUnmount(() => {
+   if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+   }
+   if (updateViewportWidthFn) {
+      window.removeEventListener("resize", updateViewportWidthFn);
+      updateViewportWidthFn = null;
+   }
+});
 </script>
 
 <style scoped lang="scss">
 /* Resize handle styles */
-.resize-handle {
+.resize-handle-wrapper {
    position: sticky;
    top: 0;
    right: 0;
-   z-index: 14;
+   z-index: 30;
+   height: var(--editor-height);
+}
+
+.resize-handle {
    width: 3px;
    height: var(--editor-height);
    cursor: col-resize;

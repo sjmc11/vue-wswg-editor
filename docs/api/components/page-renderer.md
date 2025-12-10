@@ -23,11 +23,7 @@ Render pages without the editor interface. Useful for displaying pages in produc
 
       <!-- Page content (withLayout defaults to false) -->
       <main>
-         <PageRenderer
-            :blocks="pageData.blocks"
-            :layout="pageData.settings.layout"
-            :settings="pageData.settings"
-         />
+         <PageRenderer :blocks="pageData.blocks" :layout="pageData.settings.layout" :settings="pageData.settings" />
       </main>
 
       <!-- Your application footer -->
@@ -53,4 +49,3 @@ const pageData = {
 };
 </script>
 ```
-

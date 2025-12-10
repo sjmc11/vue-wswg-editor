@@ -51,6 +51,12 @@ export default defineConfig({
          },
       } as Plugin,
    ],
+   define: {
+      // Vue feature flags for better tree-shaking
+      __VUE_OPTIONS_API__: true,
+      __VUE_PROD_DEVTOOLS__: false,
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+   },
    resolve: {
       // Ensures these are sourced from the application's node_modules directory
       dedupe: ["vue"],
@@ -76,6 +82,10 @@ export default defineConfig({
          external: (id) => {
             // Externalize regular dependencies
             if (id === "vue" || id === "yup") {
+               return true;
+            }
+            // Externalize optional dependencies that may not be available
+            if (id === "@vueuse/head") {
                return true;
             }
             // Virtual modules must be external so they can be resolved by the consuming app's vite plugin

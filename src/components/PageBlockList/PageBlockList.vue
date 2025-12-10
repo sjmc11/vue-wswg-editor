@@ -4,6 +4,7 @@
          <div
             v-for="block in pageBlocks"
             :key="block.id"
+            data-prevent-drop="true"
             :class="{ 'bg-blue-100 text-blue-600': hoveredBlockId === block.id }"
             class="block-item -mx-2.5 flex cursor-pointer items-center gap-1 rounded-md p-2.5 text-sm text-neutral-900"
             @mouseenter="setHoveredBlockId(block.id)"

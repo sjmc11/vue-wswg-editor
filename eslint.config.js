@@ -13,7 +13,7 @@ export default [
 
    {
       name: "app/files-to-ignore",
-      ignores: ["**/dist/**", "**/coverage/**", "**/.vite-ssg-temp/**"],
+      ignores: ["**/dist/**", "**/coverage/**", "**/.vite-ssg-temp/**", "**/docs/.vitepress/cache/**"],
    },
 
    // eslint:recommended

@@ -74,6 +74,7 @@ interface ValidationResult {
 ```
 
 The `errors` field can contain:
+
 - `string` - A specific error message for a field
 - `boolean` - A generic error (typically `false`)
 - `ValidationResult` - A nested validation result for `repeater` or `object` fields
@@ -189,15 +190,15 @@ Built-in validations are automatically applied based on field configuration prop
 
 ### Supported Built-in Validations
 
-| Property   | Type     | Description                    | Field Types                    |
-| ---------- | -------- | ------------------------------ | ------------------------------ |
-| `required` | `boolean` | Field is required              | All                            |
-| `minLength` | `number` | Minimum string length          | text, textarea, email, url     |
-| `maxLength` | `number` | Maximum string length          | text, textarea, email, url     |
-| `min`      | `number` | Minimum numeric value          | number, range                  |
-| `max`      | `number` | Maximum numeric value          | number, range                  |
-| `minItems` | `number` | Minimum repeater items         | repeater                       |
-| `maxItems` | `number` | Maximum repeater items         | repeater                       |
+| Property    | Type      | Description            | Field Types                |
+| ----------- | --------- | ---------------------- | -------------------------- |
+| `required`  | `boolean` | Field is required      | All                        |
+| `minLength` | `number`  | Minimum string length  | text, textarea, email, url |
+| `maxLength` | `number`  | Maximum string length  | text, textarea, email, url |
+| `min`       | `number`  | Minimum numeric value  | number, range              |
+| `max`       | `number`  | Maximum numeric value  | number, range              |
+| `minItems`  | `number`  | Minimum repeater items | repeater                   |
+| `maxItems`  | `number`  | Maximum repeater items | repeater                   |
 
 ### Example
 
@@ -212,7 +213,7 @@ export default {
       minLength: 3,
       maxLength: 100,
    }),
-   
+
    // Built-in + custom validation
    email: createField.email({
       label: "Email",
@@ -246,6 +247,7 @@ type ValidatorFunction = (value: any) => Promise<boolean | string>;
 ```
 
 A validator function:
+
 - Receives the field value as a parameter
 - Returns `true` if valid
 - Returns `false` or a `string` error message if invalid
@@ -256,16 +258,15 @@ A validator function:
 ```typescript
 const validator: ValidatorFunction = async (value) => {
    if (!value) return true; // Skip if empty (let required handle it)
-   
+
    if (value.length < 5) {
       return "Value must be at least 5 characters";
    }
-   
+
    if (value.includes("forbidden")) {
       return false; // Generic error message
    }
-   
+
    return true;
 };
 ```
-

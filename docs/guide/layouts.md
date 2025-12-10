@@ -63,6 +63,7 @@ src/page-builder/
 ```
 
 This allows you to:
+
 - Keep layout components focused on their primary purpose
 - Reuse header and footer components across layouts
 - Maintain separation of concerns
@@ -143,16 +144,12 @@ defineOptions({
    <div>
       <!-- Your actual application header -->
       <header class="site-header">...</header>
-      
+
       <!-- Page content without layout wrapper -->
       <main>
-         <PageRenderer
-            :blocks="pageData.blocks"
-            :layout="pageData.settings.layout"
-            :settings="pageData.settings"
-         />
+         <PageRenderer :blocks="pageData.blocks" :layout="pageData.settings.layout" :settings="pageData.settings" />
       </main>
-      
+
       <!-- Your actual application footer -->
       <footer class="site-footer">...</footer>
    </div>
@@ -261,11 +258,11 @@ defineOptions({
             <h1>{{ headerTitle }}</h1>
          </div>
       </header>
-      
+
       <main>
          <slot />
       </main>
-      
+
       <!-- Footer partial - links to "footer" field group -->
       <footer data-partial="footer" class="site-footer">
          <div class="container">
@@ -308,7 +305,7 @@ const props = defineProps<{
 ```
 
 In this example:
+
 - Clicking the header element opens the page settings and automatically switches to the "header" tab
 - Clicking the footer element opens the page settings and automatically switches to the "footer" tab
 - Users can quickly navigate to edit specific sections of the layout without manually finding the right tab
-

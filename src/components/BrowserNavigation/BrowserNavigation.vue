@@ -1,7 +1,7 @@
 <template>
    <!-- URL bar -->
    <div class="browser-navigation-bar">
-      <div class="flex items-center justify-between rounded-t-lg bg-zinc-600 px-5 py-4">
+      <div class="flex items-center justify-between bg-zinc-600 px-5 py-4">
          <div class="flex w-full items-center gap-2 rounded-md bg-zinc-700 px-4 py-1.5 text-sm text-zinc-300">
             <span class="block flex-1 truncate">{{ url }}</span>
 

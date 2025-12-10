@@ -161,7 +161,7 @@ async function initialiseBlockFieldsRegistry(): Promise<void> {
    }
 }
 
-async function initialiseLayoutRegistry(): Promise<void> {
+export async function initialiseLayoutRegistry(): Promise<void> {
    Object.keys(pageBuilderLayouts.value).forEach((key) => {
       delete pageBuilderLayouts.value[key];
    });
@@ -186,7 +186,7 @@ async function initialiseLayoutRegistry(): Promise<void> {
    }
 }
 
-async function initialiseBlockRegistry(): Promise<void> {
+export async function initialiseBlockRegistry(): Promise<void> {
    // Clear existing registry
    Object.keys(pageBuilderBlocks.value).forEach((key) => {
       delete pageBuilderBlocks.value[key];

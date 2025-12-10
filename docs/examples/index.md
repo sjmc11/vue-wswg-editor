@@ -11,14 +11,14 @@ The [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-ki
 The starter kit provides:
 
 - **9 Example Blocks** - Pre-built blocks including:
-  - Hero sections (with and without images)
-  - Feature Grid with icon support
-  - FAQ Section with expandable items
-  - Article Feed
-  - Announcement banners
-  - Divider components
-  - Image Text blocks
-  - Poll sections
+   - Hero sections (with and without images)
+   - Feature Grid with icon support
+   - FAQ Section with expandable items
+   - Article Feed
+   - Announcement banners
+   - Divider components
+   - Image Text blocks
+   - Poll sections
 
 - **Custom Fields** - Rich text editor field component using TipTap with a full formatting toolbar
 
@@ -43,4 +43,3 @@ The starter kit includes all necessary dependencies and installation instruction
 - Field Validation
 - Custom Layouts
 - Advanced Field Types
-

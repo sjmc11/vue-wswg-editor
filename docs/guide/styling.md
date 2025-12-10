@@ -6,22 +6,26 @@ The library provides limited styling customization options. Most styling should 
 
 The editor uses CSS custom properties that you can override:
 
-| Property                  | Default Value | Description                                    |
-| ------------------------- | ------------- | ---------------------------------------------- |
-| `--editor-height`        | `calc(100vh)` | Height of the editor container                 |
-| `--editor-bg-color`      | `#6a6a6a`     | Background color of the editor                 |
-| `--block-margin-sm`      | `2rem`        | Small block margin gap                         |
-| `--block-margin-md`      | `4rem`        | Medium block margin gap                        |
-| `--block-margin-lg`      | `6rem`        | Large block margin gap                         |
-| `--block-badge-color`    | `#3363d4`     | Color for the "Editing" badge on active blocks |
-| `--block-hover-color`    | `#a4c7ea43`   | Overlay color when hovering over blocks         |
-| `--block-active-color`   | `#a4c7ea43`   | Overlay color for active/selected blocks        |
-| `--block-border-color`   | `#638ef1`     | Border color for block overlays                |
-| `--partial-hover-color` | `#a4c7ea43`   | Overlay color when hovering over partials      |
-| `--partial-active-color` | `#a4c7ea43`   | Overlay color for active partials              |
-| `--partial-border-color` | `#638ef1`     | Border color for partial overlays              |
-| `--margin-color`         | `#faf6d5e0`   | Background color for margin spacing indicators |
-| `--margin-border-color`  | `#cbc59c`     | Border color for margin spacing indicators      |
+| Property                   | Default Value | Description                                    |
+| -------------------------- | ------------- | ---------------------------------------------- |
+| `--editor-height`          | `calc(100vh)` | Height of the editor container                 |
+| `--editor-bg-color`        | `#6a6a6a`     | Background color of the editor                 |
+| `--block-margin-sm`        | `2rem`        | Small block margin gap                         |
+| `--block-margin-md`        | `4rem`        | Medium block margin gap                        |
+| `--block-margin-lg`        | `6rem`        | Large block margin gap                         |
+| `--block-badge-color`      | `#638ef1`     | Color for the "Editing" badge on active blocks |
+| `--block-backdrop-color`   | `transparent` | Backdrop/overlay color for blocks              |
+| `--block-border-color`     | `#638ef1`     | Border color for block overlays                |
+| `--block-border-width`     | `4px`         | Border width for block overlays                |
+| `--block-border-style`     | `solid`       | Border style for block overlays                |
+| `--partial-backdrop-color` | `transparent` | Backdrop/overlay color for partials            |
+| `--partial-border-color`   | `#638ef1`     | Border color for partial overlays              |
+| `--partial-border-width`   | `4px`         | Border width for partial overlays              |
+| `--partial-border-style`   | `solid`       | Border style for partial overlays              |
+| `--margin-color`           | `#faf6d5e0`   | Background color for margin spacing indicators |
+| `--margin-border-width`    | `2px`         | Border width for margin spacing indicators     |
+| `--margin-border-style`    | `dashed`      | Border style for margin spacing indicators     |
+| `--margin-border-color`    | `#cbc59c`     | Border color for margin spacing indicators     |
 
 ## Editor Height
 
@@ -120,37 +124,41 @@ You can customize the visual feedback colors for blocks and partials (layout ele
 
 ### Block Overlays
 
-Customize the colors used when hovering over or selecting blocks:
+Customize the backdrop and border styles for blocks:
 
 ```css
 .wswg-json-editor {
-   --block-hover-color: rgba(164, 199, 234, 0.26);  /* Hover overlay */
-   --block-active-color: rgba(164, 199, 234, 0.26); /* Active/selected overlay */
-   --block-border-color: #638ef1;                    /* Border color */
-   --block-badge-color: #3363d4;                     /* "Editing" badge color */
+   --block-backdrop-color: transparent; /* Backdrop/overlay color */
+   --block-border-color: #638ef1; /* Border color */
+   --block-border-width: 4px; /* Border width */
+   --block-border-style: solid; /* Border style */
+   --block-badge-color: #638ef1; /* "Editing" badge color */
 }
 ```
 
 ### Partial Overlays
 
-Customize the colors for layout elements (partials) that are marked with `data-partial`:
+Customize the backdrop and border styles for layout elements (partials) that are marked with `data-partial`:
 
 ```css
 .wswg-json-editor {
-   --partial-hover-color: rgba(164, 199, 234, 0.26);  /* Hover overlay */
-   --partial-active-color: rgba(164, 199, 234, 0.26); /* Active overlay */
-   --partial-border-color: #638ef1;                   /* Border color */
+   --partial-backdrop-color: transparent; /* Backdrop/overlay color */
+   --partial-border-color: #638ef1; /* Border color */
+   --partial-border-width: 4px; /* Border width */
+   --partial-border-style: solid; /* Border style */
 }
 ```
 
 ### Margin Spacing Indicators
 
-Customize the colors for the margin spacing indicators shown between blocks:
+Customize the colors and styles for the margin spacing indicators shown between blocks:
 
 ```css
 .wswg-json-editor {
-   --margin-color: rgba(250, 246, 213, 0.88); /* Background color */
-   --margin-border-color: #cbc59c;             /* Border color */
+   --margin-color: #faf6d5e0; /* Background color */
+   --margin-border-width: 2px; /* Border width */
+   --margin-border-style: dashed; /* Border style */
+   --margin-border-color: #cbc59c; /* Border color */
 }
 ```
 
@@ -159,17 +167,21 @@ Customize the colors for the margin spacing indicators shown between blocks:
 ```css
 .wswg-json-editor {
    /* Block overlays - purple theme */
-   --block-hover-color: rgba(219, 117, 190, 0.26);
-   --block-active-color: rgba(219, 129, 117, 0.26);
+   --block-backdrop-color: rgba(219, 117, 190, 0.1);
    --block-border-color: #9b59b6;
-   
+   --block-border-width: 3px;
+   --block-border-style: dashed;
+
    /* Partial overlays - green theme */
-   --partial-hover-color: rgba(159, 246, 165, 0.26);
-   --partial-active-color: rgba(159, 246, 165, 0.26);
+   --partial-backdrop-color: rgba(159, 246, 165, 0.1);
    --partial-border-color: rgb(63, 165, 76);
-   
+   --partial-border-width: 2px;
+   --partial-border-style: solid;
+
    /* Margin indicators - yellow theme */
    --margin-color: rgba(250, 246, 213, 0.88);
+   --margin-border-width: 2px;
+   --margin-border-style: dashed;
    --margin-border-color: #cbc59c;
 }
 ```
@@ -182,71 +194,23 @@ To avoid conflicts with Tailwind v4, the library wraps its Tailwind utilities in
 
 ## Container Styling and Responsive Design
 
-When styling your page content, it's important to understand how container sizes and media queries work differently in the editor view versus the product preview.
+When styling your page content, you can use standard media queries and responsive breakpoints. The editor preview automatically responds to the preview container size, so your responsive styles will work correctly in both the editor view and the product preview.
 
-### The Challenge
+### Standard Media Queries
 
-Media queries respond to the browser viewport size, which works fine for the product preview. However, when rendering elements in the editor view, they are displayed in a different container alongside the sidebar and editor controls. This means:
-
-- The preview container in the editor has less width than the full browser viewport
-- Media queries based on browser width won't match the actual container width in the editor
-- Your responsive design may not behave as expected during editing
-
-### Solution 1: Container Queries (Recommended)
-
-The recommended approach is to use container queries instead of media queries. The main wrapper element `#page-viewport` already acts as a container that can be used for container queries.
-
-If using Tailwind CSS, use container query variants instead of media query variants:
+You can use standard CSS media queries or Tailwind CSS responsive variants as you normally would:
 
 ```vue
 <template>
    <div id="page-viewport">
-      <div class="@3xl:p-12 p-4">
+      <div class="p-4 md:p-8 lg:p-12">
          <!-- Your content -->
       </div>
    </div>
 </template>
 ```
 
-In this example, `@3xl:p-12` responds to the container size (the `#page-viewport` element), while `md:p-12` would respond to the browser viewport size. Container queries ensure your styles adapt correctly in both the editor view and the product preview.
-
-### Solution 2: Custom Container with CSS Override (Simple)
-
-A simpler alternative is to use a custom container class and override its max-width specifically for the editor view.
-
-First, define your container styles in your custom CSS:
-
-```css
-.my-container {
-   width: 100%;
-   margin: 0 auto;
-   padding: 0 1rem;
-}
-
-@media (min-width: 768px) {
-   .my-container {
-      max-width: 1600px;
-   }
-}
-```
-
-Then, where you use the `WswgJsonEditor` component, override the max container width just for the editor experience:
-
-```vue
-<template>
-   <WswgJsonEditor v-model="pageData" class="page-editor" />
-</template>
-
-<style lang="scss" scoped>
-.page-editor {
-   :deep(.my-container) {
-      max-width: 992px;
-   }
-}
-</style>
-```
-
-This approach allows you to use standard media queries in your CSS while ensuring the editor view displays correctly with a narrower container. But it does not affect other responsive classes.
+The editor preview container automatically adjusts breakpoints to match the preview size, so your responsive classes will behave correctly during editing without needing container queries.
 
 ## See Also
 

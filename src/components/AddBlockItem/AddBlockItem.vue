@@ -43,8 +43,17 @@ const thumbnailUrl = computed(() => {
 
 function handleDragStart(event: DragEvent, block: Block) {
    if (!event.dataTransfer) return;
-   // Store the block type in dataTransfer
-   event.dataTransfer.setData("block-type", block.__name);
+   // Store the block type in dataTransfer (use block.type as fallback if __name not available)
+   const blockType = block.__name || block.type;
+   event.dataTransfer.setData("block-type", blockType);
    event.dataTransfer.effectAllowed = "move";
+   // Allow dragging to iframes
+   event.dataTransfer.setData("text/plain", blockType);
+
+   // Check if the dragged element has data-prevent-drop attribute
+   const draggedElement = event.target as HTMLElement;
+   if (draggedElement?.hasAttribute("data-prevent-drop")) {
+      event.dataTransfer.setData("prevent-drop", "true");
+   }
 }
 </script>

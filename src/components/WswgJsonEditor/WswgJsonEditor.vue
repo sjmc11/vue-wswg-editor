@@ -1,92 +1,52 @@
 <template>
-   <div ref="editorRef" class="wswg-json-editor" :class="{ 'settings-open': showPageSettings }">
+   <div class="wswg-json-editor" :class="{ 'settings-open': showPageSettings }">
       <slot v-if="loading" name="loading">
          <div class="wswg-json-editor-loading flex h-full flex-col items-center justify-center gap-4">
             <svg
-               class="size-9 animate-[spin_2000ms_linear_infinite]"
-               viewBox="0 0 24 24"
-               fill="none"
+               class="mx-auto size-8 animate-spin text-blue-600"
                xmlns="http://www.w3.org/2000/svg"
+               fill="none"
+               viewBox="0 0 24 24"
             >
+               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+
                <path
-                  d="M13 2a1 1 0 0 0-2 0v4.167a1 1 0 1 0 2 0V2ZM13 17.833a1 1 0 0 0-2 0V22a1 1 0 1 0 2 0v-4.167ZM16.834 12a1 1 0 0 1 1-1H22a1 1 0 0 1 0 2h-4.166a1 1 0 0 1-1-1ZM2 11a1 1 0 0 0 0 2h4.167a1 1 0 1 0 0-2H2ZM19.916 4.085a1 1 0 0 1 0 1.414l-2.917 2.917A1 1 0 1 1 15.585 7l2.917-2.916a1 1 0 0 1 1.414 0ZM8.415 16.999a1 1 0 0 0-1.414-1.414L4.084 18.5A1 1 0 1 0 5.5 19.916l2.916-2.917ZM15.585 15.585a1 1 0 0 1 1.414 0l2.917 2.916a1 1 0 1 1-1.414 1.415l-2.917-2.917a1 1 0 0 1 0-1.414ZM5.499 4.085a1 1 0 0 0-1.415 1.414l2.917 2.917A1 1 0 0 0 8.415 7L5.5 4.085Z"
-                  fill="#000000"
-               />
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+               ></path>
             </svg>
-            <span>Loading</span>
+            <span>Loading editor...</span>
          </div>
       </slot>
       <!-- WYSIWYG editor -->
       <div v-else class="wswg-json-editor-body">
          <!-- Page preview -->
-         <div class="wswg-json-editor-preview">
+         <div class="wswg-json-editor-preview overflow-y-auto">
             <div
-               class="mx-auto flex h-full flex-col transition-all duration-300"
+               id="page-preview-container"
+               class="mx-auto flex flex-col overflow-hidden rounded-lg bg-white transition-all duration-300"
+               style="height: -webkit-fill-available"
                :class="{ 'w-full': editorViewport === 'desktop', 'w-96': editorViewport === 'mobile' }"
             >
                <BrowserNavigation v-if="showBrowserBar" class="browser-navigation-bar" :url="url" />
-               <div
-                  v-if="pageLayout"
-                  id="page-viewport"
-                  class="relative overflow-hidden rounded-b-lg bg-white"
-                  :class="{ 'rounded-t-lg': !showBrowserBar }"
-               >
-                  <component :is="pageLayout" v-bind="pageData?.[settingsKey]">
-                     <template #default>
-                        <!-- No blocks found -->
-                        <EmptyState
-                           v-if="!pageData?.[blocksKey]?.length"
-                           v-model:showAddBlockMenu="showAddBlockMenu"
-                           :editable="editable"
-                           @block-added="handleAddBlock"
-                        />
-                        <!-- Blocks found -->
-                        <div v-else id="page-blocks-wrapper" ref="pageBlocksWrapperRef">
-                           <div v-for="(block, blockIndex) in pageData[blocksKey]" :key="block.id">
-                              <BlockComponent
-                                 :block="block"
-                                 :blockIndex="blockIndex"
-                                 :activeBlock="activeBlock"
-                                 :editable="editable"
-                                 :hoveredBlockId="hoveredBlockId"
-                                 @hover-block="setHoveredBlockId"
-                                 @click-block="handleBlockClick"
-                              />
-                           </div>
-                        </div>
-                     </template>
-                  </component>
-               </div>
-               <!-- No layout found -->
-               <div v-else class="rounded-b-lg bg-white px-5 py-12 md:py-20">
-                  <div class="mx-auto max-w-md pb-7 text-center">
-                     <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="mx-auto size-20 text-gray-400"
-                     >
-                        <path
-                           stroke-linecap="round"
-                           stroke-linejoin="round"
-                           d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
-                        ></path>
-                     </svg>
-
-                     <h2 class="text-2xl font-bold text-gray-900">No layout found</h2>
-
-                     <p class="mt-4 text-pretty text-gray-700">
-                        Get started by creating your first layout. It only takes a few seconds.
-                     </p>
-
-                     <p class="mt-6 text-sm text-gray-700">
-                        <a href="#" class="underline hover:text-gray-900">Learn how</a> or
-                        <a href="#" class="underline hover:text-gray-900">view examples</a>
-                     </p>
-                  </div>
-               </div>
+               <IframePreview
+                  v-if="iframePreview"
+                  ref="previewRef"
+                  :pageData="pageData"
+                  :activeBlock="activeBlock"
+                  :hoveredBlockId="hoveredBlockId"
+                  :viewport="editorViewport"
+                  :editable="editable"
+                  :blocksKey="blocksKey"
+                  :settingsKey="settingsKey"
+                  :settingsOpen="showPageSettings"
+                  @hover-block="setHoveredBlockId"
+                  @click-block="handleBlockClick"
+                  @block-reorder="handleBlockReorder"
+                  @block-add="handleBlockAdd"
+                  @click-partial="handleClickPartial"
+               />
             </div>
          </div>
 
@@ -126,18 +86,17 @@ import {
    type Component,
    onBeforeMount,
    onMounted,
-   onBeforeUnmount,
    nextTick,
    computed,
 } from "vue";
 import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
-import BlockComponent from "../BlockComponent/BlockComponent.vue";
-import EmptyState from "../EmptyState/EmptyState.vue";
+import IframePreview from "../IframePreview/IframePreview.vue";
 import { getBlockComponent, getLayouts, initialiseRegistry } from "../../util/registry";
 import type { Block } from "../../types/Block";
 import Sortable from "sortablejs";
+import { onKeyStroke, onClickOutside } from "@vueuse/core";
 
 const props = withDefaults(
    defineProps<{
@@ -148,6 +107,7 @@ const props = withDefaults(
       blocksKey?: string;
       settingsKey?: string;
       defaultBlockMargin?: "none" | "small" | "medium" | "large";
+      iframePreview?: boolean;
    }>(),
    {
       editable: false,
@@ -157,6 +117,7 @@ const props = withDefaults(
       blocksKey: "blocks",
       settingsKey: "settings",
       defaultBlockMargin: "none",
+      iframePreview: true,
    }
 );
 
@@ -171,7 +132,7 @@ const sidebarWidth = ref(380); // Default sidebar width (380px)
 const sortableInstance = ref<InstanceType<typeof Sortable> | null>(null);
 const pageBlocksWrapperRef = ref<HTMLElement | null>(null);
 const isInitializingSortable = ref(false); // Prevent concurrent initialization
-const editorRef = ref<HTMLElement | null>(null);
+const previewRef = ref<HTMLElement | null>(null);
 
 // Model value for the JSON page data
 const pageData = defineModel<Record<string, any>>();
@@ -183,23 +144,6 @@ const pageLayout = shallowRef<Component | undefined>(undefined);
 // Apply the sidebar width from the resize handle
 function handleSidebarWidth(width: number) {
    sidebarWidth.value = width;
-}
-
-// Load layout component dynamically from @page-builder/layout/
-async function loadLayout(layoutName: string | undefined) {
-   // Use "default" layout if no layout is provided
-   const layout = layoutName || "default";
-   try {
-      const availableLayouts = getLayouts();
-      const layoutModule = availableLayouts[layout];
-      pageLayout.value = layoutModule;
-      // Don't initialize Sortable here - let the watcher handle it
-      // The watcher will react to pageLayout.value changing and check all conditions
-   } catch (error) {
-      // Layout doesn't exist, return undefined
-      console.warn(`Layout "${layout}" not found in @page-builder/layout/`, error);
-      pageLayout.value = undefined;
-   }
 }
 
 // Check if the page has settings
@@ -236,9 +180,6 @@ async function handleAddBlock(blockType: string, insertIndex?: number) {
       pageData.value[props.blocksKey] = [];
    }
 
-   // Record if this is an add from the EmptyState
-   const isAddFromEmptyState = insertIndex === undefined;
-
    // Create a new block object
    const newBlock = {
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -272,12 +213,6 @@ async function handleAddBlock(blockType: string, insertIndex?: number) {
       showAddBlockMenu.value = false;
    }
 
-   // finally, if this is an add from the EmptyState, we need to trigger a re-render and initialise the sortable
-   if (isAddFromEmptyState) {
-      await nextTick();
-      await initSortable();
-   }
-
    return newBlock;
 }
 
@@ -286,35 +221,28 @@ function setHoveredBlockId(id: string | null) {
    hoveredBlockId.value = id;
 }
 
-// Watch for changes in pageData layout and load the corresponding component
-watch(
-   () => pageData.value?.[props.settingsKey]?.layout,
-   (layoutName) => {
-      loadLayout(layoutName);
+// On escape key press
+onKeyStroke("Escape", () => {
+   // Unset active block
+   activeBlock.value = null;
+   hoveredBlockId.value = null;
+   showAddBlockMenu.value = false;
+   showPageSettings.value = false;
+   activeSettingsTab.value = undefined;
+});
+
+// Click outside detection
+onClickOutside(
+   previewRef,
+   () => {
+      // Unset active block
+      activeBlock.value = null;
+      hoveredBlockId.value = null;
+      showAddBlockMenu.value = false;
+      showPageSettings.value = false;
+      activeSettingsTab.value = undefined;
    },
-   { immediate: false }
-);
-
-// Watch for activeBlock changes and scroll to the corresponding block in the preview
-watch(
-   () => activeBlock.value?.id,
-   async (blockId) => {
-      if (!blockId) return;
-
-      // Wait for DOM to update
-      await nextTick();
-
-      // Find the block element by data-block-id
-      const blockElement = document.querySelector(`[data-block-id="${blockId}"]`) as HTMLElement;
-      if (!blockElement) return;
-
-      // Scroll the block into view, centered in the scrollable container
-      blockElement.scrollIntoView({
-         behavior: "smooth",
-         block: "center",
-         inline: "nearest",
-      });
-   }
+   { ignore: ["#page-builder-sidebar", "#page-builder-resize-handle"] }
 );
 
 // Watch for the pageBlocksWrapperRef element to become available
@@ -516,14 +444,11 @@ onBeforeMount(async () => {
          pageData.value[props.blocksKey] = [];
       }
    }
-
-   loadLayout(pageData.value?.[props.settingsKey]?.layout);
 });
 
 // Initialize Sortable after component is mounted - watcher will handle the initialization
 // This is just a fallback in case the watcher didn't fire
 onMounted(async () => {
-   await nextTick();
    await nextTick();
    // Trigger the watcher by checking conditions
    // The watcher will handle initialization if all conditions are met
@@ -531,70 +456,52 @@ onMounted(async () => {
       await nextTick();
       await initSortable();
    }
-
-   // Add click event listener for data-partial elements
-   setupDataPartialClickHandler();
 });
 
-// Handle clicks on elements with data-partial attribute
-let dataPartialClickHandler: ((event: Event) => void) | null = null;
+function handleBlockReorder(oldIndex: number, newIndex: number) {
+   if (!pageData.value?.[props.blocksKey]) return;
 
-function setupDataPartialClickHandler() {
-   if (!editorRef.value) return;
+   const blocks = pageData.value[props.blocksKey];
+   if (oldIndex < 0 || oldIndex >= blocks.length || newIndex < 0 || newIndex >= blocks.length) {
+      return;
+   }
 
-   dataPartialClickHandler = (event: Event) => {
-      const target = event.target as HTMLElement;
-      const partialElement = target.closest("[data-partial]") as HTMLElement | null;
-
-      if (partialElement) {
-         const partialValue = partialElement.getAttribute("data-partial");
-         const hasValue = partialValue !== null && partialValue !== "";
-
-         // Show the settings sidebar when a partial is clicked
-         showPageSettings.value = true;
-         // Clear active block when clicking on a partial
-         activeBlock.value = null;
-         hoveredBlockId.value = null;
-         showAddBlockMenu.value = false;
-
-         // If partial has a value (e.g., "header"), set it as the active tab
-         if (hasValue && partialValue) {
-            activeSettingsTab.value = partialValue;
-         } else {
-            activeSettingsTab.value = undefined;
-         }
-      }
-   };
-
-   editorRef.value.addEventListener("click", dataPartialClickHandler);
+   // Move block from oldIndex to newIndex
+   const movedBlock = blocks[oldIndex];
+   blocks.splice(oldIndex, 1);
+   blocks.splice(newIndex, 0, movedBlock);
 }
 
-// Cleanup event listener on unmount
-onBeforeUnmount(() => {
-   if (dataPartialClickHandler && editorRef.value) {
-      editorRef.value.removeEventListener("click", dataPartialClickHandler);
-      dataPartialClickHandler = null;
+function handleBlockAdd(blockType: string, index: number) {
+   // Use the existing handleAddBlock function
+   handleAddBlock(blockType, index);
+}
+
+function handleClickPartial(partialValue: string) {
+   const hasValue = partialValue !== null && partialValue !== "";
+
+   // Show the settings sidebar when a partial is clicked
+   showPageSettings.value = true;
+   // Clear active block when clicking on a partial
+   activeBlock.value = null;
+   hoveredBlockId.value = null;
+   showAddBlockMenu.value = false;
+
+   // If partial has a value (e.g., "header"), set it as the active tab
+   if (hasValue && partialValue) {
+      activeSettingsTab.value = partialValue;
+   } else {
+      activeSettingsTab.value = undefined;
    }
-});
+}
 </script>
 
 <style lang="scss">
 @use "../../assets/styles/mixins" as *;
+
 $editor-background-color: #6a6a6a;
 
 .wswg-json-editor {
-   --editor-height: calc(100vh);
-   --editor-bg-color: #6a6a6a;
-   --block-badge-color: #3363d4;
-   --block-hover-color: #a4c7ea43;
-   --block-active-color: #a4c7ea43;
-   --block-border-color: #638ef1;
-   --partial-hover-color: #a4c7ea43;
-   --partial-active-color: #a4c7ea43;
-   --partial-border-color: #638ef1;
-   --margin-color: #faf6d5e0;
-   --margin-border-color: #cbc59c;
-
    position: relative;
    width: 100%;
    max-width: 100vw;
@@ -620,26 +527,9 @@ $editor-background-color: #6a6a6a;
       flex-grow: 1;
       flex-shrink: 0;
       flex-direction: column;
-      height: 100%;
+      height: -webkit-fill-available;
       min-height: 0;
       padding: 1.5rem;
-
-      .browser-navigation-bar {
-         position: sticky;
-         top: 1.5rem;
-         z-index: 30;
-
-         &::before {
-            position: absolute;
-            top: -1.5rem;
-            left: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            content: "";
-            background-color: var(--editor-bg-color, $editor-background-color);
-         }
-      }
    }
 
    .page-builder-sidebar-wrapper {
@@ -648,22 +538,6 @@ $editor-background-color: #6a6a6a;
       z-index: 12;
       height: var(--editor-height);
       overflow-y: auto;
-   }
-
-   // target elements any data-partial="header" or empty data-partial attribute
-   [data-partial] {
-      @include hover-overlay(var(--partial-hover-color), var(--partial-border-color, rgb(63, 165, 76)));
-      cursor: pointer;
-   }
-
-   // When settings sidebar is open, show overlay on all partial elements using active color
-   &.settings-open {
-      [data-partial] {
-         @include hover-overlay-apply(
-            var(--partial-active-color, var(--partial-hover-color)),
-            var(--partial-border-color, rgb(63, 165, 76))
-         );
-      }
    }
 }
 </style>
