@@ -6,7 +6,7 @@ hero:
    text: WYSIWYG JSON Editor
    tagline: A powerful Vue 3 library for visual page builders
    image:
-      src: ./assets/app-icon-shadow.png
+      src: /app-icon-shadow.png
       alt: vue-wswg-editor
    actions:
       - theme: brand
