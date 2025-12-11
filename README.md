@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/app-icon.png" alt="vue-wswg-editor" width="120" height="120">
+  <img src="docs/assets/app-icon.png" alt="vue-wswg-editor" width="180" height="200">
   <h1>vue-wswg-editor</h1>
   <p>A powerful Vue 3 WYSIWYG JSON editor component library for building visual page builders</p>
   

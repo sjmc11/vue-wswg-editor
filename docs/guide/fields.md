@@ -25,44 +25,6 @@ export default {
 };
 ```
 
-## Block Thumbnails
-
-Blocks can include a thumbnail image that displays in the "add block" list in the editor sidebar. The library automatically looks for a `thumbnail.png` file in each block's directory.
-
-![Block browser showing block thumbnails](../assets/block-browser-2.jpg)
-
-### Adding a Thumbnail
-
-Place a `thumbnail.png` file in your block directory:
-
-```
-src/page-builder/blocks/
-  hero/
-    Hero.vue
-    fields.ts
-    thumbnail.png  ← Add thumbnail here
-```
-
-The thumbnail will be automatically displayed in the block browser when users are selecting blocks to add. Recommended size is approximately 112px height (the display area is 112px tall with auto width).
-
-### Thumbnail Fallback
-
-If no `thumbnail.png` is found, the library will fall back to:
-
-1. **Emoji** - If the block defines an `emoji` property in `defineOptions`
-2. **Placeholder icon** - A default icon if neither thumbnail nor emoji is available
-
-Example with emoji fallback:
-
-```vue
-<script setup lang="ts">
-defineOptions({
-   label: "Hero Section",
-   emoji: "🎯", // Used if thumbnail.png is not found
-});
-</script>
-```
-
 ## Supported Field Types
 
 - `text` - Single-line text input
