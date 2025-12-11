@@ -3,7 +3,7 @@
       <!-- Field group tabs-->
       <div
          v-if="editorFieldGroups.length"
-         class="field-group-tabs flex gap-2 border-b border-gray-300"
+         class="field-group-tabs flex gap-2 overflow-x-auto border-b border-gray-300"
          :class="nested ? 'px-0 pt-0' : 'px-5 pt-3'"
       >
          <button

@@ -6,7 +6,7 @@
       :class="{ 'settings-open': settingsOpen }"
    >
       <template v-if="isReady">
-         <component :is="layoutComponent" v-if="layoutComponent" v-bind="settings">
+         <component :is="layoutComponent" v-if="layoutComponent" v-bind="settings" :blocks="blocks">
             <template #default>
                <!-- No blocks found -->
                <EmptyState v-if="!blocks?.length" :editable="editable" @block-added="handleBlockAdded" />
@@ -629,6 +629,7 @@ onBeforeUnmount(() => {
    align-items: center;
    width: 100%;
    pointer-events: none;
+   transform: translateY(calc(var(--block-border-width, 4px) * -2));
    animation: drop-indicator-pulse 1.5s ease-in-out infinite;
 }
 

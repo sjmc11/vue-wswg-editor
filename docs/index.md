@@ -4,9 +4,9 @@ layout: home
 hero:
    name: vue-wswg-editor
    text: WYSIWYG JSON Editor
-   tagline: A powerful Vue 3 component library for building visual page builders
+   tagline: A powerful Vue 3 library for visual page builders
    image:
-      src: /assets.hero.jpg
+      src: /assets/app-icon-shadow.png
       alt: vue-wswg-editor
    actions:
       - theme: brand
@@ -45,6 +45,20 @@ features:
      title: Vite Plugin
      details: Automatic block, layout, and field discovery via Vite plugin
 ---
+
+<div style="text-align: center; margin: 2rem 0;">
+<p>Video preview</p>
+   <video 
+      controls 
+      autoplay="true"
+      playsinline="true"
+      poster="/assets/wswg-hero.jpg" 
+      style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); aspect-ratio: 16/9;width: 100%; height: auto;object-fit: cover;"
+   >
+      <source src="/assets/wswg-demo.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+   </video>
+</div>
 
 ## Quick Start
 
