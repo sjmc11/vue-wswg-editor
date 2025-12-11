@@ -170,7 +170,7 @@ Layouts can have settings that are editable through the page settings panel. Def
 
 ## Interactive Layout Elements with `data-partial`
 
-You can make specific elements in your layout interactive in the editor by adding the `data-partial` attribute. This allows users to click on layout elements (like headers, footers, or other sections) to quickly navigate to their corresponding settings in the page settings panel.
+You can make specific elements in your layout interactive in the editor by adding the `data-partial` attribute. This allows users to click on layout elements (like headers, footers, or other sections) in the layout to quickly navigate to their corresponding settings in the page settings panel.
 
 ### Basic Usage
 
