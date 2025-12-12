@@ -69,7 +69,7 @@
 
 // Apply Overlay Styles (Helper)
 // Applies the backdrop styles directly - useful when state classes are on parent
-// Uses CSS custom properties from .wswg-json-editor element
+// Uses CSS custom properties from .wswg-page-builder element
 // Usage: @include backdrop-apply($backdrop-color, $border-color);
 @mixin overlay-apply(
    $backdrop-color: var(--block-backdrop-color, transparent),

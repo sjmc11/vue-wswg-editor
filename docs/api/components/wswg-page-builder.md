@@ -1,4 +1,4 @@
-# WswgJsonEditor Component
+# WswgPageBuilder Component
 
 The main editor component for building and editing pages.
 
@@ -33,13 +33,13 @@ The main editor component for building and editing pages.
          <h1>My Page Editor</h1>
          <button @click="save">Save</button>
       </header>
-      <WswgJsonEditor v-model="pageData" :editable="true" :showBrowserBar="true" defaultBlockMargin="small" />
+      <WswgPageBuilder v-model="pageData" :editable="true" :showBrowserBar="true" defaultBlockMargin="small" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({
    blocks: [],

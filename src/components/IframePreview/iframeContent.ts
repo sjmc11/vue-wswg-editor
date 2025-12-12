@@ -1,6 +1,6 @@
 /**
  * Extract CSS variables from the parent document
- * Extracts variables from :root and specific selectors like .wswg-json-editor
+ * Extracts variables from :root and specific selectors like .wswg-page-builder
  */
 function extractParentCSSVariables(): string {
    if (typeof document === "undefined" || typeof window === "undefined") return "";

@@ -1,7 +1,7 @@
 <template>
-   <div class="wswg-json-editor" :class="{ 'settings-open': showPageSettings }">
+   <div class="wswg-page-builder" :class="{ 'settings-open': showPageSettings }">
       <slot v-if="loading" name="loading">
-         <div class="wswg-json-editor-loading flex h-full flex-col items-center justify-center gap-4">
+         <div class="wswg-page-builder-loading flex h-full flex-col items-center justify-center gap-4">
             <svg
                class="mx-auto size-8 animate-spin text-blue-600"
                xmlns="http://www.w3.org/2000/svg"
@@ -20,9 +20,9 @@
          </div>
       </slot>
       <!-- WYSIWYG editor -->
-      <div v-else class="wswg-json-editor-body">
+      <div v-else class="wswg-page-builder-body">
          <!-- Page preview -->
-         <div class="wswg-json-editor-preview overflow-y-auto">
+         <div class="wswg-page-builder-preview overflow-y-auto">
             <div
                id="page-preview-container"
                class="mx-auto flex flex-col overflow-hidden rounded-lg bg-white transition-all duration-300"
@@ -501,7 +501,7 @@ function handleClickPartial(partialValue: string) {
 
 $editor-background-color: #6a6a6a;
 
-.wswg-json-editor {
+.wswg-page-builder {
    position: relative;
    width: 100%;
    max-width: 100vw;

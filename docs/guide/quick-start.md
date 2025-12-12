@@ -121,7 +121,7 @@ Now use the editor in your application:
 
 ```vue
 <template>
-   <WswgJsonEditor
+   <WswgPageBuilder
       v-model="pageData"
       blocksKey="blocks"
       settingsKey="settings"
@@ -134,7 +134,7 @@ Now use the editor in your application:
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 import "vue-wswg-editor/style.css";
 
 const pageData = ref({
@@ -153,7 +153,7 @@ The editor uses `v-model` for two-way data binding. You can watch for changes an
 ```vue
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({
    blocks: [],

@@ -49,7 +49,7 @@ export default defineConfig({
             {
                text: "Components",
                items: [
-                  { text: "WswgJsonEditor", link: "/api/components/wswg-json-editor" },
+                  { text: "WswgPageBuilder", link: "/api/components/wswg-page-builder" },
                   { text: "PageRenderer", link: "/api/components/page-renderer" },
                ],
             },

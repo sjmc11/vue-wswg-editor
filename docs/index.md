@@ -47,7 +47,6 @@ features:
 ---
 
 <div style="text-align: center; margin: 2rem 0;">
-<p>Video preview</p>
    <video 
       controls 
       autoplay="true"
@@ -72,12 +71,12 @@ npm install vue-wswg-editor
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="true" :showBrowserBar="true" />
+   <WswgPageBuilder v-model="pageData" :editable="true" :showBrowserBar="true" />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 import "vue-wswg-editor/style.css";
 
 const pageData = ref({

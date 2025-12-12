@@ -6,7 +6,7 @@ Complete API reference for `vue-wswg-editor`. This documentation covers all comp
 
 The library provides two main components for building and rendering pages:
 
-### WswgJsonEditor
+### WswgPageBuilder
 
 The main editor component for building and editing pages visually.
 
@@ -17,7 +17,7 @@ The main editor component for building and editing pages visually.
 - Real-time preview with responsive viewport controls
 - Layout selection and configuration
 
-[View WswgJsonEditor API →](/api/components/wswg-json-editor)
+[View WswgPageBuilder API →](/api/components/wswg-page-builder)
 
 ### PageRenderer
 
@@ -127,7 +127,7 @@ interface ValidationResult {
 
 ```typescript
 // Components
-import { WswgJsonEditor, PageRenderer } from "vue-wswg-editor";
+import { WswgPageBuilder, PageRenderer } from "vue-wswg-editor";
 
 // Utilities
 import {
@@ -150,7 +150,7 @@ import "vue-wswg-editor/style.css";
 
 ### Components
 
-- [WswgJsonEditor](/api/components/wswg-json-editor) - Main editor component
+- [WswgPageBuilder](/api/components/wswg-page-builder) - Main editor component
 - [PageRenderer](/api/components/page-renderer) - Page renderer component
 
 ### Utilities

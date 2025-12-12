@@ -144,7 +144,7 @@ export default {
 
 ```vue
 <template>
-   <WswgJsonEditor
+   <WswgPageBuilder
       v-model="pageData"
       blocksKey="blocks"
       settingsKey="settings"
@@ -157,7 +157,7 @@ export default {
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 import "vue-wswg-editor/style.css";
 
 const pageData = ref({
@@ -196,7 +196,7 @@ src/
 
 ## API Reference
 
-### WswgJsonEditor Component
+### WswgPageBuilder Component
 
 The main editor component for building and editing pages.
 
@@ -226,14 +226,14 @@ The main editor component for building and editing pages.
 #### Example
 
 ```vue
-<WswgJsonEditor v-model="pageData" :editable="true" :showBrowserBar="true" defaultBlockMargin="small">
+<WswgPageBuilder v-model="pageData" :editable="true" :showBrowserBar="true" defaultBlockMargin="small">
   <template #header>
     <div class="custom-header">My Page Editor</div>
   </template>
   <template #toolbar>
     <button @click="save">Save</button>
   </template>
-</WswgJsonEditor>
+</WswgPageBuilder>
 ```
 
 ### PageRenderer Component
@@ -535,7 +535,7 @@ npm unlink
 vue-wswg-editor/
 ├── src/
 │   ├── components/          # Vue components
-│   │   ├── WswgJsonEditor/  # Main editor component
+│   │   ├── WswgPageBuilder/  # Main editor component
 │   │   ├── PageRenderer/    # Page renderer component
 │   │   ├── BlockComponent/  # Block wrapper component
 │   │   └── ...              # Other components

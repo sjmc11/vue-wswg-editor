@@ -2,12 +2,12 @@
 
 The library provides two main components for building and rendering pages:
 
-1. **WswgJsonEditor** - The visual editor for building and editing pages
+1. **WswgPageBuilder** - The visual editor for building and editing pages
 2. **PageRenderer** - A lightweight component for rendering pages without the editor interface
 
-## WswgJsonEditor
+## WswgPageBuilder
 
-The `WswgJsonEditor` component provides a full-featured visual editor for building pages. It includes:
+The `WswgPageBuilder` component provides a full-featured visual editor for building pages. It includes:
 
 - Drag-and-drop block management
 - Sidebar editor for configuring block properties
@@ -18,12 +18,12 @@ The `WswgJsonEditor` component provides a full-featured visual editor for buildi
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="true" />
+   <WswgPageBuilder v-model="pageData" :editable="true" />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 import "vue-wswg-editor/style.css";
 
 const pageData = ref({
@@ -75,13 +75,13 @@ Place action buttons in a header above the editor:
             </button>
          </div>
       </header>
-      <WswgJsonEditor v-model="pageData" :editable="true" :showBrowserBar="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" :showBrowserBar="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({
    blocks: [],
@@ -125,13 +125,13 @@ Use the `editable` prop to switch between edit and view modes:
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="isEditMode" />
+   <WswgPageBuilder v-model="pageData" :editable="isEditMode" />
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const route = useRoute();
 const pageData = ref({ blocks: [], settings: {} });
@@ -140,7 +140,7 @@ const isEditMode = computed(() => route.query.mode === "edit");
 </script>
 ```
 
-For more details, see the [WswgJsonEditor API reference](/api/components/wswg-json-editor).
+For more details, see the [WswgPageBuilder API reference](/api/components/wswg-page-builder).
 
 ## PageRenderer
 
@@ -357,7 +357,7 @@ For more details, see the [PageRenderer API reference](/api/components/page-rend
 
 ## When to Use Each Component
 
-### Use WswgJsonEditor When:
+### Use WswgPageBuilder When:
 
 - Building an admin/editor interface
 - Users need to create or edit pages
@@ -379,7 +379,7 @@ Here's a complete example showing both components in action:
 <template>
    <div>
       <!-- Editor view -->
-      <WswgJsonEditor v-if="isEditing" v-model="pageData" :editable="true" :loading="loading" />
+      <WswgPageBuilder v-if="isEditing" v-model="pageData" :editable="true" :loading="loading" />
 
       <!-- Production view -->
       <PageRenderer v-else :blocks="pageData.blocks" :layout="pageData.settings.layout" :settings="pageData.settings" />
@@ -389,7 +389,7 @@ Here's a complete example showing both components in action:
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { WswgJsonEditor, PageRenderer } from "vue-wswg-editor";
+import { WswgPageBuilder, PageRenderer } from "vue-wswg-editor";
 import "vue-wswg-editor/style.css";
 
 const route = useRoute();
@@ -414,7 +414,7 @@ onMounted(async () => {
 
 ## See Also
 
-- [WswgJsonEditor API Reference](/api/components/wswg-json-editor) - Complete API documentation
+- [WswgPageBuilder API Reference](/api/components/wswg-page-builder) - Complete API documentation
 - [PageRenderer API Reference](/api/components/page-renderer) - Complete API documentation
 - [Data Management Guide](/guide/data-management) - Learn about fetching and saving page data
 - [Quick Start Guide](/guide/quick-start) - Get started with the library

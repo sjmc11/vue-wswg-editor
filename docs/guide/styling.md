@@ -36,7 +36,7 @@ When you have your own header or footer in your application and want to maintain
 By default, the editor uses `100vh` (full viewport height):
 
 ```css
-.wswg-json-editor {
+.wswg-page-builder {
    --editor-height: calc(100vh);
 }
 ```
@@ -53,7 +53,7 @@ To account for your application's header, override the `--editor-height` CSS var
          <nav>...</nav>
       </header>
 
-      <WswgJsonEditor v-model="pageData" :editable="true" class="custom-editor-height" />
+      <WswgPageBuilder v-model="pageData" :editable="true" class="custom-editor-height" />
    </div>
 </template>
 
@@ -82,7 +82,7 @@ To account for your application's header, override the `--editor-height` CSS var
 You can customize the editor background color using the `--editor-bg-color` CSS custom property:
 
 ```css
-.wswg-json-editor {
+.wswg-page-builder {
    --editor-bg-color: #f5f5f5;
 }
 ```
@@ -127,7 +127,7 @@ You can customize the visual feedback colors for blocks and partials (layout ele
 Customize the backdrop and border styles for blocks:
 
 ```css
-.wswg-json-editor {
+.wswg-page-builder {
    --block-backdrop-color: transparent; /* Backdrop/overlay color */
    --block-border-color: #638ef1; /* Border color */
    --block-border-width: 4px; /* Border width */
@@ -141,7 +141,7 @@ Customize the backdrop and border styles for blocks:
 Customize the backdrop and border styles for layout elements (partials) that are marked with `data-partial`:
 
 ```css
-.wswg-json-editor {
+.wswg-page-builder {
    --partial-backdrop-color: transparent; /* Backdrop/overlay color */
    --partial-border-color: #638ef1; /* Border color */
    --partial-border-width: 4px; /* Border width */
@@ -154,7 +154,7 @@ Customize the backdrop and border styles for layout elements (partials) that are
 Customize the colors and styles for the margin spacing indicators shown between blocks:
 
 ```css
-.wswg-json-editor {
+.wswg-page-builder {
    --margin-color: #faf6d5e0; /* Background color */
    --margin-border-width: 2px; /* Border width */
    --margin-border-style: dashed; /* Border style */
@@ -165,7 +165,7 @@ Customize the colors and styles for the margin spacing indicators shown between 
 ### Example: Custom Theme
 
 ```css
-.wswg-json-editor {
+.wswg-page-builder {
    /* Block overlays - purple theme */
    --block-backdrop-color: rgba(219, 117, 190, 0.1);
    --block-border-color: #9b59b6;

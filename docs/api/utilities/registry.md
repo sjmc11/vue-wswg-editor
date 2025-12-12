@@ -64,7 +64,7 @@ const heroBlock = blocks.hero;
 
 ### initialiseRegistry
 
-Initializes the registry by loading blocks, layouts, and fields from virtual modules. This is called automatically by `WswgJsonEditor` on mount, but you can call it manually if needed.
+Initializes the registry by loading blocks, layouts, and fields from virtual modules. This is called automatically by `WswgPageBuilder` on mount, but you can call it manually if needed.
 
 ```typescript
 function initialiseRegistry(): Promise<void>;

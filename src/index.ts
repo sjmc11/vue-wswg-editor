@@ -6,7 +6,7 @@ export { getLayouts, initialiseRegistry, initialiseLayoutRegistry, initialiseBlo
 export { validateField, validateAllFields, type ValidationResult } from "./util/validation";
 
 // Export components (component exports don't cause side effects until used)
-export { default as WswgJsonEditor } from "./components/WswgJsonEditor/WswgJsonEditor.vue";
+export { default as WswgPageBuilder } from "./components/WswgPageBuilder/WswgPageBuilder.vue";
 // Export PageRenderer separately - it doesn't use the registry, so it won't trigger field loading
 export { default as PageRenderer } from "./components/PageRenderer/PageRenderer.vue";
 // Export iframe preview app for Vue app in iframe

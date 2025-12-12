@@ -4,16 +4,16 @@ This guide covers best practices for handling page data in your application, inc
 
 ## Basic Data Flow
 
-The `WswgJsonEditor` component uses Vue's `v-model` for two-way data binding. The component emits `update:modelValue` whenever the page data changes, allowing you to handle updates in your application.
+The `WswgPageBuilder` component uses Vue's `v-model` for two-way data binding. The component emits `update:modelValue` whenever the page data changes, allowing you to handle updates in your application.
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="true" />
+   <WswgPageBuilder v-model="pageData" :editable="true" />
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({
    blocks: [],
@@ -35,12 +35,12 @@ Fetch page data from your API when the component mounts:
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="true" :loading="loading" />
+   <WswgPageBuilder v-model="pageData" :editable="true" :loading="loading" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({
    blocks: [],
@@ -135,13 +135,13 @@ Implement a save button that saves data on demand:
             {{ saving ? "Saving..." : "Save" }}
          </button>
       </header>
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const saving = ref(false);
@@ -180,7 +180,7 @@ Place save and publish buttons in a header above the editor:
             {{ publishing ? "Publishing..." : "Publish" }}
          </button>
       </header>
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
    </div>
 </template>
 ```
@@ -191,12 +191,12 @@ Implement autosave to save changes automatically after a delay:
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="true" />
+   <WswgPageBuilder v-model="pageData" :editable="true" />
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const saving = ref(false);
@@ -257,13 +257,13 @@ Show autosave status to users:
       <div class="autosave-status" :class="{ saving: saving.value }">
          {{ saving.value ? "Saving..." : lastSaved ? `Saved ${lastSaved}` : "" }}
       </div>
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const saving = ref(false);
@@ -310,13 +310,13 @@ Toggle between editing and viewing modes:
             {{ isEditing ? "View Mode" : "Edit Mode" }}
          </button>
       </div>
-      <WswgJsonEditor v-model="pageData" :editable="isEditing" />
+      <WswgPageBuilder v-model="pageData" :editable="isEditing" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor, PageRenderer } from "vue-wswg-editor";
+import { WswgPageBuilder, PageRenderer } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const isEditing = ref(false);
@@ -329,13 +329,13 @@ Control edit mode via URL parameters:
 
 ```vue
 <template>
-   <WswgJsonEditor v-model="pageData" :editable="isEditMode" />
+   <WswgPageBuilder v-model="pageData" :editable="isEditMode" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const route = useRoute();
 const pageData = ref({ blocks: [], settings: {} });
@@ -419,13 +419,13 @@ Show validation errors to users in a user-friendly way:
          </ul>
       </div>
 
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor, validateAllFields, type ValidationResult } from "vue-wswg-editor";
+import { WswgPageBuilder, validateAllFields, type ValidationResult } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const validationErrors = ref<Record<string, ValidationResult>>({});
@@ -467,13 +467,13 @@ Show validation status in the UI:
          <button @click="handlePublish" :disabled="hasErrors || publishing">Publish</button>
       </div>
 
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { WswgJsonEditor, validateAllFields, type ValidationResult } from "vue-wswg-editor";
+import { WswgPageBuilder, validateAllFields, type ValidationResult } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const validationResults = ref<Record<string, ValidationResult>>({});
@@ -568,7 +568,7 @@ Display validation errors in a modal for better UX:
          <button @click="handleSave">Save</button>
          <button @click="handlePublish">Publish</button>
       </header>
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
 
       <!-- Validation Error Modal -->
       <div v-if="showValidationModal" class="modal-overlay" @click="showValidationModal = false">
@@ -594,7 +594,7 @@ Display validation errors in a modal for better UX:
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor, validateAllFields, type ValidationResult } from "vue-wswg-editor";
+import { WswgPageBuilder, validateAllFields, type ValidationResult } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const validationErrors = ref<Record<string, ValidationResult>>({});
@@ -751,13 +751,13 @@ async function unpublishPage(pageId: string) {
          </button>
          <span v-if="publishedAt" class="published-badge"> Published: {{ formatDate(publishedAt) }} </span>
       </header>
-      <WswgJsonEditor v-model="draftData" :editable="true" />
+      <WswgPageBuilder v-model="draftData" :editable="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { WswgJsonEditor, validateAllFields, type ValidationResult } from "vue-wswg-editor";
+import { WswgPageBuilder, validateAllFields, type ValidationResult } from "vue-wswg-editor";
 
 const draftData = ref({ blocks: [], settings: {} });
 const publishedData = ref(null);
@@ -940,13 +940,13 @@ Implement robust error handling:
          {{ error }}
          <button @click="error = null">Dismiss</button>
       </div>
-      <WswgJsonEditor v-model="pageData" :editable="true" />
+      <WswgPageBuilder v-model="pageData" :editable="true" />
    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { WswgJsonEditor } from "vue-wswg-editor";
+import { WswgPageBuilder } from "vue-wswg-editor";
 
 const pageData = ref({ blocks: [], settings: {} });
 const error = ref<string | null>(null);
@@ -1007,7 +1007,7 @@ Here's a complete example combining all concepts:
          </div>
       </div>
 
-      <WswgJsonEditor
+      <WswgPageBuilder
          v-model="pageData"
          :editable="isEditMode"
          :loading="loading"
@@ -1019,7 +1019,7 @@ Here's a complete example combining all concepts:
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
-import { WswgJsonEditor, validateAllFields } from "vue-wswg-editor";
+import { WswgPageBuilder, validateAllFields } from "vue-wswg-editor";
 
 const route = useRoute();
 const pageId = computed(() => route.params.id as string);
