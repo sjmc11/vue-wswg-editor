@@ -354,6 +354,7 @@ export function getBlockThumbnail(blockDirectory: string): string | undefined {
    if (!blockDirectory || !blockThumbnails) return undefined;
    const thumbnailPath = `${blockDirectory}/thumbnail.png`;
    const thumbnailModule = blockThumbnails[thumbnailPath];
+   if (!thumbnailModule) return undefined;
    return (thumbnailModule as any).default as string | undefined;
 }
 

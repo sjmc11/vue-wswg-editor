@@ -179,7 +179,7 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
 
       // Add validation results entry for the section
       validationResults[blockType] = {
-         title: blockComponent.label || toNiceName(blockType),
+         title: blockComponent?.label || toNiceName(blockType),
          isValid: true,
          errors: {},
       };

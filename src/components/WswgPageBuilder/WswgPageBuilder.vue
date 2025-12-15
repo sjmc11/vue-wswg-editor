@@ -233,6 +233,58 @@ onBeforeMount(async () => {
    // Include the editing registry to load additional theme fields and thumbnails
    await initialiseRegistry(props.theme, true);
 
+   sanitizePageData();
+});
+
+// Watch for theme changes to re-initialize the registry
+watch(
+   () => props.theme,
+   async (newTheme) => {
+      themeLoading.value = true;
+      await initialiseRegistry(newTheme, true);
+      sanitizePageData();
+      themeLoading.value = false;
+   }
+);
+
+function handleBlockReorder(oldIndex: number, newIndex: number) {
+   if (!pageData.value?.[props.blocksKey]) return;
+
+   const blocks = pageData.value[props.blocksKey];
+   if (oldIndex < 0 || oldIndex >= blocks.length || newIndex < 0 || newIndex >= blocks.length) {
+      return;
+   }
+
+   // Move block from oldIndex to newIndex
+   const movedBlock = blocks[oldIndex];
+   blocks.splice(oldIndex, 1);
+   blocks.splice(newIndex, 0, movedBlock);
+}
+
+function handleBlockAdd(blockType: string, index: number) {
+   // Use the existing handleAddBlock function
+   handleAddBlock(blockType, index);
+}
+
+function handleClickPartial(partialValue: string) {
+   const hasValue = partialValue !== null && partialValue !== "";
+
+   // Show the settings sidebar when a partial is clicked
+   showPageSettings.value = true;
+   // Clear active block when clicking on a partial
+   activeBlock.value = null;
+   hoveredBlockId.value = null;
+   showAddBlockMenu.value = false;
+
+   // If partial has a value (e.g., "header"), set it as the active tab
+   if (hasValue && partialValue) {
+      activeSettingsTab.value = partialValue;
+   } else {
+      activeSettingsTab.value = undefined;
+   }
+}
+
+function sanitizePageData() {
    // Initialise the page data if not present
    if (!pageData.value) {
       pageData.value = {};
@@ -272,53 +324,6 @@ onBeforeMount(async () => {
       if (pageData.value) {
          pageData.value[props.blocksKey] = [];
       }
-   }
-});
-
-// Watch for theme changes to re-initialize the registry
-watch(
-   () => props.theme,
-   async (newTheme) => {
-      themeLoading.value = true;
-      await initialiseRegistry(newTheme, true);
-      themeLoading.value = false;
-   }
-);
-
-function handleBlockReorder(oldIndex: number, newIndex: number) {
-   if (!pageData.value?.[props.blocksKey]) return;
-
-   const blocks = pageData.value[props.blocksKey];
-   if (oldIndex < 0 || oldIndex >= blocks.length || newIndex < 0 || newIndex >= blocks.length) {
-      return;
-   }
-
-   // Move block from oldIndex to newIndex
-   const movedBlock = blocks[oldIndex];
-   blocks.splice(oldIndex, 1);
-   blocks.splice(newIndex, 0, movedBlock);
-}
-
-function handleBlockAdd(blockType: string, index: number) {
-   // Use the existing handleAddBlock function
-   handleAddBlock(blockType, index);
-}
-
-function handleClickPartial(partialValue: string) {
-   const hasValue = partialValue !== null && partialValue !== "";
-
-   // Show the settings sidebar when a partial is clicked
-   showPageSettings.value = true;
-   // Clear active block when clicking on a partial
-   activeBlock.value = null;
-   hoveredBlockId.value = null;
-   showAddBlockMenu.value = false;
-
-   // If partial has a value (e.g., "header"), set it as the active tab
-   if (hasValue && partialValue) {
-      activeSettingsTab.value = partialValue;
-   } else {
-      activeSettingsTab.value = undefined;
    }
 }
 </script>

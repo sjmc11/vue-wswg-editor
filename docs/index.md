@@ -33,8 +33,8 @@ features:
      title: Responsive Preview
      details: Preview pages in desktop and mobile viewports with real-time updates
    - icon: 🎨
-     title: Customizable Layouts
-     details: Support for multiple page layouts with easy customization options
+     title: Theme Support
+     details: Organize blocks, layouts, and fields into cohesive collections.
    - icon: 🔧
      title: Field Validation
      details: Built-in validation with support for custom validators
@@ -43,7 +43,7 @@ features:
      details: Full TypeScript support with comprehensive type definitions
    - icon: 🔌
      title: Vite Plugin
-     details: Automatic block, layout, and field discovery via Vite plugin
+     details: Automatic theme, block & layout discovery via Vite plugin
 ---
 
 <div style="text-align: center; margin: 2rem 0;">

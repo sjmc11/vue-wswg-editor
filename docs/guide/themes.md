@@ -110,11 +110,7 @@ Pass the theme ID to the `WswgPageBuilder` component:
 
 ```vue
 <template>
-   <WswgPageBuilder
-      v-model="pageData"
-      :theme="currentThemeId"
-      :editable="true"
-   />
+   <WswgPageBuilder v-model="pageData" :theme="currentThemeId" :editable="true" />
 </template>
 
 <script setup lang="ts">
@@ -211,6 +207,8 @@ const thumbnailUrl = getThemeThumbnail(themes[0].path);
 ## Theme Selection UI
 
 You can build a theme selection interface using `getThemes()` and `getThemeThumbnail()`. See the [Theme Selection Example](/examples/theme-selection) for a complete implementation.
+
+![Theme selection interface](../assets/theme-switch.gif)
 
 ## Storing Themes in Your Application
 
@@ -312,4 +310,3 @@ The library will automatically use this theme when no theme is specified.
 - [Layouts Guide](/guide/layouts) - Learn about creating layouts within themes
 - [Fields Guide](/guide/fields) - Learn about fields within themes
 - [Components Guide](/guide/components) - Learn about using themes with components
-
