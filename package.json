@@ -1,6 +1,6 @@
 {
    "name": "vue-wswg-editor",
-   "version": "0.0.14",
+   "version": "0.0.15",
    "type": "module",
    "main": "./dist/vue-wswg-editor.es.js",
    "module": "./dist/vue-wswg-editor.es.js",
@@ -50,7 +50,6 @@
       "format-fix": "npm run tscheck && npm run prettier-fix && npm run lint-fix && npm run stylelint-fix"
    },
    "dependencies": {
-      "@headlessui/vue": "^1.7.23",
       "@heroicons/vue": "^2.2.0",
       "@vueuse/core": "^14.0.0",
       "sass": "^1.89.2",

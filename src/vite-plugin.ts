@@ -1,12 +1,19 @@
 // my-lib/src/plugin.ts
 import type { Plugin } from "vite";
 
+export type SkipableModule = "fields" | "thumbnails";
+
 export interface VueWswgEditorPluginOptions {
    /**
     * Root directory in the host project.
     * Example: "@/features/homepage"
     */
    rootDir: string;
+   /**
+    * Array of module types to skip loading.
+    * Skipped modules will return an empty object, preventing Vite from scanning those files.
+    */
+   skipModules?: SkipableModule[];
 }
 
 export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin {
@@ -17,6 +24,9 @@ export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin
       thumbnails: "\0vue-wswg-editor:thumbnails",
       themes: "\0vue-wswg-editor:themes",
    };
+
+   const shouldSkip = (module: keyof typeof virtualModules) =>
+      options.skipModules?.includes(module as SkipableModule) ?? false;
 
    return {
       name: "vue-wswg-editor-glob-plugin",
@@ -92,15 +102,25 @@ export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin
          // Using a more explicit format to ensure Vite processes it correctly
          switch (id) {
             case virtualModules.layouts:
-               return `export const modules = import.meta.glob("${options.rootDir}/*/layout/**/*.vue", { eager: true });`;
+               return shouldSkip("layouts")
+                  ? `export const modules = {};`
+                  : `export const modules = import.meta.glob("${options.rootDir}/*/layout/**/*.vue", { eager: true });`;
             case virtualModules.blocks:
-               return `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/*.vue", { eager: true });`;
+               return shouldSkip("blocks")
+                  ? `export const modules = {};`
+                  : `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/*.vue", { eager: true });`;
             case virtualModules.fields:
-               return `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/fields.ts", { eager: true });`;
+               return shouldSkip("fields")
+                  ? `export const modules = {};`
+                  : `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/fields.ts", { eager: false });`;
             case virtualModules.thumbnails:
-               return `export const modules = import.meta.glob(["${options.rootDir}/*/blocks/**/thumbnail.png", "${options.rootDir}/*/thumbnail.jpg", "${options.rootDir}/*/thumbnail.png"], { eager: true });`;
+               return shouldSkip("thumbnails")
+                  ? `export const modules = {};`
+                  : `export const modules = import.meta.glob(["${options.rootDir}/*/blocks/**/thumbnail.png", "${options.rootDir}/*/thumbnail.jpg", "${options.rootDir}/*/thumbnail.png"], { eager: true });`;
             case virtualModules.themes:
-               return `export const modules = import.meta.glob("${options.rootDir}/**/theme.config.js", { eager: true });`;
+               return shouldSkip("themes")
+                  ? `export const modules = {};`
+                  : `export const modules = import.meta.glob("${options.rootDir}/**/theme.config.js", { eager: true });`;
             default:
                return undefined;
          }
