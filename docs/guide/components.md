@@ -38,17 +38,17 @@ const pageData = ref({
 
 ### Props
 
-| Prop                     | Type                                       | Default      | Description                                     |
-| ------------------------ | ------------------------------------------ | ------------ | ----------------------------------------------- |
-| `modelValue` / `v-model` | `Record<string, any>`                      | -            | Page data object containing blocks and settings |
+| Prop                     | Type                                       | Default      | Description                                       |
+| ------------------------ | ------------------------------------------ | ------------ | ------------------------------------------------- |
+| `modelValue` / `v-model` | `Record<string, any>`                      | -            | Page data object containing blocks and settings   |
 | `theme`                  | `string`                                   | `"default"`  | Theme ID to use (stored separately from pageData) |
-| `editable`               | `boolean`                                  | `false`      | Enable/disable editing mode                     |
-| `loading`                | `boolean`                                  | `false`      | Show loading state                              |
-| `url`                    | `string`                                   | `""`         | URL displayed in browser navigation bar         |
-| `showBrowserBar`         | `boolean`                                  | `false`      | Show browser navigation bar in preview          |
-| `blocksKey`              | `string`                                   | `"blocks"`   | Key in pageData for blocks array                |
-| `settingsKey`            | `string`                                   | `"settings"` | Key in pageData for settings object             |
-| `defaultBlockMargin`     | `"none" \| "small" \| "medium" \| "large"` | `"none"`     | Default margin for blocks                       |
+| `editable`               | `boolean`                                  | `false`      | Enable/disable editing mode                       |
+| `loading`                | `boolean`                                  | `false`      | Show loading state                                |
+| `url`                    | `string`                                   | `""`         | URL displayed in browser navigation bar           |
+| `showBrowserBar`         | `boolean`                                  | `false`      | Show browser navigation bar in preview            |
+| `blocksKey`              | `string`                                   | `"blocks"`   | Key in pageData for blocks array                  |
+| `settingsKey`            | `string`                                   | `"settings"` | Key in pageData for settings object               |
+| `defaultBlockMargin`     | `"none" \| "small" \| "medium" \| "large"` | `"none"`     | Default margin for blocks                         |
 
 **Note**: The `theme` prop should be stored separately from `pageData` in your application state or database. Themes are not stored in page data, allowing you to apply the same theme to multiple pages. See the [Themes Guide](/guide/themes) for more information.
 
@@ -203,13 +203,13 @@ const pageData = {
 
 ### Props
 
-| Prop         | Type                  | Default     | Description                                |
-| ------------ | --------------------- | ----------- | ------------------------------------------ |
-| `blocks`     | `Block[]`             | -           | Array of block data                        |
-| `layout`     | `string`              | `"default"` | Layout name to use                         |
-| `settings`   | `Record<string, any>` | `{}`        | Page settings object                       |
+| Prop         | Type                  | Default     | Description                                       |
+| ------------ | --------------------- | ----------- | ------------------------------------------------- |
+| `blocks`     | `Block[]`             | -           | Array of block data                               |
+| `layout`     | `string`              | `"default"` | Layout name to use                                |
+| `settings`   | `Record<string, any>` | `{}`        | Page settings object                              |
 | `theme`      | `string`              | `"default"` | Theme ID to use (stored separately from pageData) |
-| `withLayout` | `boolean`             | `false`     | Whether to wrap blocks in layout component |
+| `withLayout` | `boolean`             | `false`     | Whether to wrap blocks in layout component        |
 
 **Note**: The `theme` prop should match the theme used when editing the page. Store the theme ID separately from page data in your application state or database. See the [Themes Guide](/guide/themes) for more information.
 
@@ -434,7 +434,7 @@ onMounted(async () => {
       const response = await fetch(`/api/pages/${route.params.id}`);
       const data = await response.json();
       pageData.value = data;
-      
+
       // Load theme ID from your application settings
       const settingsResponse = await fetch("/api/settings");
       const settings = await settingsResponse.json();

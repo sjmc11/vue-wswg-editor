@@ -57,8 +57,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
    function serializeForPostMessage(data: any): any {
       try {
          return JSON.parse(JSON.stringify(data));
-      } catch (error) {
-         console.warn("[iframe] Failed to serialize data for postMessage:", error);
+      } catch {
          return undefined;
       }
    }
@@ -69,7 +68,6 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
          // Serialize message to handle Vue reactive proxies
          const serializedMessage = serializeForPostMessage(message);
          if (!serializedMessage) {
-            console.error("[iframe] Failed to serialize message for postMessage");
             return;
          }
          window.parent.postMessage(serializedMessage, "*");
@@ -193,15 +191,18 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
       },
    });
 
+   // Dynamic import helper - using Function constructor to create a truly dynamic import
+   // that Vite cannot analyze statically, preventing build-time resolution errors
+   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   // @ts-ignore - modules may not be available in all consuming apps
+   const dynamicImport = new Function("modulePath", "return import(modulePath)");
+
    // Try to install Unhead plugin if available
    // This is needed for layouts that use useHead from @vueuse/head
    try {
       // Dynamic import to check if @vueuse/head is available
       // This module is externalized in vite.config.ts so it won't be bundled
-      // Using @vite-ignore to prevent static analysis
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - @vueuse/head may not be available in all consuming apps
-      const headModule = await import(/* @vite-ignore */ "@vueuse/head");
+      const headModule = await dynamicImport("@vueuse/head");
       if (headModule && typeof headModule.createHead === "function") {
          const head = headModule.createHead();
          app.use(head);
@@ -211,6 +212,92 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
       // This is expected if the consuming app doesn't use @vueuse/head
    }
 
+   // Try to use vue-router - first try from CDN, but components use consuming app's vue-router
+   // The issue is that components from the consuming app use their own vue-router instance
+   // with different Symbol keys. We need to use the same instance they're using.
+   // Try to import vue-router dynamically - this will use the consuming app's vue-router
+   // if it's available in the module resolution context
+   let VueRouter: any = null;
+   let routerInstalled = false;
+
+   try {
+      // Try dynamic import - this should resolve to the consuming app's vue-router
+      // when the library is consumed as source code
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - vue-router may not be available in all consuming apps
+      const routerModule = await import("vue-router");
+      VueRouter = routerModule;
+   } catch {
+      // Fallback to CDN version
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      VueRouter = typeof window !== "undefined" ? (window as any).VueRouter : null;
+   }
+
+   if (VueRouter && typeof VueRouter.createRouter === "function") {
+      try {
+         // Create a minimal router instance
+         const router = VueRouter.createRouter({
+            history: VueRouter.createMemoryHistory(),
+            routes: [
+               {
+                  path: "/",
+                  component: { template: "<div></div>" },
+               },
+               {
+                  path: "/:pathMatch(.*)*",
+                  component: { template: "<div></div>" },
+               },
+            ],
+         });
+
+         // Store original resolve to call it first, then ensure matched array exists
+         const originalResolve = router.resolve.bind(router);
+         router.resolve = (to: any) => {
+            // Call original resolve to get proper route structure
+            const resolved = originalResolve(to);
+            // Ensure the resolved route has a matched array (useLink requires this)
+            if (resolved.route && (!resolved.route.matched || resolved.route.matched.length === 0)) {
+               resolved.route.matched = [
+                  {
+                     path: resolved.route.path || "/",
+                     name: resolved.route.name,
+                     meta: resolved.route.meta || {},
+                     components: {},
+                     children: [],
+                  },
+               ];
+            }
+            return resolved;
+         };
+
+         // Install router BEFORE mounting - this provides the router injection
+         // The app.use() call should handle the Symbol keys automatically
+         app.use(router);
+
+         // Wait for router to be ready before mounting
+         await router.isReady();
+
+         // Ensure currentRoute has proper structure with matched array
+         // currentRoute.value is readonly, so we navigate to ensure route is properly resolved
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore
+         const currentRoute = router.currentRoute.value;
+         if (currentRoute && (!currentRoute.matched || currentRoute.matched.length === 0)) {
+            // Navigate to ensure route has proper matched array
+            await router.push("/");
+         }
+
+         routerInstalled = true;
+      } catch {
+         // Fall through to mount without router
+      }
+   }
+
+   if (!routerInstalled) {
+      // Router was not installed - RouterLink components will fail
+      console.warn("[iframe preview] Router was not installed - RouterLink components will fail");
+   }
    // Mount the app
    app.mount(container);
 

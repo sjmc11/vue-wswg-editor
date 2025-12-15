@@ -178,8 +178,8 @@ export async function initialiseLayoutRegistry(): Promise<void> {
    // Get the active theme
    const activeTheme = getActiveTheme();
 
-   // Use virtual module to load all layouts (scans all themes at build time)
-   // Then filter to only process layouts from the active theme
+   // Use virtual module to load all layouts (scans all theme directories at build time)
+   // Then filter to only process layouts from the active theme directory
    const { modules: layoutModules } = await import("vue-wswg-editor:layouts");
 
    // Filter to only layouts from the active theme

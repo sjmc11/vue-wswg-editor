@@ -7,21 +7,13 @@ This example shows how to create a theme selection interface using the `getTheme
 ```vue
 <template>
    <div class="theme-selector">
-      <input
-         v-model="searchQuery"
-         type="text"
-         placeholder="Search themes..."
-         class="search-input"
-      />
-      
+      <input v-model="searchQuery" type="text" placeholder="Search themes..." class="search-input" />
+
       <div class="theme-grid">
          <button
             v-for="theme in filteredThemes"
             :key="theme.id"
-            :class="[
-               'theme-card',
-               { 'theme-card--selected': selectedThemeId === theme.id }
-            ]"
+            :class="['theme-card', { 'theme-card--selected': selectedThemeId === theme.id }]"
             @click="selectTheme(theme.id)"
          >
             <img
@@ -36,10 +28,8 @@ This example shows how to create a theme selection interface using the `getTheme
             </div>
          </button>
       </div>
-      
-      <button @click="saveTheme" :disabled="!selectedThemeId">
-         Save Theme
-      </button>
+
+      <button @click="saveTheme" :disabled="!selectedThemeId">Save Theme</button>
    </div>
 </template>
 
@@ -58,7 +48,7 @@ const filteredThemes = computed(() => {
    if (!searchQuery.value.trim()) {
       return availableThemes.value;
    }
-   
+
    const query = searchQuery.value.toLowerCase();
    return availableThemes.value.filter((theme: Theme) => {
       return (
@@ -75,7 +65,7 @@ function selectTheme(themeId: string) {
 
 async function saveTheme() {
    if (!selectedThemeId.value) return;
-   
+
    // Save theme to your application state/database
    // The theme ID should be stored separately from pageData
    await fetch("/api/settings/theme", {
@@ -83,7 +73,7 @@ async function saveTheme() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ themeId: selectedThemeId.value }),
    });
-   
+
    // Update your application's theme state
    // Then pass the theme ID to WswgPageBuilder and PageRenderer components
 }
@@ -158,11 +148,7 @@ After selecting a theme, pass it to your `WswgPageBuilder` and `PageRenderer` co
 
 ```vue
 <template>
-   <WswgPageBuilder
-      v-model="pageData"
-      :theme="currentThemeId"
-      :editable="true"
-   />
+   <WswgPageBuilder v-model="pageData" :theme="currentThemeId" :editable="true" />
 </template>
 
 <script setup lang="ts">
@@ -184,4 +170,3 @@ const pageData = ref({
 - **Use `getThemeThumbnail()`**: Gets the thumbnail image URL for a theme
 - **Pass theme prop**: Both `WswgPageBuilder` and `PageRenderer` accept a `theme` prop
 - **Fallback to default**: If no theme is provided, the library falls back to a `default` theme directory
-

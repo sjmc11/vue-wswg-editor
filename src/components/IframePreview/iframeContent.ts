@@ -106,6 +106,7 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
    const parentStylesheets = extractParentStylesheets();
    const parentCSSVariables = extractParentCSSVariables();
    const vueCdnUrl = "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+   const vueRouterCdnUrl = "https://unpkg.com/vue-router@4/dist/vue-router.esm-browser.js";
    // Get parent origin to use as base URL for relative asset paths
    const parentOrigin = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -125,10 +126,15 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
       window.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false;
    </script>`;
 
-   // Generate script that loads Vue and initializes the iframe app
+   // Generate script that loads Vue, vue-router, and initializes the iframe app
+   // The import map above allows vue-router to resolve "vue" as a bare module specifier
    const appScript = iframeAppModuleUrl
       ? `<script type="module">
-         import { createApp } from '${vueCdnUrl}';
+         import { createApp } from 'vue';
+         import * as VueRouter from 'vue-router';
+         // Make vue-router available globally so it can be accessed in the iframe app
+         window.VueRouter = VueRouter;
+         
          import { createIframeApp } from '${iframeAppModuleUrl}';
          
          const appEl = document.getElementById('app');
@@ -140,7 +146,10 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
       </script>`
       : `<script type="module">
          // Fallback: Wait for parent to send module URL via postMessage
-         import { createApp } from '${vueCdnUrl}';
+         import { createApp } from 'vue';
+         import * as VueRouter from 'vue-router';
+         // Make vue-router available globally so it can be imported in the iframe app
+         window.VueRouter = VueRouter;
          
          let appInitialized = false;
          
@@ -179,6 +188,17 @@ export function generateIframeHTML(iframeAppModuleUrl?: string): string {
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Page Preview</title>
    ${parentOrigin ? `<base href="${parentOrigin}/">` : ""}
+   <!-- Import map to allow vue-router to resolve "vue" -->
+   <!-- Stub for @vue/devtools-api to avoid loading devtools in iframe -->
+   <script type="importmap">
+   {
+      "imports": {
+         "vue": "${vueCdnUrl}",
+         "vue-router": "${vueRouterCdnUrl}",
+         "@vue/devtools-api": "data:text/javascript,export const setupDevtoolsPlugin=()=>{};export const on=()=>{};export const off=()=>{};export const once=()=>{};export const emit=()=>{};export const notifyComponentUpdate=()=>{};export const addTimelineLayer=()=>{};export const addCustomCommand=()=>{};export const addCustomTab=()=>{};"
+      }
+   }
+   </script>
    ${parentStylesheets}
    ${parentCSSVariables}
    <style>

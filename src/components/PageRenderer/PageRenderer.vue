@@ -1,7 +1,7 @@
 <template>
    <div id="page-viewport" class="page-renderer-wrapper relative">
       <template v-if="isReady">
-         <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings">
+         <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings" :blocks="blocks">
             <template #default>
                <div id="page-blocks-wrapper">
                   <div
@@ -54,7 +54,7 @@ const isReady = ref(false);
 
 // Get the layout component based on the layout prop
 const layoutComponent = computed(() => {
-   return getLayout(props.layout);
+   return getLayout(props.layout || props.settings?.layout);
 });
 
 // Get the margin class for the block
@@ -84,10 +84,14 @@ onBeforeMount(async () => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @use "../../assets/styles/mixins" as *;
 
-.block-wrapper {
-   @include block-margin-classes;
+// Styles are scoped to the component using the root class selector instead of Vue's scoped attribute
+// This ensures styles work correctly when the component is consumed from a library
+.page-renderer-wrapper {
+   .block-wrapper {
+      @include block-margin-classes;
+   }
 }
 </style>

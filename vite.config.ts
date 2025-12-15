@@ -70,6 +70,7 @@ export default defineConfig({
    },
    build: {
       copyPublicDir: false,
+      emptyOutDir: false, // Don't clear dist folder - preserve vite-plugin.js from separate build
       lib: {
          entry: path.resolve(__dirname, "src/index.ts"),
          name: "VueWswgEditor",
@@ -85,7 +86,7 @@ export default defineConfig({
                return true;
             }
             // Externalize optional dependencies that may not be available
-            if (id === "@vueuse/head") {
+            if (id === "@vueuse/head" || id === "vue-router") {
                return true;
             }
             // Virtual modules must be external so they can be resolved by the consuming app's vite plugin
