@@ -49,7 +49,7 @@ export default defineConfig({
 
 ### Plugin Options
 
-The plugin accepts a single option:
+The plugin accepts the following options:
 
 ```typescript
 interface VueWswgEditorPluginOptions {
@@ -58,7 +58,15 @@ interface VueWswgEditorPluginOptions {
     * Example: "@/features/homepage" or "@page-builder"
     */
    rootDir: string;
+   /**
+    * Array of module types to skip loading.
+    * Skipped modules will return an empty object, preventing Vite from scanning those files.
+    * This can improve build performance when certain features are not needed.
+    */
+   skipModules?: SkipableModule[];
 }
+
+type SkipableModule = "fields" | "thumbnails";
 ```
 
 #### Using Path Aliases
@@ -111,6 +119,59 @@ export default defineConfig({
    ],
 });
 ```
+
+## Skipping Modules
+
+The `skipModules` option allows you to skip loading specific module types, which prevents Vite from scanning files that don't exist or aren't needed in your project. Currently, you can skip:
+
+- **`"fields"`** - Skip loading field definition files (`fields.ts`)
+- **`"thumbnails"`** - Skip loading block thumbnail images
+
+When a module is skipped, it returns an empty object instead of scanning files with `import.meta.glob`, preventing Vite from processing those files during the build.
+
+### Separate Editor and PageRenderer Projects
+
+**If you have separate projects** where the editor (admin/client portal) and the pageRenderer (front-facing website) are in different codebases, you should skip `fields` and `thumbnails` in your pageRenderer project.
+
+**Why?** Field definitions and thumbnails are only needed in the editor for configuration and UI purposes. The pageRenderer only needs blocks and layouts to render pages - it doesn't need field definitions or thumbnails. By skipping these modules, you avoid import errors when these project-specific dependencies don't exist in the pageRenderer project.
+
+**Project Structure:**
+
+```
+monorepo/
+  ├── admin/              # Editor project (admin/client portal)
+  │   └── Uses: blocks, layouts, fields, thumbnails
+  └── website/            # PageRenderer project (front-facing site)
+      └── Uses: blocks, layouts only
+      └── Should skip: fields, thumbnails
+```
+
+**Example for PageRenderer Project:**
+
+```typescript
+// vite.config.ts (in your pageRenderer/website project)
+export default defineConfig({
+   plugins: [
+      vue(),
+      vueWswgEditorPlugin({
+         rootDir: "@page-builder",
+         skipModules: ["fields", "thumbnails"], // Skip editor-only modules
+      }),
+   ],
+   resolve: {
+      alias: {
+         "@page-builder": fileURLToPath(new URL("./src/page-builder", import.meta.url)),
+      },
+   },
+});
+```
+
+**Other Use Cases:**
+
+- **Skip fields**: If your blocks don't use field definitions or you're loading them dynamically
+- **Skip thumbnails**: If you don't need thumbnail images in the editor UI
+
+**Note:** Skipping modules means those features won't be available at runtime. For example, if you skip `"fields"`, the editor won't be able to load field configurations for blocks. Only skip modules if you're certain they're not needed.
 
 ## How It Works
 
