@@ -11,7 +11,7 @@
             <h4 class="mt-1 text-lg font-bold">Page settings</h4>
          </div>
       </div>
-      <div class="border-b border-gray-300 p-5">
+      <div v-if="availableLayouts.length > 1" class="border-b border-gray-300 p-5">
          <!-- Page layout -->
          <div class="editor-field-node">
             <!-- Label -->
@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeMount, onMounted, ref } from "vue";
-import { getLayoutFields, getLayouts } from "../../util/registry";
+import { themeLayouts } from "../../util/theme-registry";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
 
 const emit = defineEmits<{
@@ -66,17 +66,18 @@ const props = withDefaults(
    }
 );
 const availableLayouts = computed(() => {
-   return getLayouts();
+   return Object.values(themeLayouts.value) || [];
 });
 
 function getLayoutSettings() {
-   if (!pageData.value[props.settingsKey].layout) return;
-   pageSettingsFields.value = getLayoutFields(pageData.value[props.settingsKey].layout) || null;
+   const activeLayout = pageData.value[props.settingsKey].layout;
+   if (!activeLayout) return;
+   pageSettingsFields.value = themeLayouts.value[activeLayout]?.fields || null;
 }
 
 onBeforeMount(() => {
    if (!pageData.value[props.settingsKey]) {
-      pageData.value.settings = null;
+      pageData.value[props.settingsKey] = {};
    }
 });
 

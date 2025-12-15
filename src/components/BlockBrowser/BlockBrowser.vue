@@ -28,15 +28,15 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { pageBuilderBlocks } from "../../util/registry";
+import { themeBlocks } from "../../util/theme-registry";
 import AddBlockItem from "../AddBlockItem/AddBlockItem.vue";
 import type { Block } from "../../types/Block";
 import Sortable from "sortablejs";
 
 const blockSearch = ref("");
 const filteredBlocks = computed(() => {
-   if (!pageBuilderBlocks.value) return [];
-   return Object.values(pageBuilderBlocks.value).filter((block: Block) => {
+   if (!themeBlocks.value) return [];
+   return Object.values(themeBlocks.value).filter((block: Block) => {
       // against block name and label
       return (
          block.type?.toLowerCase().includes(blockSearch.value.toLowerCase()) ||
@@ -46,8 +46,8 @@ const filteredBlocks = computed(() => {
 });
 
 const blockCount = computed(() => {
-   if (!pageBuilderBlocks.value) return 0;
-   return Object.values(pageBuilderBlocks.value).length;
+   if (!themeBlocks.value) return 0;
+   return Object.values(themeBlocks.value).length;
 });
 
 function initSortable() {

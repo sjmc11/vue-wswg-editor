@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { computed, defineProps, ref } from "vue";
 import type { Block } from "../../types/Block";
-import { getBlockThumbnailUrl } from "../../util/registry";
+import { getBlockThumbnail } from "../../util/theme-registry";
 import { CubeTransparentIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps<{
@@ -38,7 +38,7 @@ const props = defineProps<{
 
 const thumbnailError = ref<boolean>(false);
 const thumbnailUrl = computed(() => {
-   return getBlockThumbnailUrl(props.block.directory);
+   return getBlockThumbnail(props.block.path);
 });
 
 function handleDragStart(event: DragEvent, block: Block) {

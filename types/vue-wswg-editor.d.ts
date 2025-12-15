@@ -159,3 +159,7 @@ declare module "vue-wswg-editor:fields" {
 declare module "vue-wswg-editor:thumbnails" {
    export const modules: Record<string, () => Promise<any>>;
 }
+
+declare module "vue-wswg-editor:themes" {
+   export const modules: Record<string, () => Promise<any>>;
+}

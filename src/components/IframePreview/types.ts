@@ -27,6 +27,7 @@ export interface UpdatePageDataMessage extends BaseMessage {
    pageData: Record<string, any>;
    blocksKey: string;
    settingsKey: string;
+   theme: string;
 }
 
 export interface UpdateHTMLMessage extends BaseMessage {

@@ -1,5 +1,6 @@
 import type { EditorFieldConfig, ValidatorFunction } from "./fieldConfig";
-import { getBlockComponent, getLayoutFields } from "./registry";
+import { getBlock } from "./theme-registry";
+import { getLayoutFields } from "./registry";
 import { toNiceName } from "./helpers";
 
 export async function validateField(
@@ -174,7 +175,7 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
       // Get the block type
       const blockType = block.type;
       // Get the block editor fields
-      const blockComponent = getBlockComponent(blockType);
+      const blockComponent = getBlock(blockType);
 
       // Add validation results entry for the section
       validationResults[blockType] = {

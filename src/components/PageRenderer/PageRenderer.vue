@@ -30,11 +30,9 @@
 </template>
 
 <script setup lang="ts">
-import { type Component, computed, withDefaults, onBeforeMount, ref } from "vue";
-import { generateNameVariations } from "../../util/helpers";
-import { getBlockModule, loadBlockModules } from "./blockModules";
-import { loadLayoutModules, getLayoutModule } from "./layoutModules";
+import { computed, withDefaults, onBeforeMount, ref } from "vue";
 import type { Block } from "../../types/Block";
+import { initialiseRegistry, getBlock, getLayout } from "../../util/theme-registry";
 
 const props = withDefaults(
    defineProps<{
@@ -42,41 +40,17 @@ const props = withDefaults(
       layout?: string;
       settings?: Record<string, any>;
       withLayout?: boolean;
+      theme?: string;
    }>(),
    {
       layout: "default",
       settings: () => ({}),
       withLayout: false,
+      theme: "default",
    }
 );
 
 const isReady = ref(false);
-
-function getBlock(blockType: string): Component | undefined {
-   // Generate name variations and try to find a match
-   const nameVariations = generateNameVariations(blockType);
-
-   // Try each variation to find the block component
-   for (const variation of nameVariations) {
-      const module = getBlockModule(variation);
-      if (module) return module;
-   }
-
-   return undefined;
-}
-
-function getLayout(layoutName: string): Component | undefined {
-   // Generate name variations and try to find a match in layoutModules keys (file paths)
-   const nameVariations = generateNameVariations(layoutName);
-
-   // Try each variation to find the block component
-   for (const variation of nameVariations) {
-      const module = getLayoutModule(variation);
-      if (module) return module;
-   }
-
-   return undefined;
-}
 
 // Get the layout component based on the layout prop
 const layoutComponent = computed(() => {
@@ -101,8 +75,11 @@ function getMarginClass(block: Block): string {
 
 onBeforeMount(async () => {
    isReady.value = false;
-   await loadBlockModules();
-   await loadLayoutModules();
+
+   // Initialise registries for editor preview
+   // Exclude the editing registry to load only the theme and blocks
+   await initialiseRegistry(props.theme, false);
+
    isReady.value = true;
 });
 </script>

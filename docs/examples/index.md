@@ -36,6 +36,10 @@ You can use the starter kit as:
 
 The starter kit includes all necessary dependencies and installation instructions. See the [README](https://github.com/sjmc11/page-builder-starter-kit) for details.
 
+## Examples
+
+- [Theme Selection](/examples/theme-selection) - Building a theme selection interface using `getThemes()` and `getThemeThumbnail()`
+
 ## Planned Examples
 
 - Basic Page Builder

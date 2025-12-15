@@ -2,14 +2,35 @@
 
 Layouts are page templates that wrap blocks. They define the overall structure and styling of a page.
 
+## Layouts and Themes
+
+Layouts are organized within themes. Each theme has its own `layout/` directory containing theme-specific layouts. This allows you to create different layout sets for different themes.
+
 ## Creating a Layout
 
-Layouts are Vue components located in your `page-builder/layout` directory:
+Layouts are Vue components located in your theme's `layout/` directory:
+
+**For a single theme setup (using `default`):**
 
 ```
-src/page-builder/layout/
-  default.vue
-  marketing.vue
+src/page-builder/
+  default/
+    layout/
+      default.vue
+      marketing.vue
+```
+
+**For multiple themes:**
+
+```
+src/page-builder/
+  default/
+    layout/
+      default.vue
+  marketing-theme/
+    layout/
+      default.vue
+      landing-page.vue
 ```
 
 ## Layout Component Structure
@@ -54,12 +75,13 @@ You can organize your layout directory structure to include additional component
 
 ```
 src/page-builder/
-  layout/
-    default.vue
-    marketing.vue
-  partials/              # Optional: Additional components
-    Header.vue
-    Footer.vue
+  default/
+    layout/
+      default.vue
+      marketing.vue
+      partials/              # Optional: Additional components
+        Header.vue
+        Footer.vue
 ```
 
 This allows you to:
@@ -71,7 +93,7 @@ This allows you to:
 Example with partials:
 
 ```vue
-<!-- src/page-builder/layout/default.vue -->
+<!-- src/page-builder/default/layout/default.vue -->
 <template>
    <div class="page-layout">
       <Header />
@@ -309,3 +331,13 @@ In this example:
 - Clicking the header element opens the page settings and automatically switches to the "header" tab
 - Clicking the footer element opens the page settings and automatically switches to the "footer" tab
 - Users can quickly navigate to edit specific sections of the layout without manually finding the right tab
+
+## Theme-Specific Layouts
+
+Layouts are scoped to their theme. When you use a theme, only layouts from that theme's `layout/` directory are available. This allows you to:
+
+- Create different layout sets for different use cases (e.g., blog layouts vs. marketing layouts)
+- Organize layouts by theme functionality
+- Maintain separate layout libraries for different themes
+
+To learn more about themes, see the [Themes Guide](/guide/themes).

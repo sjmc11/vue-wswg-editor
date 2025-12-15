@@ -25,9 +25,9 @@
 
 <script setup lang="ts">
 import { computed, defineEmits, onMounted, ref } from "vue";
-import { pageBuilderBlocks } from "../../util/registry";
+import { getBlock } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
-import { toCamelCase, toNiceName } from "../../util/helpers";
+import { toNiceName } from "../../util/helpers";
 import Sortable from "sortablejs";
 
 const emit = defineEmits<{
@@ -46,9 +46,12 @@ const pageBlocks = computed(() => {
    if (!pageData.value?.[props.blocksKey]) return [];
    // loop through pageData[blocksKey] and get the block data from registry or return a default block data
    return pageData.value[props.blocksKey].map((block: any) => {
-      if (pageBuilderBlocks.value[toCamelCase(block.type)]) {
+      // Find the corresponding block in the registry
+      const registryBlock = getBlock(block.type);
+
+      if (registryBlock) {
          return {
-            ...pageBuilderBlocks.value[toCamelCase(block.type)],
+            ...registryBlock,
             ...block,
          };
       }
@@ -57,8 +60,6 @@ const pageBlocks = computed(() => {
          id: block.id,
          name: block.type,
          label: toNiceName(block.type),
-         icon: "question-mark",
-         thumbnail: "https://via.placeholder.com/150",
       };
    });
 });

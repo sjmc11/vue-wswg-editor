@@ -1,9 +1,0 @@
-// Alternative 1: Use relative paths instead of aliases
-// This works because the consuming app processes this file
-// The path is relative to where the consuming app's vite.config.ts is located
-// For participant/admin projects, this resolves to ../../page-builder/blocks/**/*.vue
-export const blockModules = import.meta.glob("../../page-builder/blocks/**/*.vue", { eager: true });
-
-// However, this is fragile because it depends on the file location relative to the consuming app
-// Better: Use a build-time script (see Alternative 2)
-

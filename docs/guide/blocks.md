@@ -2,16 +2,40 @@
 
 Blocks are reusable components that make up a page. Each block represents a section of content that users can add, configure, and arrange.
 
+## Blocks and Themes
+
+Blocks are organized within themes. Each theme has its own `blocks/` directory containing theme-specific blocks. This allows you to create different sets of blocks for different themes.
+
 ## Creating a Block
 
-Blocks are Vue components located in your `page-builder/blocks` directory. Each block should be in its own directory:
+Blocks are Vue components located in your theme's `blocks/` directory. Each block should be in its own directory:
+
+**For a single theme setup (using `default`):**
 
 ```
-src/page-builder/blocks/
-  hero/
-    Hero.vue
-    fields.ts      # Optional
-    thumbnail.png  # Optional
+src/page-builder/
+  default/
+    blocks/
+      hero/
+        Hero.vue
+        fields.ts      # Optional
+        thumbnail.png  # Optional
+```
+
+**For multiple themes:**
+
+```
+src/page-builder/
+  default/
+    blocks/
+      hero/
+        Hero.vue
+  marketing-theme/
+    blocks/
+      hero/
+        Hero.vue
+      cta-section/
+        CtaSection.vue
 ```
 
 ## Block Component Structure
@@ -80,11 +104,13 @@ Blocks can include a thumbnail image that displays in the "add block" list in th
 Place a `thumbnail.png` file in your block directory:
 
 ```
-src/page-builder/blocks/
-  hero/
-    Hero.vue
-    fields.ts
-    thumbnail.png  ← Add thumbnail here
+src/page-builder/
+  default/
+    blocks/
+      hero/
+        Hero.vue
+        fields.ts
+        thumbnail.png  ← Add thumbnail here
 ```
 
 The thumbnail will be automatically displayed in the block browser when users are selecting blocks to add. Recommended size is approximately 112px height (the display area is 112px tall with auto width).
@@ -106,3 +132,13 @@ defineOptions({
 });
 </script>
 ```
+
+## Theme-Specific Blocks
+
+Blocks are scoped to their theme. When you use a theme, only blocks from that theme's `blocks/` directory are available. This allows you to:
+
+- Create different block sets for different use cases (e.g., marketing blocks vs. blog blocks)
+- Organize blocks by theme functionality
+- Maintain separate block libraries for different themes
+
+To learn more about themes, see the [Themes Guide](/guide/themes).

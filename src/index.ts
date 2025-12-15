@@ -5,6 +5,11 @@ export type { EditorFieldConfig, ValidatorFunction } from "./util/fieldConfig";
 export { getLayouts, initialiseRegistry, initialiseLayoutRegistry, initialiseBlockRegistry } from "./util/registry";
 export { validateField, validateAllFields, type ValidationResult } from "./util/validation";
 
+export { getActiveTheme, setActiveTheme, getThemeThumbnail, getThemes } from "./util/theme-registry";
+export type { Theme } from "./types/Theme";
+export type { Layout } from "./types/Layout";
+export type { Block } from "./types/Block";
+
 // Export components (component exports don't cause side effects until used)
 export { default as WswgPageBuilder } from "./components/WswgPageBuilder/WswgPageBuilder.vue";
 // Export PageRenderer separately - it doesn't use the registry, so it won't trigger field loading

@@ -54,7 +54,8 @@ export function sendPageDataUpdate(
    iframe: HTMLIFrameElement | null,
    pageData: Record<string, any>,
    blocksKey: string,
-   settingsKey: string
+   settingsKey: string,
+   theme: string
 ): void {
    // Serialize pageData to avoid Vue reactive proxy issues
    const serializedPageData = serializeForPostMessage(pageData);
@@ -63,6 +64,7 @@ export function sendPageDataUpdate(
       pageData: serializedPageData,
       blocksKey,
       settingsKey,
+      theme,
    };
    sendToIframe(iframe, message);
 }

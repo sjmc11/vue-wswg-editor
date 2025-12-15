@@ -84,19 +84,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-   type Component,
-   computed,
-   withDefaults,
-   onBeforeMount,
-   ref,
-   onBeforeUnmount,
-   onMounted,
-   watch,
-   nextTick,
-} from "vue";
-import { generateNameVariations } from "../../util/helpers";
-import { initialiseLayoutRegistry, initialiseBlockRegistry, getLayouts } from "../../util/registry";
+import { computed, withDefaults, onBeforeMount, ref, onBeforeUnmount, onMounted, watch, nextTick } from "vue";
+import { initialiseRegistry, getLayout } from "../../util/theme-registry";
 import BlockComponent from "../BlockComponent/BlockComponent.vue";
 import EmptyState from "../EmptyState/EmptyState.vue";
 import type { Block } from "../../types/Block";
@@ -112,6 +101,7 @@ const props = withDefaults(
       hoveredBlockId?: string | null;
       editable?: boolean;
       settingsOpen?: boolean;
+      theme?: string;
    }>(),
    {
       layout: "default",
@@ -120,6 +110,7 @@ const props = withDefaults(
       hoveredBlockId: null,
       editable: false,
       settingsOpen: false,
+      theme: "default",
    }
 );
 
@@ -128,19 +119,6 @@ const editorRef = ref<HTMLElement | null>(null);
 const isSorting = ref(false);
 const sortableInstance = ref<InstanceType<typeof Sortable> | null>(null);
 const isInitializingSortable = ref(false);
-function getLayout(layoutName: string): Component | undefined {
-   // Generate name variations and try to find a match in layoutModules keys (file paths)
-   const nameVariations = generateNameVariations(layoutName);
-
-   // Try each variation to find the block component
-   for (const variation of nameVariations) {
-      const availableLayouts = getLayouts();
-      const layoutModule = availableLayouts[variation];
-      if (layoutModule) return layoutModule;
-   }
-
-   return undefined;
-}
 
 // Get the layout component based on the layout prop
 // Only compute when isReady is true (registry is initialized)
@@ -531,8 +509,9 @@ async function initSortable() {
 onBeforeMount(async () => {
    isReady.value = false;
 
-   await initialiseLayoutRegistry();
-   await initialiseBlockRegistry();
+   // Initialise registries for editor preview
+   // Exclude the editing registry to load only the theme and blocks
+   await initialiseRegistry(props.theme, false);
 
    isReady.value = true;
 

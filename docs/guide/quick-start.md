@@ -30,30 +30,68 @@ export default defineConfig({
 
 ## 2. Create the Page Builder Directory Structure
 
-Create a `page-builder` directory in your project. This directory is the main place where you'll create page blocks, custom fields, and layouts to build pages with:
+Create a `page-builder` directory in your project. Themes are organized as directories within this folder. If you're only using one theme, create a `default` theme directory:
 
 ```
 src/
   page-builder/
-    blocks/          # Block components
-    layout/          # Layout components
-    fields/          # Custom field components (optional)
+    default/              # Default theme (fallback if no theme specified)
+      theme.config.js     # Theme configuration file
+      blocks/             # Block components
+      layout/             # Layout components
+      fields/             # Custom field components (optional)
 ```
 
-The `page-builder` directory serves as the central location for all your page builder components:
+**For multiple themes**, organize them as separate directories:
 
+```
+src/
+  page-builder/
+    default/              # Default theme
+      theme.config.js
+      blocks/
+      layout/
+    marketing-theme/      # Another theme
+      theme.config.js
+      blocks/
+      layout/
+```
+
+The `page-builder` directory serves as the central location for all your themes:
+
+- **Themes** - Each theme directory contains its own blocks, layouts, and fields
 - **Blocks** (`blocks/`) - Reusable page sections like hero sections, feature lists, testimonials, etc.
 - **Layouts** (`layout/`) - Page templates that wrap blocks and define overall page structure
 - **Fields** (`fields/`) - Custom field components for specialized input types (optional)
 
+💡 **Tip**: If you're not using multiple themes, just create a `default` theme directory. The library will automatically use it when no theme is specified.
+
 💡 **Tip**: Need a complete example? Check out the [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) repository for a reference implementation with example blocks, layouts, and directory structure.
 
-## 3. Create a Layout Component
+## 3. Create a Theme Configuration (Optional)
 
-Create your first layout component:
+If you're creating a custom theme (not using `default`), create a `theme.config.js` file:
+
+```javascript
+// src/page-builder/my-theme/theme.config.js
+export default {
+   title: "My Theme",
+   description: "A custom theme",
+   version: "1.0.0",
+   author: "Your Name",
+   tags: ["custom"],
+   license: "MIT",
+};
+```
+
+If you're using the `default` theme, you can skip this step for now.
+
+## 4. Create a Layout Component
+
+Create your first layout component inside your theme directory:
 
 ```vue
-<!-- src/page-builder/layout/default.vue -->
+<!-- src/page-builder/default/layout/default.vue -->
 <template>
    <div class="page-layout">
       <slot />
@@ -67,12 +105,12 @@ defineOptions({
 </script>
 ```
 
-## 4. Create a Block Component
+## 5. Create a Block Component
 
-Create your first block component:
+Create your first block component inside your theme's blocks directory:
 
 ```vue
-<!-- src/page-builder/blocks/hero/Hero.vue -->
+<!-- src/page-builder/default/blocks/hero/Hero.vue -->
 <template>
    <section class="hero-section">
       <h1>{{ heading }}</h1>
@@ -92,12 +130,12 @@ defineProps<{
 </script>
 ```
 
-## 5. Define Block Fields (Optional)
+## 6. Define Block Fields (Optional)
 
 Create a fields configuration file:
 
 ```typescript
-// src/page-builder/blocks/hero/fields.ts
+// src/page-builder/default/blocks/hero/fields.ts
 import { createField } from "vue-wswg-editor";
 
 export default {
@@ -115,14 +153,15 @@ export default {
 };
 ```
 
-## 6. Use the Editor Component
+## 7. Use the Editor Component
 
-Now use the editor in your application:
+Now use the editor in your application. Pass the `theme` prop to specify which theme to use:
 
 ```vue
 <template>
    <WswgPageBuilder
       v-model="pageData"
+      :theme="currentThemeId"
       blocksKey="blocks"
       settingsKey="settings"
       :url="`/page`"
@@ -137,6 +176,7 @@ import { ref } from "vue";
 import { WswgPageBuilder } from "vue-wswg-editor";
 import "vue-wswg-editor/style.css";
 
+const currentThemeId = ref("default"); // Theme ID - store separately from pageData
 const pageData = ref({
    blocks: [],
    settings: {
@@ -146,7 +186,9 @@ const pageData = ref({
 </script>
 ```
 
-## 7. Handle Data (Optional)
+**Important**: The `theme` prop should be stored separately from `pageData` in your application state or database. Themes are not stored in page data, allowing you to apply the same theme to multiple pages.
+
+## 8. Handle Data (Optional)
 
 The editor uses `v-model` for two-way data binding. You can watch for changes and save them:
 
@@ -177,25 +219,35 @@ watch(
 
 For more advanced data management patterns (autosaving, versioning, publishing), see the [Data Management Guide](/guide/data-management).
 
-## 8. Render Pages (Production)
+## 9. Render Pages (Production)
 
-To display pages without the editor interface, use the `PageRenderer` component:
+To display pages without the editor interface, use the `PageRenderer` component. Pass the `theme` prop to match the theme used during editing:
 
 ```vue
 <template>
-   <PageRenderer :blocks="pageData.blocks" :layout="pageData.settings.layout" :settings="pageData.settings" />
+   <PageRenderer
+      :blocks="pageData.blocks"
+      :layout="pageData.settings.layout"
+      :settings="pageData.settings"
+      :theme="currentThemeId"
+   />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { PageRenderer } from "vue-wswg-editor";
 
+const currentThemeId = ref("default"); // Load from your application state
 const pageData = ref({ blocks: [], settings: {} });
 
 onMounted(async () => {
    const response = await fetch("/api/pages/123");
    const data = await response.json();
    pageData.value = data;
+   // Load theme ID from your application settings
+   const settingsResponse = await fetch("/api/settings");
+   const settings = await settingsResponse.json();
+   currentThemeId.value = settings.themeId || "default";
 });
 </script>
 ```
@@ -210,6 +262,7 @@ Want to get started faster? Check out the [page-builder-starter-kit](https://git
 
 ## Next Steps
 
+- Learn about [Themes](/guide/themes) - Understanding theme-based architecture
 - Learn about [Components](/guide/components) - Editor and PageRenderer
 - Learn more about [Blocks](/guide/blocks)
 - Understand [Fields](/guide/fields)

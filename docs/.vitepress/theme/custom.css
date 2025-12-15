@@ -5,37 +5,36 @@
 
 /* Light mode - softer, lighter glow and shadow */
 :root {
-  /* Hero image glow effect - lighter gradient for light mode */
-  --vp-home-hero-image-background-image: linear-gradient(
-    135deg,
-    rgba(189, 52, 254, 0.3) 10%,
-    rgba(65, 209, 255, 0.3) 100%
-  );
-  
-  /* Softer blur filter for light mode */
-  --vp-home-hero-image-filter: blur(60px);
+   /* Hero image glow effect - lighter gradient for light mode */
+   --vp-home-hero-image-background-image: linear-gradient(
+      135deg,
+      rgba(189, 52, 254, 0.3) 10%,
+      rgba(65, 209, 255, 0.3) 100%
+   );
+
+   /* Softer blur filter for light mode */
+   --vp-home-hero-image-filter: blur(60px);
 }
 
 /* Light mode shadow - lighter and softer */
 .VPHomeHeroImage img {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(189, 52, 254, 0.15);
+   box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.1),
+      0 2px 8px rgba(189, 52, 254, 0.15);
 }
 
 /* Dark mode - vibrant glow and stronger shadow */
 .dark {
-  /* Hero image glow effect - vibrant gradient for dark mode */
-  --vp-home-hero-image-background-image: linear-gradient(
-    135deg,
-    #bd34fe 10%,
-    #41d1ff 100%
-  );
-  
-  /* Stronger blur filter for dark mode */
-  --vp-home-hero-image-filter: blur(80px);
+   /* Hero image glow effect - vibrant gradient for dark mode */
+   --vp-home-hero-image-background-image: linear-gradient(135deg, #bd34fe 10%, #41d1ff 100%);
+
+   /* Stronger blur filter for dark mode */
+   --vp-home-hero-image-filter: blur(80px);
 }
 
 /* Dark mode shadow - stronger and more pronounced */
 .dark .VPHomeHeroImage img {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 30px rgba(189, 52, 254, 0.2);
+   box-shadow:
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(189, 52, 254, 0.2);
 }
-

@@ -33,6 +33,7 @@ export interface IframeAppState {
    blocksKey: string;
    settingsKey: string;
    settingsOpen: boolean;
+   theme: string;
 }
 
 export interface IframeAppCallbacks {
@@ -51,7 +52,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
    const settingsOpen = ref<boolean>(false);
    const blocksKey = ref<string>("blocks");
    const settingsKey = ref<string>("settings");
-
+   const theme = ref<string>("default");
    // Serialize data for postMessage (handles Vue reactive proxies)
    function serializeForPostMessage(data: any): any {
       try {
@@ -90,6 +91,9 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             }
             if (msg.settingsKey) {
                settingsKey.value = msg.settingsKey;
+            }
+            if (msg.theme) {
+               theme.value = msg.theme;
             }
             break;
          case "SET_ACTIVE_BLOCK":
@@ -151,6 +155,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                   hoveredBlockId: hoveredBlockId.value,
                   settingsOpen: settingsOpen.value,
                   editable: true,
+                  theme: theme.value,
                });
             } else {
                // Show loading state while PageRenderer loads blocks

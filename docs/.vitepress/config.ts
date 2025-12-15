@@ -25,6 +25,7 @@ export default defineConfig({
                text: "Concepts",
                items: [
                   { text: "Components", link: "/guide/components" },
+                  { text: "Themes", link: "/guide/themes" },
                   { text: "Blocks", link: "/guide/blocks" },
                   { text: "Layouts", link: "/guide/layouts" },
                   { text: "Fields", link: "/guide/fields" },

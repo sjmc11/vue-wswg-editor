@@ -91,9 +91,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { pageBuilderBlocks } from "../../util/registry";
+import { getBlock } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
-import { toCamelCase } from "../../util/helpers";
 import BlockBrowser from "../BlockBrowser/BlockBrowser.vue";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
 import PageBlockList from "../PageBlockList/PageBlockList.vue";
@@ -139,7 +138,7 @@ const computedActiveBlock = computed(() => {
    }
 
    // Find the corresponding block in the registry
-   const registryBlock = pageBuilderBlocks.value[toCamelCase(blockType)];
+   const registryBlock = getBlock(blockType);
 
    if (!registryBlock) {
       // If no registry block found, return activeBlock as-is

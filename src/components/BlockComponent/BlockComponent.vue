@@ -10,7 +10,7 @@
       :data-block-id="block.id"
    >
       <div
-         v-if="pageBuilderBlocks[toCamelCase(block.type)]"
+         v-if="blockComponent"
          class="block-component"
          @mouseenter="emit('hoverBlock', block.id)"
          @mouseleave="emit('hoverBlock', null)"
@@ -22,7 +22,7 @@
          >
             <span>Editing</span>
          </div>
-         <component :is="pageBuilderBlocks[toCamelCase(block.type)]" v-bind="block" ref="blockComponentRef" />
+         <component :is="blockComponent" v-bind="block" ref="blockComponentRef" />
       </div>
       <div
          v-else
@@ -41,8 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from "vue";
-import { pageBuilderBlocks } from "../../util/registry";
+import { computed, useTemplateRef } from "vue";
+import { getBlock } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { toCamelCase } from "../../util/helpers";
 import { onKeyStroke } from "@vueuse/core";
@@ -60,6 +60,10 @@ const props = defineProps<{
 }>();
 
 const blockComponentRef = useTemplateRef<HTMLElement | null>("blockComponentRef");
+
+const blockComponent = computed<Block | undefined>(() => {
+   return getBlock(props.block.type) || undefined;
+});
 
 // Get the margin class for the block
 // Margin is an object with top and bottom properties

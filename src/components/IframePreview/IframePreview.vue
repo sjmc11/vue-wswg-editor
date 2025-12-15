@@ -31,6 +31,7 @@ const props = defineProps<{
    blocksKey?: string;
    settingsKey?: string;
    settingsOpen?: boolean;
+   theme?: string;
 }>();
 
 const emit = defineEmits<{
@@ -62,7 +63,7 @@ async function updateIframeContent() {
    if (!props.pageData || !props.pageData[blocksKey.value]) return;
 
    await nextTick();
-   sendPageDataUpdate(iframeRef.value, props.pageData, blocksKey.value, settingsKey.value);
+   sendPageDataUpdate(iframeRef.value, props.pageData, blocksKey.value, settingsKey.value, props.theme || "default");
 }
 
 // Setup message listener
@@ -115,8 +116,9 @@ function cleanupMessageListener() {
 
 // Watch for pageData changes
 watch(
-   () => props.pageData,
-   () => {
+   [() => props.pageData, () => props.theme],
+   async () => {
+      await nextTick();
       updateIframeContent();
    },
    { deep: true }

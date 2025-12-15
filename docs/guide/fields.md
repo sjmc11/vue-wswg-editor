@@ -2,12 +2,21 @@
 
 Fields define the editable properties of blocks. They control what users can edit in the sidebar editor.
 
-## Creating Fields
+## Fields and Themes
+
+Fields are organized within themes in two ways:
+
+1. **Block fields** - Defined in `fields.ts` files within block directories (theme-specific)
+2. **Custom field components** - Located in a theme's `fields/` directory (theme-specific)
+
+Since blocks are theme-specific, their fields are automatically scoped to their theme. Custom field components are also theme-specific and can be shared across blocks within the same theme.
+
+## Creating Block Fields
 
 Fields are defined in a `fields.ts` file within your block directory:
 
 ```typescript
-// src/page-builder/blocks/hero/fields.ts
+// src/page-builder/default/blocks/hero/fields.ts
 import { createField } from "vue-wswg-editor";
 
 export default {
@@ -24,6 +33,25 @@ export default {
    }),
 };
 ```
+
+## Custom Field Components
+
+Themes can include custom field components in a `fields/` directory:
+
+```
+src/page-builder/
+  default/
+    fields/
+      rich-text/
+        RichTextField.vue
+        RichTextToolbar.vue
+    blocks/
+      hero/
+        Hero.vue
+        fields.ts  # Can use custom fields from theme's fields/ directory
+```
+
+Custom field components can be used in block fields using the `custom` field type. See the [Custom Fields Guide](/guide/custom-fields) for more information.
 
 ## Supported Field Types
 

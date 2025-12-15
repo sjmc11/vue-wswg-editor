@@ -15,6 +15,7 @@ export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin
       fields: "\0vue-wswg-editor:fields",
       layouts: "\0vue-wswg-editor:layouts",
       thumbnails: "\0vue-wswg-editor:thumbnails",
+      themes: "\0vue-wswg-editor:themes",
    };
 
    return {
@@ -41,6 +42,7 @@ export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin
             "vue-wswg-editor:blocks",
             "vue-wswg-editor:fields",
             "vue-wswg-editor:thumbnails",
+            "vue-wswg-editor:themes",
          ];
          for (const item of itemsToExclude) {
             if (!exclude.includes(item)) {
@@ -90,13 +92,15 @@ export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin
          // Using a more explicit format to ensure Vite processes it correctly
          switch (id) {
             case virtualModules.layouts:
-               return `export const modules = import.meta.glob("${options.rootDir}/layout/**/*.vue", { eager: true });`;
+               return `export const modules = import.meta.glob("${options.rootDir}/*/layout/**/*.vue", { eager: true });`;
             case virtualModules.blocks:
-               return `export const modules = import.meta.glob("${options.rootDir}/blocks/**/*.vue", { eager: true });`;
+               return `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/*.vue", { eager: true });`;
             case virtualModules.fields:
-               return `export const modules = import.meta.glob("${options.rootDir}/blocks/**/fields.ts", { eager: true });`;
+               return `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/fields.ts", { eager: true });`;
             case virtualModules.thumbnails:
-               return `export const modules = import.meta.glob("${options.rootDir}/blocks/**/thumbnail.png", { eager: true });`;
+               return `export const modules = import.meta.glob(["${options.rootDir}/*/blocks/**/thumbnail.png", "${options.rootDir}/*/thumbnail.jpg", "${options.rootDir}/*/thumbnail.png"], { eager: true });`;
+            case virtualModules.themes:
+               return `export const modules = import.meta.glob("${options.rootDir}/**/theme.config.js", { eager: true });`;
             default:
                return undefined;
          }

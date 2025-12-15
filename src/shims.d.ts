@@ -67,6 +67,10 @@ declare module "vue-wswg-editor:thumbnails" {
    export const modules: Record<string, () => Promise<any>>;
 }
 
+declare module "vue-wswg-editor:themes" {
+   export const modules: Record<string, () => Promise<any>>;
+}
+
 // SortableJS type declaration - reference @types/sortablejs and re-export as ESM default
 /// <reference types="sortablejs" />
 declare module "sortablejs" {
