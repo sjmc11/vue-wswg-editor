@@ -66,7 +66,7 @@ The `page-builder` directory serves as the central location for all your themes:
 
 💡 **Tip**: If you're not using multiple themes, just create a `default` theme directory. The library will automatically use it when no theme is specified.
 
-💡 **Tip**: Need a complete example? Check out the [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) repository for a reference implementation with example blocks, layouts, and directory structure.
+💡 **Tip**: Need a complete example? Check out the [page builder example theme](https://github.com/sjmc11/vue-wswg-demos/tree/main/src/page-builder/wswg-demo-theme) for a reference implementation with example blocks, layouts, and directory structure.
 
 ## 3. Create a Theme Configuration (Optional)
 
@@ -256,9 +256,9 @@ The `PageRenderer` component is lightweight and designed for production use. It 
 
 For more details on components, see the [Components Guide](/guide/components).
 
-## Starter Kit
+## Example Theme
 
-Want to get started faster? Check out the [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) repository, which provides a complete reference implementation with example blocks, custom fields, and layouts. This starter kit is extracted from the [vue-wswg-demos](https://github.com/sjmc11/vue-wswg-demos) project and includes everything you need to start building pages with vue-wswg-editor.
+Want to get started faster? Check out the [page builder example theme](https://github.com/sjmc11/vue-wswg-demos/tree/main/src/page-builder/wswg-demo-theme), which provides a complete reference implementation with example blocks, custom fields, and layouts. This example theme is part of the [vue-wswg-demos](https://github.com/sjmc11/vue-wswg-demos) project and includes everything you need to start building pages with vue-wswg-editor.
 
 You can also try the [Live Demo on StackBlitz](https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos) to explore the library in action.
 
