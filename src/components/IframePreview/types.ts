@@ -4,18 +4,19 @@ import type { Block } from "../../types/Block";
 
 export type MessageType =
    | "UPDATE_PAGE_DATA"
-   | "UPDATE_HTML"
    | "SET_ACTIVE_BLOCK"
    | "SET_HOVERED_BLOCK"
    | "SET_SETTINGS_OPEN"
    | "SET_VIEWPORT"
    | "CLICK_PARTIAL"
    | "SCROLL_TO_BLOCK"
+   | "INJECT_STYLESHEETS"
    | "BLOCK_CLICK"
    | "BLOCK_HOVER"
    | "BLOCK_REORDER"
    | "BLOCK_ADD"
    | "IFRAME_READY"
+   | "STYLESHEETS_LOADED"
    | "BLOCK_ELEMENT_POSITION";
 
 export interface BaseMessage {
@@ -28,14 +29,6 @@ export interface UpdatePageDataMessage extends BaseMessage {
    blocksKey: string;
    settingsKey: string;
    theme: string;
-}
-
-export interface UpdateHTMLMessage extends BaseMessage {
-   type: "UPDATE_HTML";
-   html: string;
-   pageData?: Record<string, any>;
-   blocksKey?: string;
-   settingsKey?: string;
 }
 
 export interface SetActiveBlockMessage extends BaseMessage {
@@ -68,6 +61,16 @@ export interface ScrollToBlockMessage extends BaseMessage {
    blockId: string;
 }
 
+export interface InjectStylesheetsMessage extends BaseMessage {
+   type: "INJECT_STYLESHEETS";
+   /** URLs of external stylesheets (<link> tags) */
+   stylesheetUrls: string[];
+   /** Contents of inline <style> tags */
+   inlineStyles: string[];
+   /** CSS variables extracted from :root */
+   cssVariables: string;
+}
+
 export interface BlockClickMessage extends BaseMessage {
    type: "BLOCK_CLICK";
    blockId: string;
@@ -95,6 +98,10 @@ export interface IframeReadyMessage extends BaseMessage {
    type: "IFRAME_READY";
 }
 
+export interface StylesheetsLoadedMessage extends BaseMessage {
+   type: "STYLESHEETS_LOADED";
+}
+
 export interface BlockElementPositionMessage extends BaseMessage {
    type: "BLOCK_ELEMENT_POSITION";
    blockId: string;
@@ -108,12 +115,12 @@ export interface BlockElementPositionMessage extends BaseMessage {
 
 export type IframeMessage =
    | UpdatePageDataMessage
-   | UpdateHTMLMessage
    | SetActiveBlockMessage
    | SetHoveredBlockMessage
    | SetSettingsOpenMessage
    | SetViewportMessage
    | ScrollToBlockMessage
+   | InjectStylesheetsMessage
    | PartialClickMessage;
 
 export type ParentMessage =
@@ -122,5 +129,6 @@ export type ParentMessage =
    | BlockReorderMessage
    | BlockAddMessage
    | IframeReadyMessage
+   | StylesheetsLoadedMessage
    | BlockElementPositionMessage
    | PartialClickMessage;

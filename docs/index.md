@@ -13,8 +13,8 @@ hero:
         text: Get Started
         link: /guide/getting-started
       - theme: alt
-        text: View on npm
-        link: https://www.npmjs.com/package/vue-wswg-editor
+        text: Live Demo
+        link: https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos
       - theme: alt
         text: View on GitHub
         link: https://github.com/sjmc11/vue-wswg-editor

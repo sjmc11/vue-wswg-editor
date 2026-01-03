@@ -2,6 +2,10 @@
 
 `vue-wswg-editor` is a Vue 3 component library that provides a complete page builder solution. This guide will help you get started quickly.
 
+::: tip Try it out
+Explore the library in action with the [Live Demo on StackBlitz](https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos).
+:::
+
 ## What is vue-wswg-editor?
 
 `vue-wswg-editor` enables developers to create visual editors where users can:

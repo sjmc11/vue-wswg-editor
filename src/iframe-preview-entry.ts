@@ -1,30 +1,16 @@
 /**
- * Iframe Preview Vue Application
+ * Iframe Preview Entry Point
  *
- * This file creates a Vue application that runs inside the iframe preview.
- * Since the library is consumed as source code, consuming apps' Vite builds
- * will process this file, giving it access to virtual modules (blocks/layouts).
+ * This file is built as a separate bundle for the iframe preview.
+ * It creates a standalone Vue application that can be loaded in an iframe.
  *
- * Usage in consuming apps:
- * ```ts
- * import { createIframeApp, getIframeAppModuleUrl } from 'vue-wswg-editor/IframePreviewApp'
- * ```
+ * This bundle includes all the necessary code to render the preview,
+ * but blocks/layouts are loaded dynamically from the consuming app.
  */
 
 import { createApp, ref, watch, h, type App } from "vue";
-import EditorPageRenderer from "../EditorPageRenderer/EditorPageRenderer.vue";
-import type { Block } from "../../types/Block";
-
-/**
- * Get the URL of this module
- * This can be used to import the module in the iframe HTML
- */
-export function getIframeAppModuleUrl(): string {
-   // Use import.meta.url to get the current module's URL
-   // In development, this will be the source file URL
-   // In production (after Vite build), this will be the bundled module URL
-   return import.meta.url;
-}
+import EditorPageRenderer from "./components/EditorPageRenderer/EditorPageRenderer.vue";
+import type { Block } from "./types/Block";
 
 export interface IframeAppState {
    pageData: Record<string, any> | null;
@@ -54,6 +40,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
    const settingsKey = ref<string>("settings");
    const theme = ref<string>("default");
    const stylesheetsLoaded = ref<boolean>(false);
+
    // Serialize data for postMessage (handles Vue reactive proxies)
    function serializeForPostMessage(data: any): any {
       try {
@@ -289,7 +276,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
       // when the library is consumed as source code
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore - vue-router may not be available in all consuming apps
-      const routerModule = await import("vue-router");
+      const routerModule = await dynamicImport("vue-router");
       VueRouter = routerModule;
    } catch {
       // Fallback to CDN version

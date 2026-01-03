@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from "vue";
-import { generateIframeHTML } from "./iframeContent";
 import {
    sendPageDataUpdate,
    sendActiveBlock,
@@ -14,13 +13,11 @@ import {
    sendSettingsOpen,
    sendScrollToBlock,
    handleIframeMessage,
+   sendStylesheets,
 } from "./messageHandler";
 import type { Block } from "../../types/Block";
+import { IFRAME_PREVIEW_ROUTE } from "../../constants";
 import { getIframeAppModuleUrl } from "./iframePreviewApp";
-
-// Get the iframe app module URL
-// This will be processed by the consuming app's Vite build
-const iframeAppModuleUrl = getIframeAppModuleUrl();
 
 const props = defineProps<{
    pageData?: Record<string, any>;
@@ -45,21 +42,27 @@ const emit = defineEmits<{
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 const containerRef = ref<HTMLElement | null>(null);
 const iframeReady = ref(false);
+const stylesheetsLoaded = ref(false);
 const iframeSrc = ref<string>("");
 
 const blocksKey = computed(() => props.blocksKey || "blocks");
 const settingsKey = computed(() => props.settingsKey || "settings");
 
-// Generate blob URL for iframe
+// Get the iframe app module URL for fallback
+const iframeAppModuleUrl = getIframeAppModuleUrl();
+
+// Create iframe src using the virtual route served by the vite plugin
+// This keeps the iframe on the same origin, enabling module imports to work in WebContainers
 function createIframeSrc(): string {
-   const html = generateIframeHTML(iframeAppModuleUrl);
-   const blob = new Blob([html], { type: "text/html" });
-   return URL.createObjectURL(blob);
+   // Use the virtual route provided by the vite plugin
+   // Pass the module URL as a query parameter for fallback in case the virtual module doesn't work
+   const moduleUrlParam = encodeURIComponent(iframeAppModuleUrl);
+   return `${IFRAME_PREVIEW_ROUTE}?moduleUrl=${moduleUrlParam}`;
 }
 
 // Update iframe content - send pageData to Vue app in iframe
 async function updateIframeContent() {
-   if (!iframeRef.value || !iframeReady.value) return;
+   if (!iframeRef.value || !iframeReady.value || !stylesheetsLoaded.value) return;
    if (!props.pageData || !props.pageData[blocksKey.value]) return;
 
    await nextTick();
@@ -92,14 +95,19 @@ function setupMessageListener() {
          },
          onIframeReady: () => {
             iframeReady.value = true;
-            // Wait a bit for iframe Vue app to be fully ready
-            setTimeout(() => {
-               updateIframeContent();
-               // Send initial settingsOpen state
-               if (iframeRef.value && props.settingsOpen !== undefined) {
-                  sendSettingsOpen(iframeRef.value, props.settingsOpen);
-               }
-            }, 100);
+            // Send stylesheets to iframe first - wait for STYLESHEETS_LOADED before sending content
+            if (iframeRef.value) {
+               sendStylesheets(iframeRef.value);
+            }
+         },
+         onStylesheetsLoaded: () => {
+            stylesheetsLoaded.value = true;
+            // Now that stylesheets are loaded, send the content
+            updateIframeContent();
+            // Send initial settingsOpen state
+            if (iframeRef.value && props.settingsOpen !== undefined) {
+               sendSettingsOpen(iframeRef.value, props.settingsOpen);
+            }
          },
       });
    };
@@ -166,10 +174,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
    cleanupMessageListener();
-   // Cleanup blob URL
-   if (iframeSrc.value.startsWith("blob:")) {
-      URL.revokeObjectURL(iframeSrc.value);
-   }
 });
 </script>
 

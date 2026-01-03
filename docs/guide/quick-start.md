@@ -260,6 +260,8 @@ For more details on components, see the [Components Guide](/guide/components).
 
 Want to get started faster? Check out the [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) repository, which provides a complete reference implementation with example blocks, custom fields, and layouts. This starter kit is extracted from the [vue-wswg-demos](https://github.com/sjmc11/vue-wswg-demos) project and includes everything you need to start building pages with vue-wswg-editor.
 
+You can also try the [Live Demo on StackBlitz](https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos) to explore the library in action.
+
 ## Next Steps
 
 - Learn about [Themes](/guide/themes) - Understanding theme-based architecture

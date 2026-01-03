@@ -4,10 +4,10 @@
   <p>A powerful Vue 3 WYSIWYG JSON editor component library for building visual page builders</p>
   
   <p>
-    <a href="https://stackblitz.com/edit/vitejs-vite-zwmxyawb">Live Demo</a> •
+    <a href="https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos">Live Demo</a> •
     <a href="https://sjmc11.github.io/vue-wswg-editor/">Documentation</a> •
     <a href="https://www.npmjs.com/package/vue-wswg-editor">NPM Package</a> •
-    <a href="https://github.com/sjmc11/page-builder-starter-kit">Starter Kit</a> •
+    <a href="https://github.com/sjmc11/vue-wswg-demos/tree/main/src/page-builder/wswg-demo-theme">Demo theme</a> •
     <a href="https://github.com/sjmc11/vue-wswg-demos">Demo Project</a>
   </p>
 </div>
@@ -576,4 +576,4 @@ import type { EditorFieldConfig, ValidatorFunction, ValidationResult } from "vue
 ## Related Projects
 
 - [vue-wswg-demos](https://github.com/sjmc11/vue-wswg-demos) - Demo project showing how to use vue-wswg-editor
-- [page-builder-starter-kit](https://github.com/sjmc11/page-builder-starter-kit) - Starter kit with example blocks, layouts, and custom fields
+- [Demo Theme](https://github.com/sjmc11/vue-wswg-demos/tree/main/src/page-builder/wswg-demo-theme) - Demo page builder theme with example blocks, layouts, and custom fields (included in the demos project)
