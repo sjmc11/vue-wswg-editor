@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/sjmc11/vue-wswg-editor/main/docs/public/app-icon-shadow.png" alt="vue-wswg-editor" width="180" height="200">
   <h1>vue-wswg-editor</h1>
-  <p>A powerful Vue 3 WYSIWYG JSON editor component library for building visual page builders</p>
+  <p>A powerful vue3 library for visual page builders</p>
   
   <p>
     <a href="https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos">Live Demo</a> •
@@ -14,7 +14,7 @@
 
 ---
 
-A powerful Vue 3 WYSIWYG JSON editor component library for building visual page builders. Create, edit, and manage page content through an intuitive drag-and-drop interface with a comprehensive sidebar editor for block configuration.
+A powerful Vue 3 WYSIWYG editor component library for building visual page builders. Create, edit, and manage page content through an intuitive drag-and-drop interface with a comprehensive sidebar editor for block configuration.
 
 ## Overview
 

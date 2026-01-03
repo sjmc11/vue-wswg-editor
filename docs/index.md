@@ -69,6 +69,31 @@ npm install vue-wswg-editor
 
 📦 **Package**: [vue-wswg-editor on npm](https://www.npmjs.com/package/vue-wswg-editor)
 
+Configure the Vite plugin in your `vite.config.ts`:
+
+```typescript
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import { fileURLToPath } from "url";
+import { vueWswgEditorPlugin } from "vue-wswg-editor/vite-plugin";
+
+export default defineConfig({
+   plugins: [
+      vue(),
+      vueWswgEditorPlugin({
+         rootDir: "@page-builder",
+      }),
+   ],
+   resolve: {
+      alias: {
+         "@page-builder": fileURLToPath(new URL("./src/page-builder", import.meta.url)),
+      },
+   },
+});
+```
+
+Use the editor component in your Vue app:
+
 ```vue
 <template>
    <WswgPageBuilder v-model="pageData" :editable="true" :showBrowserBar="true" />
