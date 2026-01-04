@@ -51,7 +51,7 @@ features:
       controls 
       autoplay="true"
       playsinline="true"
-      poster="/assets/wswg-hero.jpg" 
+      poster="/assets/wswg-poster.jpg" 
       style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); aspect-ratio: 16/9;width: 100%; height: auto;object-fit: cover;"
    >
       <source src="/assets/wswg-demo.mp4" type="video/mp4">
