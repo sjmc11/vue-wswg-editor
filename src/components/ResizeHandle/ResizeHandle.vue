@@ -1,11 +1,6 @@
 <template>
    <div class="resize-handle-wrapper">
-      <div
-         id="page-builder-resize-handle"
-         ref="resizeHandle"
-         class="resize-handle"
-         @mousedown="startResize"
-      ></div>
+      <div id="page-builder-resize-handle" ref="resizeHandle" class="resize-handle" @mousedown="startResize"></div>
       <span class="viewport-size">
          <span class="viewport-size__badge">
             {{ computedViewportSize }}

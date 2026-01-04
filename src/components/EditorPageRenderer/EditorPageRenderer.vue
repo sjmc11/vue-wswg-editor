@@ -1,10 +1,5 @@
 <template>
-   <div
-      id="page-viewport"
-      ref="editorRef"
-      class="page-renderer-wrapper relative"
-      :class="{ 'settings-open': settingsOpen }"
-   >
+   <div id="page-viewport" ref="editorRef" class="page-renderer-wrapper" :class="{ 'settings-open': settingsOpen }">
       <template v-if="isReady">
          <component :is="layoutComponent" v-if="layoutComponent" v-bind="settings" :blocks="blocks">
             <template #default>
@@ -15,7 +10,6 @@
                   v-else
                   id="page-blocks-wrapper"
                   ref="pageBlocksWrapperRef"
-                  class="relative"
                   :class="{ 'drag-over': isDraggingOver }"
                   @dragenter="handleDragEnter"
                   @dragleave="handleDragLeave"
@@ -626,10 +620,10 @@ onBeforeUnmount(() => {
 :deep([data-partial]) {
    &:hover {
       @include overlay-apply(
-         var(--partial-backdrop-color),
-         var(--partial-border-color),
-         var(--partial-border-width),
-         var(--partial-border-style)
+         var(--partial-backdrop-color, transparent),
+         var(--partial-border-color, #638ef1),
+         var(--partial-border-width, 4px),
+         var(--partial-border-style, solid)
       );
    }
 
@@ -640,10 +634,10 @@ onBeforeUnmount(() => {
 .settings-open {
    :deep([data-partial]) {
       @include overlay-apply(
-         var(--partial-backdrop-color),
-         var(--partial-border-color),
-         var(--partial-border-width),
-         var(--partial-border-style)
+         var(--partial-backdrop-color, transparent),
+         var(--partial-border-color, #638ef1),
+         var(--partial-border-width, 4px),
+         var(--partial-border-style, solid)
       );
    }
 }
