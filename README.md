@@ -16,6 +16,10 @@
 
 A powerful Vue 3 WYSIWYG editor component library for building visual page builders. Create, edit, and manage page content through an intuitive drag-and-drop interface with a comprehensive sidebar editor for block configuration.
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/sjmc11/vue-wswg-editor/main/docs/assets/wswg-hero.jpg" alt="vue-wswg-editor hero" style="max-width: 100%; height: auto;">
+</div>
+
 ## Overview
 
 `vue-wswg-editor` is a Vue 3 component library that provides a complete page builder solution. It enables developers to create visual editors where users can:
