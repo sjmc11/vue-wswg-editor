@@ -16,23 +16,20 @@
          @mouseleave="emit('hoverBlock', null)"
          @click="emit('clickBlock', block)"
       >
-         <div
-            v-if="activeBlock?.id === block.id"
-            class="editing-badge absolute right-2 top-2 z-40 rounded-full px-2 py-1 text-xs text-white"
-         >
+         <div v-if="activeBlock?.id === block.id" class="editing-badge">
             <span>Editing</span>
          </div>
          <component :is="blockComponent" v-bind="block" ref="blockComponentRef" />
       </div>
       <div
          v-else
-         class="block-not-found px-3 py-2"
+         class="block-not-found"
          @mouseenter="emit('hoverBlock', block.id)"
          @mouseleave="emit('hoverBlock', null)"
       >
-         <div class="rounded-lg bg-zinc-200 p-5 px-3 text-center text-sm text-zinc-600">
-            <p class="mb-2">Block not registered</p>
-            <span class="rounded-full bg-zinc-300 px-2 py-1 text-zinc-600">
+         <div class="block-not-found__content">
+            <p class="block-not-found__text">Block not registered</p>
+            <span class="block-not-found__badge">
                {{ toCamelCase(block.type) }}
             </span>
          </div>
@@ -124,7 +121,40 @@ onKeyStroke("Escape", () => {
    }
 
    .editing-badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 40;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      color: #fff;
       background-color: var(--block-badge-color, #638ef1);
+      border-radius: 9999px;
+   }
+
+   .block-not-found {
+      padding: 0.5rem 0.75rem;
+
+      &__content {
+         padding: 0.75rem 1.25rem;
+         font-size: 0.875rem;
+         color: #52525b;
+         text-align: center;
+         background-color: #e4e4e7;
+         border-radius: 0.5rem;
+      }
+
+      &__text {
+         margin-bottom: 0.5rem;
+      }
+
+      &__badge {
+         display: inline-block;
+         padding: 0.25rem 0.5rem;
+         color: #52525b;
+         background-color: #d4d4d8;
+         border-radius: 9999px;
+      }
    }
 
    // Active state - apply overlay and show margin spacing

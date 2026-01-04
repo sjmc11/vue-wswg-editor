@@ -36,7 +36,6 @@ The library uses a JSON-based data structure, making it easy to store, version, 
 - 📱 **Responsive Preview** - Preview pages in desktop and mobile viewports
 - 🎨 **Customizable Layouts** - Support for multiple page layouts
 - 🔧 **Field Validation** - Built-in validation with custom validator support
-- 🎨 **Tailwind CSS** - Styled with Tailwind CSS for easy customization
 - 📦 **TypeScript** - Full TypeScript support with comprehensive type definitions
 - 🔌 **Vite Plugin** - Automatic block, layout, and field discovery via Vite plugin
 - 🎯 **Zero Config Blocks** - Blocks are automatically discovered from your project structure

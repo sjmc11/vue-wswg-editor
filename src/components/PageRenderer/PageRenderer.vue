@@ -1,5 +1,5 @@
 <template>
-   <div id="page-viewport" class="page-renderer-wrapper relative">
+   <div id="page-viewport" class="page-renderer-wrapper">
       <template v-if="isReady">
          <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings" :blocks="blocks">
             <template #default>
@@ -90,6 +90,8 @@ onBeforeMount(async () => {
 // Styles are scoped to the component using the root class selector instead of Vue's scoped attribute
 // This ensures styles work correctly when the component is consumed from a library
 .page-renderer-wrapper {
+   position: relative;
+
    .block-wrapper {
       @include block-margin-classes;
    }

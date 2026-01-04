@@ -5,7 +5,7 @@
          v-model:editorViewport="editorViewport"
          v-model:showPageSettings="showPageSettings"
          v-model:activeBlock="activeBlock"
-         class="z-12 sticky top-0 bg-white"
+         class="page-builder-sidebar__toolbar"
          :hasPageSettings="hasPageSettings"
       />
       <!-- Page settings -->
@@ -20,24 +20,21 @@
       <!-- Active section-->
       <div v-else-if="activeBlock">
          <!-- back header -->
-         <div class="flex items-start justify-between border-b border-gray-300 bg-white p-5">
+         <div class="wswg-sidebar-header">
             <div>
-               <button
-                  class="cursor-pointer text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
-                  @click="activeBlock = null"
-               >
-                  ← Back
-               </button>
-               <h4 class="mt-1 text-lg font-bold">{{ computedActiveBlock.label || computedActiveBlock.type }}</h4>
+               <button class="wswg-back-btn" @click="activeBlock = null">← Back</button>
+               <h4 class="wswg-sidebar-title wswg-sidebar-title--with-back">
+                  {{ computedActiveBlock.label || computedActiveBlock.type }}
+               </h4>
             </div>
             <!-- delete section button -->
             <button
                v-if="activeBlock && editable"
-               class="inline-flex size-7 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-zinc-100 text-zinc-500 hover:border-red-200 hover:bg-red-100 hover:text-red-600"
+               class="wswg-btn wswg-btn--icon wswg-btn--secondary wswg-btn--danger"
                title="Delete block"
                @click="handleDeleteBlock"
             >
-               <TrashIcon class="size-4" />
+               <TrashIcon class="wswg-icon--sm" />
             </button>
          </div>
          <BlockEditorFields
@@ -48,15 +45,10 @@
       </div>
       <!-- Add block menu -->
       <div v-else-if="showAddBlockMenu">
-         <div class="flex items-center justify-between border-b border-gray-300 bg-white p-5">
+         <div class="wswg-sidebar-header wswg-sidebar-header--centered">
             <div>
-               <button
-                  class="cursor-pointer text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
-                  @click="showAddBlockMenu = false"
-               >
-                  ← Back
-               </button>
-               <h4 class="mt-1 text-lg font-bold">Add block</h4>
+               <button class="wswg-back-btn" @click="showAddBlockMenu = false">← Back</button>
+               <h4 class="wswg-sidebar-title wswg-sidebar-title--with-back">Add block</h4>
             </div>
          </div>
          <!-- Blocks list -->
@@ -64,16 +56,16 @@
       </div>
       <!-- No active block -->
       <div v-else>
-         <div class="flex items-center justify-between border-b border-gray-300 bg-white p-5">
-            <h4 class="text-lg font-bold">Blocks ({{ pageData?.[blocksKey]?.length }})</h4>
+         <div class="wswg-sidebar-header wswg-sidebar-header--centered">
+            <h4 class="wswg-sidebar-title">Blocks ({{ pageData?.[blocksKey]?.length }})</h4>
             <button
                v-if="editable"
-               class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-zinc-50 px-3 py-2 text-xs text-zinc-500 hover:border-zinc-400 hover:text-zinc-900 active:border-blue-600 active:bg-blue-50 active:text-blue-600"
+               class="wswg-btn wswg-btn--secondary"
                title="Add block"
                @click="handleShowAddBlockMenu"
             >
                <span>Add block</span>
-               <PlusIcon class="size-3" />
+               <PlusIcon class="wswg-icon--xs" />
             </button>
          </div>
          <!-- Blocks list -->
@@ -253,10 +245,15 @@ async function handleDeleteBlock() {
 </script>
 
 <style scoped lang="scss">
-$toolbar-height: 0px;
-
 .page-builder-sidebar {
    min-width: 300px;
    background: #fff;
+
+   &__toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      background-color: #ffffff;
+   }
 }
 </style>

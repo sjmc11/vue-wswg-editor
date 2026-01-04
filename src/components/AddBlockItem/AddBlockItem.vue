@@ -2,27 +2,27 @@
    <div
       :data-block-type="block.type"
       draggable="true"
-      class="cursor-pointer rounded-md border border-gray-300 bg-zinc-50 p-2 text-sm text-zinc-900 hover:border-zinc-400 hover:text-zinc-900"
+      class="add-block-item"
       @dragstart="(event) => handleDragStart(event, block)"
    >
       <!-- thumbnail image -->
-      <div v-if="thumbnailUrl" class="w-full overflow-hidden rounded-md bg-neutral-100">
+      <div v-if="thumbnailUrl" class="add-block-item__thumbnail">
          <img
             :src="thumbnailUrl"
             :alt="block.label || block.type"
-            class="mx-auto mb-2 h-28 w-auto object-contain"
+            class="add-block-item__image"
             @error="thumbnailError = true"
          />
       </div>
       <!-- emoji -->
-      <div v-else-if="block.emoji" class="mb-2 flex h-28 w-full items-center justify-center rounded-md bg-zinc-200">
-         <span class="text-2xl">{{ block.emoji }}</span>
+      <div v-else-if="block.emoji" class="add-block-item__emoji">
+         <span class="add-block-item__emoji-text">{{ block.emoji }}</span>
       </div>
       <!-- placeholder -->
-      <div v-else class="mb-2 flex h-28 w-full items-center justify-center rounded-md bg-zinc-200">
-         <CubeTransparentIcon class="size-6 text-zinc-400" />
+      <div v-else class="add-block-item__placeholder">
+         <CubeTransparentIcon class="add-block-item__placeholder-icon" />
       </div>
-      <p class="text-sm">{{ block.label }}</p>
+      <p class="add-block-item__label">{{ block.label }}</p>
    </div>
 </template>
 
@@ -57,3 +57,74 @@ function handleDragStart(event: DragEvent, block: Block) {
    }
 }
 </script>
+
+<style scoped lang="scss">
+.add-block-item {
+   padding: 0.5rem;
+   font-size: 0.875rem;
+   color: #18181b;
+   cursor: pointer;
+   border: 1px solid #d1d5db;
+   border-radius: 0.375rem;
+   background-color: #fafafa;
+   transition: all 0.15s ease-in-out;
+
+   &:hover {
+      color: #18181b;
+      border-color: #a1a1aa;
+   }
+
+   &__thumbnail {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 0.375rem;
+      background-color: #f5f5f5;
+   }
+
+   &__image {
+      display: block;
+      width: auto;
+      height: 7rem;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 0.5rem;
+      object-fit: contain;
+   }
+
+   &__emoji {
+      display: flex;
+      width: 100%;
+      height: 7rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+      border-radius: 0.375rem;
+      background-color: #e4e4e7;
+   }
+
+   &__emoji-text {
+      font-size: 1.5rem;
+   }
+
+   &__placeholder {
+      display: flex;
+      width: 100%;
+      height: 7rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+      border-radius: 0.375rem;
+      background-color: #e4e4e7;
+   }
+
+   &__placeholder-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: #a1a1aa;
+   }
+
+   &__label {
+      font-size: 0.875rem;
+   }
+}
+</style>

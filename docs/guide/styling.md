@@ -186,31 +186,43 @@ Customize the colors and styles for the margin spacing indicators shown between 
 }
 ```
 
-## Tailwind CSS Integration
-
-The library uses Tailwind CSS for its internal styling. If you're using Tailwind in your project, the editor will inherit your Tailwind configuration.
-
-To avoid conflicts with Tailwind v4, the library wraps its Tailwind utilities in a custom layer (`vue-wswg-editor-library`), ensuring your Tailwind v4 utilities take precedence.
-
 ## Container Styling and Responsive Design
 
 When styling your page content, you can use standard media queries and responsive breakpoints. The editor preview automatically responds to the preview container size, so your responsive styles will work correctly in both the editor view and the product preview.
 
 ### Standard Media Queries
 
-You can use standard CSS media queries or Tailwind CSS responsive variants as you normally would:
+You can use standard CSS media queries for responsive styling:
 
 ```vue
 <template>
    <div id="page-viewport">
-      <div class="p-4 md:p-8 lg:p-12">
+      <div class="content-wrapper">
          <!-- Your content -->
       </div>
    </div>
 </template>
+
+<style scoped>
+.content-wrapper {
+   padding: 1rem;
+}
+
+@media (min-width: 768px) {
+   .content-wrapper {
+      padding: 2rem;
+   }
+}
+
+@media (min-width: 1024px) {
+   .content-wrapper {
+      padding: 3rem;
+   }
+}
+</style>
 ```
 
-The editor preview container automatically adjusts breakpoints to match the preview size, so your responsive classes will behave correctly during editing without needing container queries.
+The editor preview container automatically adjusts breakpoints to match the preview size, so your responsive styles will behave correctly during editing without needing container queries.
 
 ## See Also
 

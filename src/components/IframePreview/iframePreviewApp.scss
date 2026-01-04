@@ -1,0 +1,50 @@
+.iframe-preview-loading {
+   padding: 3rem 1.25rem;
+   background-color: #fff;
+
+   @media (min-width: 768px) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+   }
+
+   &__container {
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-bottom: 1.75rem;
+      text-align: center;
+   }
+
+   &__spinner {
+      width: 2rem;
+      height: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      color: #2563eb;
+      animation: spin 1s linear infinite;
+   }
+
+   &__spinner-circle {
+      opacity: 0.25;
+   }
+
+   &__spinner-path {
+      opacity: 0.75;
+   }
+
+   &__text {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #374151;
+   }
+}
+
+@keyframes spin {
+   from {
+      transform: rotate(0deg);
+   }
+   to {
+      transform: rotate(360deg);
+   }
+}
+

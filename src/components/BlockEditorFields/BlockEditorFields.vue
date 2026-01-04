@@ -1,16 +1,12 @@
 <template>
    <div class="section-editor-fields">
       <!-- Field group tabs-->
-      <div
-         v-if="editorFieldGroups.length"
-         class="field-group-tabs flex gap-2 overflow-x-auto border-b border-gray-300"
-         :class="nested ? 'px-0 pt-0' : 'px-5 pt-3'"
-      >
+      <div v-if="editorFieldGroups.length" class="field-group-tabs" :class="{ 'field-group-tabs--nested': nested }">
          <button
             v-for="fieldGroupName in editorFieldGroups"
             :key="`fg_${fieldGroupName}`"
-            class="field-group-tab rounded-t-md border border-zinc-200 bg-zinc-100 px-4 py-2 text-sm first-letter:uppercase"
-            :class="{ 'bg-zinc-00 border-b-transparent !bg-white': activeFieldGroup === fieldGroupName }"
+            class="field-group-tab"
+            :class="{ 'field-group-tab--active': activeFieldGroup === fieldGroupName }"
             @click="activeFieldGroup = fieldGroupName"
          >
             {{ fieldGroupName }}
@@ -20,8 +16,8 @@
       <!-- Fields -->
       <div
          v-if="blockData && Object.keys(editorFields).length > 0"
-         class="flex flex-col gap-3"
-         :class="nested ? 'p-0' : 'p-5'"
+         class="fields-container"
+         :class="{ 'fields-container--nested': nested }"
       >
          <div v-for="(fieldConfig, fieldName) in editorFields" :key="fieldName" class="prop-field">
             <BlockEditorFieldNode
@@ -34,8 +30,8 @@
       </div>
 
       <!-- No fields -->
-      <div v-else :class="nested ? 'p-0' : 'p-5'">
-         <div class="rounded-lg bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-600">
+      <div v-else class="fields-container" :class="{ 'fields-container--nested': nested }">
+         <div class="no-fields-message">
             <p>
                {{ isLayoutBlock ? "No settings available for this layout." : "No options available for this block." }}
             </p>
@@ -118,3 +114,54 @@ onBeforeMount(() => {
    }
 });
 </script>
+
+<style scoped lang="scss">
+.field-group-tabs {
+   display: flex;
+   gap: 0.5rem;
+   overflow-x: auto;
+   padding: 0.75rem 1.25rem 0;
+   border-bottom: 1px solid #d1d5db;
+
+   &--nested {
+      padding: 0;
+   }
+}
+
+.field-group-tab {
+   padding: 0.4375rem 0.875rem;
+   font-size: 0.8125rem;
+   border: 1px solid #e4e4e7;
+   border-radius: 0.3125rem 0.3125rem 0 0;
+   background-color: #f4f4f5;
+
+   &::first-letter {
+      text-transform: uppercase;
+   }
+
+   &--active {
+      border-bottom-color: transparent;
+      background-color: #fff;
+   }
+}
+
+.fields-container {
+   display: flex;
+   flex-direction: column;
+   gap: 0.75rem;
+   padding: 1.25rem;
+
+   &--nested {
+      padding: 0;
+   }
+}
+
+.no-fields-message {
+   padding: 0.75rem 1rem;
+   font-size: 0.875rem;
+   font-weight: 500;
+   color: #52525b;
+   background-color: #f4f4f5;
+   border-radius: 0.5rem;
+}
+</style>

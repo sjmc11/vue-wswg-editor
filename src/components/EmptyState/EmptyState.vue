@@ -1,39 +1,32 @@
 <template>
    <div
       v-if="editable"
-      class="relative p-5 py-12 text-center transition-all duration-200"
-      :class="{ 'dropzone-active': isDraggingOver }"
+      class="empty-state"
+      :class="{ 'empty-state--dragging': isDraggingOver }"
       @dragover.prevent="handleDragOver"
       @dragenter.prevent="handleDragEnter"
       @dragleave="handleDragLeave"
       @drop.prevent="handleDrop"
    >
       <!-- Dropzone overlay -->
-      <div
-         v-if="isDraggingOver"
-         class="absolute inset-0 z-10 flex items-center justify-center rounded-lg border-2 border-dashed border-blue-500 bg-blue-50/80 backdrop-blur-sm"
-      >
-         <div class="text-center">
-            <p class="text-lg font-semibold text-blue-700">Drop block here</p>
-            <p class="mt-1 text-sm text-blue-600">Release to add your first block</p>
+      <div v-if="isDraggingOver" class="empty-state__dropzone">
+         <div class="empty-state__dropzone-content">
+            <p class="empty-state__dropzone-title">Drop block here</p>
+            <p class="empty-state__dropzone-subtitle">Release to add your first block</p>
          </div>
       </div>
 
-      <h2 class="mb-3 text-xl font-bold">No blocks found</h2>
+      <h2 class="empty-state__title">No blocks found</h2>
       <template v-if="editable">
-         <p
-            class="mb-9 inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-500"
-         >
-            Add a block to get started
-         </p>
+         <p class="empty-state__message">Add a block to get started</p>
       </template>
       <!-- empty state image from assets -->
-      <img :src="emptyStateImage" alt="Empty state" class="mx-auto h-auto w-full max-w-xs" />
+      <img :src="emptyStateImage" alt="Empty state" class="empty-state__image" />
    </div>
-   <div v-else class="p-5 py-12 text-center">
-      <h2 class="mb-3 text-xl font-bold">No blocks found</h2>
+   <div v-else class="empty-state">
+      <h2 class="empty-state__title">No blocks found</h2>
       <!-- empty state image from assets -->
-      <img :src="emptyStateImage" alt="Empty state" class="mx-auto h-auto w-full max-w-xs" />
+      <img :src="emptyStateImage" alt="Empty state" class="empty-state__image" />
    </div>
 </template>
 
@@ -83,3 +76,74 @@ function handleDrop(event: DragEvent) {
    }
 }
 </script>
+
+<style scoped lang="scss">
+.empty-state {
+   position: relative;
+   padding: 1.25rem;
+   padding-top: 3rem;
+   padding-bottom: 3rem;
+   text-align: center;
+   transition: all 0.2s ease-in-out;
+
+   &__title {
+      margin-bottom: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+   }
+
+   &__message {
+      display: inline-flex;
+      gap: 0.375rem;
+      align-items: center;
+      margin-bottom: 2.25rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      color: #71717a;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background-color: #fafafa;
+   }
+
+   &__image {
+      display: block;
+      width: 100%;
+      max-width: 20rem;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+   }
+
+   &__dropzone {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed #3b82f6;
+      border-radius: 0.5rem;
+      background-color: rgb(239 246 255 / 80%);
+      backdrop-filter: blur(4px);
+   }
+
+   &__dropzone-content {
+      text-align: center;
+   }
+
+   &__dropzone-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1d4ed8;
+   }
+
+   &__dropzone-subtitle {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: #2563eb;
+   }
+}
+</style>

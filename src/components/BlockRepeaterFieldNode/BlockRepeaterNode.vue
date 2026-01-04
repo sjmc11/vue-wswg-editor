@@ -1,55 +1,66 @@
 <template>
    <div class="repeater-field">
-      <div v-if="fieldValue.length === 0" class="empty-state bg-zinc-50 px-4 py-5 text-center text-sm text-neutral-500">
-         <p class="underline underline-offset-2">No items yet.</p>
+      <div v-if="fieldValue.length === 0" class="empty-state">
+         <p class="empty-state__text">No items yet.</p>
          <button
             v-if="editable"
             :disabled="!!(fieldConfig.maxItems && fieldValue.length >= fieldConfig.maxItems)"
-            class="mx-auto mt-4 flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-sm text-blue-500 transition-all duration-200 hover:bg-blue-100 hover:text-blue-700"
+            class="repeater-field__add-btn"
             @click="addItem"
          >
             <span>Add item</span>
             <span>+</span>
          </button>
-         <p v-else class="text-sm text-neutral-500">Enter edit mode to add items.</p>
+         <p v-else class="empty-state__help-text">Enter edit mode to add items.</p>
       </div>
 
-      <div v-else class="repeater-items space-y-2">
+      <div v-else class="repeater-items">
          <div
             v-for="(item, index) in fieldValue"
             :key="`${fieldName}-item-${index}`"
-            class="repeater-item overflow-hidden rounded-lg border border-gray-300 bg-white hover:border-zinc-300 hover:shadow-sm"
+            class="repeater-item"
             :class="{ 'is-open': openRepeaterItems.includes(item.id) }"
          >
-            <div class="repeater-item-header flex items-center gap-2 bg-zinc-50 p-3">
-               <button
-                  class="text-zinc-500 hover:text-zinc-700"
-                  title="Toggle item"
-                  @click="toggleRepeaterItem(item.id)"
-               >
-                  <ChevronDownIcon v-if="!openRepeaterItems.includes(item.id)" class="size-4" />
-                  <ChevronUpIcon v-else class="size-4" />
+            <div class="repeater-item-header">
+               <button class="repeater-item-header__toggle" title="Toggle item" @click="toggleRepeaterItem(item.id)">
+                  <ChevronDownIcon v-if="!openRepeaterItems.includes(item.id)" class="repeater-item-header__icon" />
+                  <ChevronUpIcon v-else class="repeater-item-header__icon" />
                </button>
-               <h4 class="mr-auto text-sm font-medium text-gray-700">
+               <h4 class="repeater-item-header__title">
                   <span v-if="fieldConfig.repeaterFieldLabel">
                      {{ item[fieldConfig.repeaterFieldLabel] || `Item ${index + 1}` }}
                   </span>
                   <span v-else> Item {{ index + 1 }} </span>
                </h4>
-               <div v-if="editable" class="flex items-center gap-2">
-                  <button v-if="index > 0" :disabled="!editable" title="Move item up" @click="moveItemUp(index)">
-                     <BarsArrowUpIcon class="size-4" />
+               <div v-if="editable" class="repeater-item-header__actions">
+                  <button
+                     v-if="index > 0"
+                     :disabled="!editable"
+                     class="repeater-item-header__action-btn"
+                     title="Move item up"
+                     @click="moveItemUp(index)"
+                  >
+                     <BarsArrowUpIcon class="repeater-item-header__action-icon" />
                   </button>
-                  <button v-if="index < fieldValue.length - 1" title="Move item down" @click="moveItemDown(index)">
-                     <BarsArrowDownIcon class="size-4" />
+                  <button
+                     v-if="index < fieldValue.length - 1"
+                     class="repeater-item-header__action-btn"
+                     title="Move item down"
+                     @click="moveItemDown(index)"
+                  >
+                     <BarsArrowDownIcon class="repeater-item-header__action-icon" />
                   </button>
-                  <button class="text-red-600 hover:text-red-700" title="Remove item" @click="removeItem(index)">
-                     <XMarkIcon class="size-4" />
+                  <button
+                     class="repeater-item-header__action-btn repeater-item-header__action-btn--danger"
+                     title="Remove item"
+                     @click="removeItem(index)"
+                  >
+                     <XMarkIcon class="repeater-item-header__action-icon" />
                   </button>
                </div>
             </div>
 
-            <div class="repeater-item-fields flex flex-col gap-3">
+            <div class="repeater-item-fields">
                <template
                   v-for="(subFieldConfig, subFieldName) in fieldConfig.repeaterFields"
                   :key="`${fieldName}-${index}-${subFieldName}`"
@@ -65,29 +76,23 @@
          </div>
       </div>
 
-      <div class="mt-3 flex justify-between gap-2">
-         <div
-            v-if="fieldConfig.minItems && fieldValue.length === fieldConfig.minItems"
-            class="mt-2 text-xs text-amber-600"
-         >
+      <div class="repeater-field__footer">
+         <div v-if="fieldConfig.minItems && fieldValue.length === fieldConfig.minItems" class="repeater-field__warning">
             Minimum {{ fieldConfig.minItems }} item{{ fieldConfig.minItems > 1 ? "s" : "" }} required
          </div>
-         <div
-            v-if="fieldConfig.maxItems && fieldValue.length >= fieldConfig.maxItems"
-            class="mt-2 text-xs text-amber-600"
-         >
+         <div v-if="fieldConfig.maxItems && fieldValue.length >= fieldConfig.maxItems" class="repeater-field__warning">
             Maximum {{ fieldConfig.maxItems }} item{{ fieldConfig.maxItems > 1 ? "s" : "" }} allowed
          </div>
 
          <button
             v-if="editable && fieldValue.length"
             :disabled="canAddItem"
-            class="ml-auto mt-1 flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-sm text-blue-500 transition-all duration-200 hover:bg-blue-100 hover:text-blue-700"
-            :class="{ 'cursor-not-allowed opacity-50': canAddItem }"
+            class="repeater-field__add-btn"
+            :class="{ 'repeater-field__add-btn--disabled': canAddItem }"
             @click="addItem"
          >
             <span>Add item</span>
-            <PlusIcon class="size-4" />
+            <PlusIcon class="repeater-field__add-icon" />
          </button>
       </div>
    </div>
@@ -200,15 +205,100 @@ const canAddItem = computed(() => {
 <style scoped lang="scss">
 .repeater-field {
    width: 100%;
+
+   &__add-btn {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+      margin-left: auto;
+      margin-top: 0.25rem;
+      padding: 0.375rem 0.625rem;
+      font-size: 0.875rem;
+      color: #3b82f6;
+      cursor: pointer;
+      border: 1px solid #bfdbfe;
+      border-radius: 0.375rem;
+      background-color: #eff6ff;
+      transition: all 0.2s ease-in-out;
+
+      &:hover:not(:disabled) {
+         color: #1d4ed8;
+         background-color: #dbeafe;
+      }
+
+      &--disabled {
+         cursor: not-allowed;
+         opacity: 0.5;
+      }
+   }
+
+   &__add-icon {
+      width: 1rem;
+      height: 1rem;
+   }
+
+   &__footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+   }
+
+   &__warning {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: #d97706;
+   }
 }
 
 .empty-state {
+   padding: 1.25rem 1rem;
+   font-size: 0.875rem;
+   color: #737373;
+   text-align: center;
+   background-color: #fafafa;
    border: 2px dashed #e5e7eb;
    border-radius: 0.5rem;
+
+   &__text {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+   }
+
+   .repeater-field__add-btn {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 1rem;
+   }
+
+   &__help-text {
+      font-size: 0.875rem;
+      color: #737373;
+   }
+}
+
+.repeater-items {
+   display: flex;
+   flex-direction: column;
+   gap: 0.5rem;
 }
 
 .repeater-item {
+   overflow: hidden;
+   border: 1px solid #d1d5db;
+   border-radius: 0.5rem;
+   background-color: #fff;
+   transition: all 0.15s ease-in-out;
+
+   &:hover {
+      border-color: #d4d4d8;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
+   }
+
    .repeater-item-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
       height: 0;
       overflow: hidden;
    }
@@ -219,6 +309,65 @@ const canAddItem = computed(() => {
          padding: 1rem;
          border-top: 1px solid #e5e7eb;
       }
+   }
+}
+
+.repeater-item-header {
+   display: flex;
+   gap: 0.5rem;
+   align-items: center;
+   padding: 0.75rem;
+   background-color: #fafafa;
+
+   &__toggle {
+      color: #71717a;
+      cursor: pointer;
+      transition: color 0.15s ease-in-out;
+
+      &:hover {
+         color: #3f3f46;
+      }
+   }
+
+   &__icon {
+      width: 1rem;
+      height: 1rem;
+   }
+
+   &__title {
+      margin-right: auto;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+   }
+
+   &__actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+   }
+
+   &__action-btn {
+      color: #71717a;
+      cursor: pointer;
+      transition: color 0.15s ease-in-out;
+
+      &:hover {
+         color: #3f3f46;
+      }
+
+      &--danger {
+         color: #dc2626;
+
+         &:hover {
+            color: #b91c1c;
+         }
+      }
+   }
+
+   &__action-icon {
+      width: 1rem;
+      height: 1rem;
    }
 }
 </style>

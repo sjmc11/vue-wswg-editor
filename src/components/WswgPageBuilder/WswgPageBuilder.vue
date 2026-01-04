@@ -1,17 +1,24 @@
 <template>
    <div class="wswg-page-builder" :class="{ 'settings-open': showPageSettings }">
       <slot v-if="loading || themeLoading" name="loading">
-         <div class="wswg-page-builder-loading flex h-full flex-col items-center justify-center gap-4">
+         <div class="wswg-page-builder-loading">
             <svg
-               class="mx-auto size-8 animate-spin text-blue-600"
+               class="wswg-page-builder-loading__spinner"
                xmlns="http://www.w3.org/2000/svg"
                fill="none"
                viewBox="0 0 24 24"
             >
-               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+               <circle
+                  class="wswg-page-builder-loading__spinner-circle"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+               ></circle>
 
                <path
-                  class="opacity-75"
+                  class="wswg-page-builder-loading__spinner-path"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                ></path>
@@ -22,12 +29,15 @@
       <!-- WYSIWYG editor -->
       <div v-else class="wswg-page-builder-body">
          <!-- Page preview -->
-         <div class="wswg-page-builder-preview overflow-y-auto">
+         <div class="wswg-page-builder-preview">
             <div
                id="page-preview-container"
-               class="mx-auto flex flex-col overflow-hidden rounded-lg bg-white transition-all duration-300"
+               class="wswg-page-builder-preview__container"
                style="height: -webkit-fill-available"
-               :class="{ 'w-full': editorViewport === 'desktop', 'w-96': editorViewport === 'mobile' }"
+               :class="{
+                  'wswg-page-builder-preview__container--desktop': editorViewport === 'desktop',
+                  'wswg-page-builder-preview__container--mobile': editorViewport === 'mobile',
+               }"
             >
                <BrowserNavigation v-if="showBrowserBar" class="browser-navigation-bar" :url="url" />
                <IframePreview
@@ -54,11 +64,7 @@
          <ResizeHandle @sidebar-width="handleSidebarWidth" />
 
          <!-- Sidebar -->
-         <div
-            id="page-builder-sidebar"
-            class="page-builder-sidebar-wrapper bg-white"
-            :style="{ width: sidebarWidth + 'px' }"
-         >
+         <div id="page-builder-sidebar" class="page-builder-sidebar-wrapper" :style="{ width: sidebarWidth + 'px' }">
             <PageBuilderSidebar
                v-model="pageData"
                v-model:activeBlock="activeBlock"
@@ -342,8 +348,28 @@ $editor-background-color: #6a6a6a;
 
    &-loading {
       display: flex;
+      height: 100%;
+      flex-direction: column;
+      gap: 1rem;
       align-items: center;
       justify-content: center;
+
+      &__spinner {
+         width: 2rem;
+         height: 2rem;
+         margin-left: auto;
+         margin-right: auto;
+         color: #2563eb;
+         animation: spin 1s linear infinite;
+      }
+
+      &__spinner-circle {
+         opacity: 0.25;
+      }
+
+      &__spinner-path {
+         opacity: 0.75;
+      }
    }
 
    &-body {
@@ -362,6 +388,26 @@ $editor-background-color: #6a6a6a;
       height: -webkit-fill-available;
       min-height: 0;
       padding: 1.5rem;
+      overflow-y: auto;
+
+      &__container {
+         display: flex;
+         flex-direction: column;
+         margin-left: auto;
+         margin-right: auto;
+         overflow: hidden;
+         background-color: #fff;
+         border-radius: 0.5rem;
+         transition: all 0.3s ease-in-out;
+
+         &--desktop {
+            width: 100%;
+         }
+
+         &--mobile {
+            width: 24rem;
+         }
+      }
    }
 
    .page-builder-sidebar-wrapper {
@@ -369,7 +415,17 @@ $editor-background-color: #6a6a6a;
       top: 0;
       z-index: 12;
       height: var(--editor-height);
+      background-color: #fff;
       overflow-y: auto;
+   }
+}
+
+@keyframes spin {
+   from {
+      transform: rotate(0deg);
+   }
+   to {
+      transform: rotate(360deg);
    }
 }
 </style>

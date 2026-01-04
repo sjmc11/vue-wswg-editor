@@ -1,63 +1,76 @@
 <template>
    <!-- Control bar -->
-   <div class="flex divide-x divide-gray-300 border-b border-gray-300">
+   <div class="toolbar">
       <slot name="default">
          <!-- no default toolbar content -->
       </slot>
 
-      <!-- Desktop / Mobile view toggle -->
-      <div v-if="hasPageSettings" class="ml-auto inline-flex gap-2 px-5 py-2.5">
+      <!-- Page settings toggle -->
+      <div v-if="hasPageSettings" class="toolbar__group toolbar__group--end">
          <button
-            class="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-xs"
-            :class="
-               showPageSettings
-                  ? 'bg-blue-50 text-blue-700 border-blue-800/20'
-                  : 'bg-zinc-50 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900'
-            "
+            class="wswg-btn"
+            :class="showPageSettings ? 'wswg-btn--active' : 'wswg-btn--secondary'"
             title="Page settings"
             @click="
                showPageSettings = !showPageSettings;
                activeBlock = null;
             "
          >
-            <Cog6ToothIcon class="size-4" />
+            <Cog6ToothIcon class="wswg-icon--sm" />
          </button>
       </div>
-      <div class="inline-flex gap-2 px-5 py-2.5">
+
+      <!-- Desktop / Mobile view toggle -->
+      <div class="toolbar__group">
          <button
-            class="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-xs"
-            :class="
-               editorViewport === 'mobile'
-                  ? 'bg-blue-50 text-blue-700 border-blue-800/20'
-                  : 'bg-zinc-50 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900'
-            "
+            class="wswg-btn"
+            :class="editorViewport === 'mobile' ? 'wswg-btn--active' : 'wswg-btn--secondary'"
             title="Mobile view"
             @click="editorViewport = 'mobile'"
          >
-            <DevicePhoneMobileIcon class="size-4" />
+            <DevicePhoneMobileIcon class="wswg-icon--sm" />
          </button>
          <button
-            class="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-xs"
-            :class="
-               editorViewport === 'desktop'
-                  ? 'bg-blue-50 text-blue-700 border-blue-800/20'
-                  : 'bg-zinc-50 text-zinc-500 hover:border-zinc-400 hover:text-zinc-900'
-            "
+            class="wswg-btn"
+            :class="editorViewport === 'desktop' ? 'wswg-btn--active' : 'wswg-btn--secondary'"
             title="Desktop view"
             @click="editorViewport = 'desktop'"
          >
-            <ComputerDesktopIcon class="size-4" />
+            <ComputerDesktopIcon class="wswg-icon--sm" />
          </button>
       </div>
    </div>
 </template>
+
 <script setup lang="ts">
+import { ComputerDesktopIcon, DevicePhoneMobileIcon, Cog6ToothIcon } from "@heroicons/vue/24/outline";
+
 const editorViewport = defineModel<"desktop" | "mobile">("editorViewport");
 const activeBlock = defineModel<any>("activeBlock");
 const showPageSettings = defineModel<boolean>("showPageSettings");
-import { ComputerDesktopIcon, DevicePhoneMobileIcon, Cog6ToothIcon } from "@heroicons/vue/24/outline";
 
 defineProps<{
    hasPageSettings: boolean;
 }>();
 </script>
+
+<style scoped lang="scss">
+.toolbar {
+   display: flex;
+   border-bottom: 1px solid #d1d5db;
+
+   &__group {
+      display: inline-flex;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+
+      &:not(:last-child) {
+         border-right: 1px solid #d1d5db;
+      }
+
+      &--end {
+         margin-left: auto;
+      }
+   }
+}
+</style>

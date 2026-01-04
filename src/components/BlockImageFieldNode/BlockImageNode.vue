@@ -1,9 +1,9 @@
 <template>
-   <div class="image-upload-field mb-2">
+   <div class="image-upload-field">
       <!-- Image Preview with Upload Area (Compact Layout) -->
       <div
          v-if="imageUrl && editable"
-         class="flex gap-2"
+         class="image-upload-field__preview-container"
          @dragover.prevent="handleDragOver"
          @dragleave.prevent="handleDragLeave"
          @drop.prevent="handleDrop"
@@ -19,21 +19,16 @@
          />
 
          <!-- Thumbnail Preview -->
-         <div class="relative shrink-0">
-            <img :src="imageUrl" alt="Uploaded image" class="size-16 rounded border border-gray-300 object-cover" />
-            <button
-               type="button"
-               class="absolute -right-1 -top-1 rounded-full bg-red-500 p-0.5 text-white shadow-sm hover:bg-red-600"
-               title="Remove image"
-               @click.stop="removeImage"
-            >
+         <div class="image-upload-field__thumbnail">
+            <img :src="imageUrl" alt="Uploaded image" class="image-upload-field__thumbnail-img" />
+            <button type="button" class="image-upload-field__remove-btn" title="Remove image" @click.stop="removeImage">
                <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="2.5"
                   stroke="currentColor"
-                  class="size-3"
+                  class="image-upload-field__remove-icon"
                >
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                </svg>
@@ -43,25 +38,24 @@
          <!-- Upload Button -->
          <button
             type="button"
-            :class="[
-               'flex-1rounded w-full rounded border px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors',
-               isUploading && 'pointer-events-none opacity-50',
-               isDragging && 'border-blue-500 bg-blue-50',
-               !isDragging && 'border-gray-300 bg-white hover:bg-gray-50',
-            ]"
+            class="image-upload-field__replace-btn"
+            :class="{
+               'image-upload-field__replace-btn--uploading': isUploading,
+               'image-upload-field__replace-btn--dragging': isDragging,
+            }"
             @click="triggerFileInput"
             @dragover.prevent="handleDragOver"
             @dragleave.prevent="handleDragLeave"
             @drop.prevent="handleDrop"
          >
-            <span v-if="!isUploading" class="flex items-center justify-center gap-1.5">
+            <span v-if="!isUploading" class="image-upload-field__replace-content">
                <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-3.5"
+                  class="image-upload-field__replace-icon"
                >
                   <path
                      stroke-linecap="round"
@@ -71,16 +65,23 @@
                </svg>
                Replace image
             </span>
-            <span v-else class="flex items-center justify-center gap-1.5">
+            <span v-else class="image-upload-field__replace-content">
                <svg
-                  class="size-3.5 animate-spin text-blue-500"
+                  class="image-upload-field__spinner"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                >
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <circle
+                     class="image-upload-field__spinner-circle"
+                     cx="12"
+                     cy="12"
+                     r="10"
+                     stroke="currentColor"
+                     stroke-width="4"
+                  ></circle>
                   <path
-                     class="opacity-75"
+                     class="image-upload-field__spinner-path"
                      fill="currentColor"
                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
@@ -93,13 +94,11 @@
       <!-- Upload Area (No Image) -->
       <div
          v-else-if="editable"
-         :class="[
-            'relative cursor-pointer rounded border border-dashed transition-colors',
-            isDragging
-               ? 'border-blue-500 bg-blue-50'
-               : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100',
-            isUploading && 'pointer-events-none opacity-50',
-         ]"
+         class="image-upload-field__upload-area"
+         :class="{
+            'image-upload-field__upload-area--dragging': isDragging,
+            'image-upload-field__upload-area--uploading': isUploading,
+         }"
          @click="triggerFileInput"
          @dragover.prevent="handleDragOver"
          @dragleave.prevent="handleDragLeave"
@@ -114,7 +113,7 @@
             @change="handleFileSelect"
          />
 
-         <div class="flex items-center justify-center gap-2 p-3">
+         <div class="image-upload-field__upload-content">
             <!-- Upload Icon -->
             <svg
                v-if="!isUploading"
@@ -123,7 +122,7 @@
                viewBox="0 0 24 24"
                stroke-width="1.5"
                stroke="currentColor"
-               class="size-4 text-gray-400"
+               class="image-upload-field__upload-icon"
             >
                <path
                   stroke-linecap="round"
@@ -135,34 +134,43 @@
             <!-- Loading Spinner -->
             <svg
                v-else
-               class="size-4 animate-spin text-blue-500"
+               class="image-upload-field__spinner"
                xmlns="http://www.w3.org/2000/svg"
                fill="none"
                viewBox="0 0 24 24"
             >
-               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+               <circle
+                  class="image-upload-field__spinner-circle"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+               ></circle>
                <path
-                  class="opacity-75"
+                  class="image-upload-field__spinner-path"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                ></path>
             </svg>
 
             <!-- Upload Text -->
-            <span v-if="!isUploading" class="text-xs font-medium text-gray-700">Click to upload image</span>
-            <span v-else class="text-xs font-medium text-blue-600">Uploading...</span>
+            <span v-if="!isUploading" class="image-upload-field__upload-text">Click to upload image</span>
+            <span v-else class="image-upload-field__upload-text image-upload-field__upload-text--uploading"
+               >Uploading...</span
+            >
          </div>
       </div>
 
       <!-- Read-only display -->
-      <div v-else-if="imageUrl" class="flex items-center gap-2">
-         <img :src="imageUrl" alt="Image" class="size-16 rounded border border-gray-300 object-cover" />
-         <span class="text-xs text-gray-500">Image uploaded</span>
+      <div v-else-if="imageUrl" class="image-upload-field__readonly">
+         <img :src="imageUrl" alt="Image" class="image-upload-field__readonly-img" />
+         <span class="image-upload-field__readonly-text">Image uploaded</span>
       </div>
-      <div v-else class="rounded border border-gray-200 bg-gray-50 p-2 text-center text-xs text-gray-400">No image</div>
+      <div v-else class="image-upload-field__empty">No image</div>
 
       <!-- Error Message -->
-      <div v-if="errorMessage" class="mt-1.5 rounded bg-red-50 px-2 py-1 text-xs text-red-600">
+      <div v-if="errorMessage" class="image-upload-field__error">
          {{ errorMessage }}
       </div>
    </div>
@@ -366,8 +374,216 @@ function removeImage() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .image-upload-field {
    width: 100%;
+   margin-bottom: 0.5rem;
+
+   &__preview-container {
+      display: flex;
+      gap: 0.5rem;
+   }
+
+   &__thumbnail {
+      position: relative;
+      flex-shrink: 0;
+   }
+
+   &__thumbnail-img {
+      width: 4rem;
+      height: 4rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      object-fit: cover;
+   }
+
+   &__remove-btn {
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      padding: 0.125rem;
+      color: #fff;
+      cursor: pointer;
+      background-color: #ef4444;
+      border-radius: 9999px;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
+      transition: background-color 0.15s ease-in-out;
+
+      &:hover {
+         background-color: #dc2626;
+      }
+   }
+
+   &__remove-icon {
+      width: 0.75rem;
+      height: 0.75rem;
+   }
+
+   &__replace-btn {
+      display: flex;
+      flex: 1 1 0%;
+      width: 100%;
+      gap: 0.375rem;
+      align-items: center;
+      justify-content: center;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      background-color: #fff;
+      transition: all 0.15s ease-in-out;
+
+      &--uploading {
+         pointer-events: none;
+         opacity: 0.5;
+      }
+
+      &--dragging {
+         border-color: #3b82f6;
+         background-color: #eff6ff;
+      }
+
+      &:not(&--dragging):hover {
+         background-color: #f9fafb;
+      }
+   }
+
+   &__replace-content {
+      display: flex;
+      gap: 0.375rem;
+      align-items: center;
+      justify-content: center;
+   }
+
+   &__replace-icon {
+      width: 0.875rem;
+      height: 0.875rem;
+   }
+
+   &__upload-area {
+      position: relative;
+      cursor: pointer;
+      border: 1px dashed #d1d5db;
+      border-radius: 0.25rem;
+      background-color: #f9fafb;
+      transition: all 0.15s ease-in-out;
+
+      &--dragging {
+         border-color: #3b82f6;
+         background-color: #eff6ff;
+      }
+
+      &:not(&--dragging):hover {
+         border-color: #9ca3af;
+         background-color: #f3f4f6;
+      }
+
+      &--uploading {
+         pointer-events: none;
+         opacity: 0.5;
+      }
+   }
+
+   &__upload-content {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem;
+   }
+
+   &__upload-icon {
+      width: 1rem;
+      height: 1rem;
+      color: #9ca3af;
+   }
+
+   &__upload-text {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #374151;
+
+      &--uploading {
+         color: #2563eb;
+      }
+   }
+
+   &__spinner {
+      width: 1rem;
+      height: 1rem;
+      color: #3b82f6;
+      animation: spin 1s linear infinite;
+   }
+
+   &__spinner-circle {
+      opacity: 0.25;
+   }
+
+   &__spinner-path {
+      opacity: 0.75;
+   }
+
+   &__readonly {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+   }
+
+   &__readonly-img {
+      width: 4rem;
+      height: 4rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      object-fit: cover;
+   }
+
+   &__readonly-text {
+      font-size: 0.75rem;
+      color: #6b7280;
+   }
+
+   &__empty {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.25rem;
+      background-color: #f9fafb;
+   }
+
+   &__error {
+      margin-top: 0.375rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      color: #dc2626;
+      background-color: #fef2f2;
+      border-radius: 0.25rem;
+   }
+}
+
+// Screen reader only utility
+.sr-only {
+   position: absolute;
+   width: 1px;
+   height: 1px;
+   padding: 0;
+   margin: -1px;
+   overflow: hidden;
+   clip: rect(0, 0, 0, 0);
+   white-space: nowrap;
+   border-width: 0;
+}
+
+@keyframes spin {
+   from {
+      transform: rotate(0deg);
+   }
+   to {
+      transform: rotate(360deg);
+   }
 }
 </style>

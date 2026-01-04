@@ -179,10 +179,6 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .iframe-preview-container {
-   // position: relative;
-   // width: 100%;
-   // overflow: hidden;
-   // background-color: #ededed;
    height: -webkit-fill-available;
 
    &.mobile-viewport {

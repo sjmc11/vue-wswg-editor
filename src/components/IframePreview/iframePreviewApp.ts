@@ -14,6 +14,7 @@
 import { createApp, ref, watch, h, type App } from "vue";
 import EditorPageRenderer from "../EditorPageRenderer/EditorPageRenderer.vue";
 import type { Block } from "../../types/Block";
+import "./iframePreviewApp.scss";
 
 /**
  * Get the URL of this module
@@ -221,19 +222,19 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                });
             } else {
                // Show loading state while PageRenderer loads blocks
-               return h("div", { class: "bg-white px-5 py-12 md:py-20" }, [
-                  h("div", { class: "mx-auto max-w-md pb-7 text-center" }, [
+               return h("div", { class: "iframe-preview-loading" }, [
+                  h("div", { class: "iframe-preview-loading__container" }, [
                      h(
                         "svg",
                         {
-                           class: "mx-auto size-8 animate-spin text-blue-600",
+                           class: "iframe-preview-loading__spinner",
                            xmlns: "http://www.w3.org/2000/svg",
                            fill: "none",
                            viewBox: "0 0 24 24",
                         },
                         [
                            h("circle", {
-                              class: "opacity-25",
+                              class: "iframe-preview-loading__spinner-circle",
                               cx: "12",
                               cy: "12",
                               r: "10",
@@ -241,13 +242,13 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                               "stroke-width": "4",
                            }),
                            h("path", {
-                              class: "opacity-75",
+                              class: "iframe-preview-loading__spinner-path",
                               fill: "currentColor",
                               d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z",
                            }),
                         ]
                      ),
-                     h("span", { class: "mt-4 text-gray-700" }, "Loading preview..."),
+                     h("span", { class: "iframe-preview-loading__text" }, "Loading preview..."),
                   ]),
                ]);
             }

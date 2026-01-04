@@ -1,26 +1,16 @@
 <template>
    <div class="block-browser">
-      <div class="block-browser-header border-b border-gray-300 bg-white px-5 py-3">
-         <input
-            v-model="blockSearch"
-            type="text"
-            placeholder="Search blocks"
-            class="w-full rounded-md border border-gray-300 p-2"
-         />
+      <div class="block-browser__header">
+         <input v-model="blockSearch" type="text" placeholder="Search blocks" class="block-browser__search" />
       </div>
-      <div v-if="!blockCount" class="p-5 text-center text-sm text-zinc-500">
+      <div v-if="!blockCount" class="block-browser__empty">
          <p>Create your first block to get started.</p>
-         <p class="mt-3">
-            <a
-               href="https://github.com/sano-io/page-builder/tree/main/blocks"
-               target="_blank"
-               class="text-blue-600 underline underline-offset-2 hover:text-blue-800"
-               >How to create a block</a
-            >
+         <p class="block-browser__empty-link">
+            <a href="https://github.com/sano-io/page-builder/tree/main/blocks" target="_blank">How to create a block</a>
          </p>
       </div>
-      <div v-else-if="!filteredBlocks.length" class="p-5 text-center text-sm text-zinc-500">No blocks found</div>
-      <div v-else id="available-blocks-list" class="available-blocks-grid">
+      <div v-else-if="!filteredBlocks.length" class="block-browser__empty">No blocks found</div>
+      <div v-else id="available-blocks-list" class="block-browser__grid">
          <AddBlockItem v-for="block in filteredBlocks" :key="block.type" :block="block" />
       </div>
    </div>
@@ -73,26 +63,60 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .block-browser {
    container-type: inline-size;
-}
 
-.available-blocks-grid {
-   display: grid;
-   grid-template-columns: 1fr;
-   gap: 0.75rem;
-   padding: 1.25rem;
+   &__header {
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid #d1d5db;
+      background-color: #fff;
+   }
+
+   &__search {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+   }
+
+   &__empty {
+      padding: 1.25rem;
+      font-size: 0.875rem;
+      color: #71717a;
+      text-align: center;
+   }
+
+   &__empty-link {
+      margin-top: 0.75rem;
+
+      a {
+         color: #2563eb;
+         text-decoration: underline;
+         text-underline-offset: 2px;
+
+         &:hover {
+            color: #1e40af;
+         }
+      }
+   }
+
+   &__grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding: 1.25rem;
+   }
 }
 
 @container (min-width: 360px) {
-   .available-blocks-grid {
+   .block-browser__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
    }
 }
 
 @container (min-width: 560px) {
-   .available-blocks-grid {
+   .block-browser__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
    }
 }

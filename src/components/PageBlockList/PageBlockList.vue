@@ -1,24 +1,22 @@
 <template>
-   <div id="page-blocks-list" class="flex flex-col gap-1 p-5">
+   <div id="page-blocks-list" class="page-blocks-list">
       <template v-if="pageBlocks?.length">
          <div
             v-for="block in pageBlocks"
             :key="block.id"
             data-prevent-drop="true"
-            :class="{ 'bg-blue-100 text-blue-600': hoveredBlockId === block.id }"
-            class="block-item -mx-2.5 flex cursor-pointer items-center gap-1 rounded-md p-2.5 text-sm text-neutral-900"
+            :class="{ 'block-item--hovered': hoveredBlockId === block.id }"
+            class="block-item"
             @mouseenter="setHoveredBlockId(block.id)"
             @mouseleave="setHoveredBlockId(null)"
             @click="emit('block-click', block)"
          >
             <p>{{ block.label || block.type }}</p>
-            <span v-if="!block.__file" class="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500"
-               >Not registered</span
-            >
+            <span v-if="!block.__file" class="block-item__badge">Not registered</span>
          </div>
       </template>
       <template v-else>
-         <p class="bg-zinc-100 p-5 text-center text-sm text-zinc-500">No blocks added yet.</p>
+         <p class="page-blocks-list__empty">No blocks added yet.</p>
       </template>
    </div>
 </template>
@@ -95,3 +93,48 @@ onMounted(() => {
    initSortable();
 });
 </script>
+
+<style scoped lang="scss">
+.page-blocks-list {
+   display: flex;
+   flex-direction: column;
+   gap: 0.25rem;
+   padding: 1.25rem;
+}
+
+.block-item {
+   display: flex;
+   align-items: center;
+   gap: 0.25rem;
+   margin-left: -0.625rem;
+   margin-right: -0.625rem;
+   padding: 0.625rem;
+   border-radius: 0.375rem;
+   cursor: pointer;
+   font-size: 0.875rem;
+   color: #171717;
+
+   &--hovered {
+      background-color: #dbeafe;
+      color: #2563eb;
+   }
+
+   &__badge {
+      margin-left: auto;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      background-color: #f4f4f5;
+      font-size: 0.75rem;
+      color: #71717a;
+   }
+}
+
+.page-blocks-list__empty {
+   padding: 1.25rem;
+   border-radius: 0.375rem;
+   background-color: #f4f4f5;
+   text-align: center;
+   font-size: 0.875rem;
+   color: #71717a;
+}
+</style>

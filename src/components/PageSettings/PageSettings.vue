@@ -1,29 +1,20 @@
 <template>
    <div class="page-settings">
-      <div class="flex items-start justify-between border-b border-gray-300 bg-white p-5">
+      <div class="page-settings__header">
          <div>
-            <button
-               class="cursor-pointer text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
-               @click="emit('close')"
-            >
-               ← Back
-            </button>
-            <h4 class="mt-1 text-lg font-bold">Page settings</h4>
+            <button class="page-settings__back-btn" @click="emit('close')">← Back</button>
+            <h4 class="page-settings__title">Page settings</h4>
          </div>
       </div>
-      <div v-if="availableLayouts.length > 1" class="border-b border-gray-300 p-5">
+      <div v-if="availableLayouts.length > 1" class="page-settings__section">
          <!-- Page layout -->
          <div class="editor-field-node">
             <!-- Label -->
-            <div class="mb-1.5 flex items-center gap-1.5">
-               <label class="mr-auto font-medium first-letter:uppercase">Page layout</label>
+            <div class="page-settings__field-label">
+               <label>Page layout</label>
             </div>
 
-            <select
-               v-model="pageData[settingsKey].layout"
-               class="form-control w-full rounded-md border border-gray-300 p-2"
-               @change="getLayoutSettings"
-            >
+            <select v-model="pageData[settingsKey].layout" class="page-settings__select" @change="getLayoutSettings">
                <option v-for="layout in availableLayouts" :key="`layout-${layout.__name}`" :value="layout.__name">
                   {{ layout.label }}
                </option>
@@ -87,12 +78,65 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-select.form-control {
-   padding-right: 32px;
-   appearance: none;
-   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // down chevron
-   background-repeat: no-repeat;
-   background-position: right 8px center;
-   background-size: 20px;
+.page-settings {
+   &__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1.25rem;
+      border-bottom: 1px solid #d1d5db;
+      background-color: #ffffff;
+   }
+
+   &__back-btn {
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: #71717a;
+
+      &:hover {
+         color: #18181b;
+         text-decoration: underline;
+      }
+   }
+
+   &__title {
+      margin-top: 0.25rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+   }
+
+   &__section {
+      padding: 1.25rem;
+      border-bottom: 1px solid #d1d5db;
+   }
+
+   &__field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      margin-bottom: 0.375rem;
+
+      label {
+         margin-right: auto;
+         font-weight: 500;
+
+         &::first-letter {
+            text-transform: uppercase;
+         }
+      }
+   }
+
+   &__select {
+      width: 100%;
+      padding: 0.5rem;
+      padding-right: 32px;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 20px;
+   }
 }
 </style>

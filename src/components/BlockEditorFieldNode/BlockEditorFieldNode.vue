@@ -1,27 +1,23 @@
 <template>
    <!-- Field -->
    <div class="editor-field-node">
-      <div class="mb-1 flex items-center gap-1.5">
+      <div class="editor-field-node__header">
          <!-- Label -->
-         <label class="mr-auto text-sm font-medium first-letter:uppercase">
+         <label class="editor-field-node__label">
             {{ fieldConfig.label || fieldName }}
-            <span v-if="fieldConfig.required" class="prop-required ml-1 text-red-600">*</span>
+            <span v-if="fieldConfig.required" class="editor-field-node__required">*</span>
          </label>
          <!-- Clearable -->
-         <div
-            v-if="canClearFieldValue"
-            class="cursor-pointer rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600"
-            @click="clearFieldValue"
-         >
+         <div v-if="canClearFieldValue" class="editor-field-node__clear-btn" @click="clearFieldValue">
             <span>Clear</span>
          </div>
          <!-- Description -->
          <div
             v-if="fieldConfig.description && fieldConfig.type !== 'info'"
             :title="fieldConfig.description"
-            class="cursor-default"
+            class="editor-field-node__description"
          >
-            <InformationCircleIcon class="size-4 text-zinc-500" />
+            <InformationCircleIcon class="editor-field-node__description-icon" />
          </div>
       </div>
 
@@ -32,7 +28,7 @@
 
       <!-- Generic input (text, number, email, url) -->
       <template v-else-if="['text', 'number', 'email', 'url'].includes(fieldConfig.type)">
-         <input v-model="textFieldValue" class="form-control mb-1" :disabled="!editable" v-bind="fieldConfig" />
+         <input v-model="textFieldValue" class="form-control" :disabled="!editable" v-bind="fieldConfig" />
       </template>
 
       <!-- Text area -->
@@ -55,16 +51,19 @@
       </template>
 
       <!-- Color picker -->
-      <div v-else-if="fieldConfig.type === 'color'" class="flex gap-2">
-         <input v-model="fieldValue" type="color" class="form-control size-10 shrink-0" :disabled="!editable" />
+      <div v-else-if="fieldConfig.type === 'color'" class="editor-field-node__color-picker">
+         <input
+            v-model="fieldValue"
+            type="color"
+            class="form-control editor-field-node__color-input"
+            :disabled="!editable"
+         />
          <input v-model="fieldValue" type="text" class="form-control" :disabled="!editable" />
       </div>
 
       <!-- Range input -->
-      <div v-else-if="fieldConfig.type === 'range'" class="flex items-center gap-2">
-         <span class="rounded-full bg-zinc-100 px-2 py-1 text-sm font-bold text-zinc-600"
-            >{{ fieldValue }}{{ fieldConfig.valueSuffix || "" }}</span
-         >
+      <div v-else-if="fieldConfig.type === 'range'" class="editor-field-node__range">
+         <span class="editor-field-node__range-value">{{ fieldValue }}{{ fieldConfig.valueSuffix || "" }}</span>
          <input
             v-model="fieldValue"
             type="range"
@@ -77,32 +76,29 @@
       </div>
 
       <!-- Checkbox -->
-      <div v-else-if="fieldConfig.type === 'checkbox'" class="form-control flex flex-col gap-2">
+      <div v-else-if="fieldConfig.type === 'checkbox'" class="editor-field-node__checkbox-group">
          <label
             v-for="option in fieldConfig.options"
             :key="`${fieldName}_${option.value}`"
-            class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 p-2"
+            class="editor-field-node__checkbox-label"
          >
             <input
                :id="`${fieldName}_${option.value}`"
                v-model="checkboxValues"
                :value="option.value"
                type="checkbox"
-               class="form-control appearance-none"
+               class="editor-field-node__checkbox-input"
                :disabled="!editable"
             />
-            <span class="text-sm">{{ option.label }}</span>
+            <span class="editor-field-node__checkbox-text">{{ option.label }}</span>
          </label>
       </div>
 
       <!-- Radio -->
-      <div v-else-if="fieldConfig.type === 'radio'" class="form-control flex flex-col gap-2">
+      <div v-else-if="fieldConfig.type === 'radio'" class="editor-field-node__radio-group">
          <div v-for="option in fieldConfig.options" :key="`${fieldName}_${option.value}`">
-            <label
-               :for="`${fieldName}_${option.value}`"
-               class="has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 flex cursor-pointer items-center justify-between gap-4 rounded border border-gray-300 bg-white p-3 text-sm font-medium shadow-sm transition-colors hover:bg-gray-50"
-            >
-               <p class="text-gray-700">{{ option.label }}</p>
+            <label :for="`${fieldName}_${option.value}`" class="editor-field-node__radio-label">
+               <p class="editor-field-node__radio-text">{{ option.label }}</p>
 
                <input
                   :id="`${fieldName}_${option.value}`"
@@ -119,15 +115,15 @@
 
       <!-- Boolean toggle -->
       <template v-else-if="fieldConfig.type === 'boolean'">
-         <label
-            :for="fieldName"
-            class="has-checked:bg-emerald-700 w-13 relative block h-7 cursor-pointer rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-gray-400/75 has-[:checked]:hover:bg-emerald-800"
-         >
-            <input :id="fieldName" v-model="fieldValue" type="checkbox" class="peer sr-only" :disabled="!editable" />
-
-            <span
-               class="absolute inset-y-0 start-0 m-1 size-5 rounded-full bg-white transition-[inset-inline-start] peer-checked:start-6"
-            ></span>
+         <label :for="fieldName" class="editor-field-node__toggle">
+            <input
+               :id="fieldName"
+               v-model="fieldValue"
+               type="checkbox"
+               class="editor-field-node__toggle-input"
+               :disabled="!editable"
+            />
+            <span class="editor-field-node__toggle-handle"></span>
          </label>
       </template>
 
@@ -143,7 +139,7 @@
 
       <!-- Object Input -->
       <div v-else-if="fieldConfig.type === 'object' && fieldConfig.objectFields">
-         <div class="mt-3 border-t border-gray-300 pt-3">
+         <div class="editor-field-node__object-fields">
             <BlockEditorFields
                v-model="objectFieldValue"
                :fields="fieldConfig.objectFields"
@@ -165,8 +161,8 @@
 
       <!-- Info -->
       <template v-else-if="fieldConfig.type === 'info'">
-         <div class="font-base mt-1 rounded-md bg-zinc-100 p-2 text-sm text-zinc-600 md:p-3">
-            <InformationCircleIcon class="float-left mr-1 mt-0.5 inline-block size-4" />
+         <div class="editor-field-node__info">
+            <InformationCircleIcon class="editor-field-node__info-icon" />
             {{ fieldConfig.description }}
          </div>
       </template>
@@ -177,10 +173,7 @@
       </template>
 
       <!-- Validation error message -->
-      <div
-         v-if="validationError && typeof validationError === 'string'"
-         class="rounded-sm bg-red-50 p-2 px-3 text-xs text-red-600"
-      >
+      <div v-if="validationError && typeof validationError === 'string'" class="editor-field-node__error">
          {{ validationError }}
       </div>
    </div>
@@ -335,6 +328,255 @@ watch(
 
 <style scoped lang="scss">
 .editor-field-node {
+   &__header {
+      display: flex;
+      gap: 0.375rem;
+      align-items: center;
+      margin-bottom: 0.25rem;
+   }
+
+   &__label {
+      margin-right: auto;
+      font-size: 0.875rem;
+      font-weight: 500;
+
+      &::first-letter {
+         text-transform: uppercase;
+      }
+   }
+
+   &__required {
+      margin-left: 0.25rem;
+      color: #dc2626;
+   }
+
+   &__clear-btn {
+      padding: 0.125rem 0.5rem;
+      font-size: 0.75rem;
+      color: #52525b;
+      cursor: pointer;
+      background-color: #f4f4f5;
+      border-radius: 9999px;
+      transition: all 0.15s ease-in-out;
+
+      &:hover {
+         color: #52525b;
+         background-color: #e4e4e7;
+      }
+   }
+
+   &__description {
+      cursor: default;
+   }
+
+   &__description-icon {
+      width: 1rem;
+      height: 1rem;
+      color: #71717a;
+   }
+
+   &__color-picker {
+      display: flex;
+      gap: 0.5rem;
+   }
+
+   &__color-input {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+   }
+
+   &__range {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+   }
+
+   &__range-value {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #52525b;
+      background-color: #f4f4f5;
+      border-radius: 9999px;
+   }
+
+   &__checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+   }
+
+   &__checkbox-label {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.5rem;
+      cursor: pointer;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      transition: all 0.15s ease-in-out;
+
+      &:has(input:checked) {
+         background-color: #eff6ff;
+      }
+
+      &:hover input:not(:checked) {
+         border-color: #2563eb;
+      }
+
+      &:has(input:disabled) {
+         cursor: not-allowed;
+         opacity: 0.75;
+      }
+   }
+
+   &__checkbox-input {
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+      appearance: none;
+      border: 1px solid #e0e0e0;
+      border-radius: 0.3125rem;
+
+      &:checked {
+         background-color: #1d4ed8;
+         border-color: #1d4ed8;
+      }
+
+      &:disabled {
+         cursor: not-allowed;
+      }
+   }
+
+   &__checkbox-text {
+      font-size: 0.875rem;
+   }
+
+   &__radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+   }
+
+   &__radio-label {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      background-color: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
+      transition: all 0.15s ease-in-out;
+
+      &:hover {
+         background-color: #f9fafb;
+      }
+
+      &:has(input:checked) {
+         border-color: #2563eb;
+         box-shadow: 0 0 0 1px #2563eb;
+      }
+   }
+
+   &__radio-text {
+      color: #374151;
+   }
+
+   &__toggle {
+      position: relative;
+      display: block;
+      width: 3.25rem;
+      height: 1.75rem;
+      cursor: pointer;
+      background-color: #d1d5db;
+      border-radius: 9999px;
+      transition: background-color 0.2s ease-in-out;
+      -webkit-tap-highlight-color: transparent;
+
+      &:hover {
+         background-color: rgb(156 163 175 / 75%);
+      }
+
+      &:has(input:checked) {
+         background-color: #047857;
+
+         &:hover {
+            background-color: #065f46;
+         }
+      }
+   }
+
+   &__toggle-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+   }
+
+   &__toggle-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin: 0.25rem;
+      background-color: #fff;
+      border-radius: 9999px;
+      transition: left 0.2s ease-in-out;
+
+      .editor-field-node__toggle:has(input:checked) & {
+         left: 1.5rem;
+      }
+   }
+
+   &__object-fields {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #d1d5db;
+   }
+
+   &__info {
+      margin-top: 0.25rem;
+      padding: 0.5rem;
+      font-size: 0.875rem;
+      color: #52525b;
+      background-color: #f4f4f5;
+      border-radius: 0.375rem;
+
+      @media (min-width: 768px) {
+         padding: 0.75rem;
+      }
+   }
+
+   &__info-icon {
+      float: left;
+      width: 1rem;
+      height: 1rem;
+      margin-top: 0.125rem;
+      margin-right: 0.25rem;
+   }
+
+   &__error {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      color: #dc2626;
+      background-color: #fef2f2;
+      border-radius: 0.125rem;
+   }
+
+   // Form control styles
    :deep(.form-control) {
       // Text based inputs
       &:is(input:not([type="checkbox"], [type="radio"]), textarea, select) {
@@ -350,50 +592,11 @@ watch(
          transition: border-color 0.2s;
       }
 
-      // checkbox input
-      label {
-         input[type="checkbox"],
-         input[type="radio"] {
-            width: 16px;
-            height: 16px;
-            padding: 8px;
-            font-size: 14px;
-            appearance: none;
-            cursor: pointer;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-
-            &:checked {
-               @apply bg-blue-700 border-blue-700;
-            }
-         }
-
-         &:has(input[type="checkbox"]:checked, input[type="radio"]:checked) {
-            @apply bg-blue-50;
-         }
-
-         &:hover {
-            input[type="checkbox"]:not(:checked),
-            input[type="radio"]:not(:checked) {
-               @apply border-blue-600;
-            }
-         }
-
-         &:has(input[type="checkbox"]:disabled, input[type="radio"]:disabled) {
-            cursor: not-allowed;
-            opacity: 0.75;
-
-            input {
-               cursor: not-allowed;
-            }
-         }
-      }
-
       // Select input chevron icon
       &:is(select) {
          padding-right: 32px;
          appearance: none;
-         background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); // down chevron
+         background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
          background-repeat: no-repeat;
          background-position: right 8px center;
          background-size: 20px;
@@ -406,7 +609,6 @@ watch(
          padding: 3px;
          cursor: pointer;
          background-color: #fff;
-         border: none;
          border: 1px solid #e0e0e0;
          border-radius: 5px;
       }
@@ -420,6 +622,19 @@ watch(
          background-color: #fff;
          opacity: 0.75;
       }
+   }
+
+   // Screen reader only utility
+   .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
    }
 }
 </style>

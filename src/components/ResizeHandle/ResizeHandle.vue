@@ -1,17 +1,15 @@
 <template>
-   <div class="resize-handle-wrapper group">
+   <div class="resize-handle-wrapper">
       <div
          id="page-builder-resize-handle"
          ref="resizeHandle"
-         class="resize-handle shrink-0 cursor-col-resize transition-colors duration-200"
+         class="resize-handle"
          @mousedown="startResize"
       ></div>
-      <span
-         class="viewport-size absolute right-1 top-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-      >
-         <div class="rounded-sm bg-yellow-400 px-1.5 py-1 font-mono text-xs font-medium text-gray-900">
+      <span class="viewport-size">
+         <span class="viewport-size__badge">
             {{ computedViewportSize }}
-         </div>
+         </span>
       </span>
    </div>
 </template>
@@ -114,14 +112,38 @@ onBeforeUnmount(() => {
    right: 0;
    z-index: 30;
    height: var(--editor-height);
+
+   &:hover .viewport-size {
+      opacity: 1;
+   }
 }
 
 .resize-handle {
+   flex-shrink: 0;
    width: 3px;
    height: var(--editor-height);
    cursor: col-resize;
    background-color: #dbdee0;
    transition: all 0.2s ease-in-out;
+}
+
+.viewport-size {
+   position: absolute;
+   top: 0.25rem;
+   right: 0.25rem;
+   opacity: 0;
+   transition: opacity 0.2s ease-in-out;
+
+   &__badge {
+      display: block;
+      padding: 0.25rem 0.375rem;
+      border-radius: 0.125rem;
+      background-color: #facc15;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #111827;
+   }
 }
 
 .resize-handle:hover {

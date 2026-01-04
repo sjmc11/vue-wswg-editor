@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import pluginVue from "eslint-plugin-vue";
 import vueTsEslintConfig from "@vue/eslint-config-typescript";
-import pluginTailwind from "eslint-plugin-tailwindcss";
 import prettierLint from "@vue/eslint-config-prettier";
 import vitest from "@vitest/eslint-plugin";
 
@@ -22,9 +21,6 @@ export default [
    // Adding Vue and TypeScript config
    ...pluginVue.configs["flat/recommended"],
    ...vueTsEslintConfig(),
-
-   // Tailwind CSS config
-   ...pluginTailwind.configs["flat/recommended"],
 
    // Custom rules
    {
@@ -71,7 +67,6 @@ export default [
          "@typescript-eslint/no-explicit-any": "off",
          "@typescript-eslint/no-unused-vars": ["warn", { args: "none", vars: "all", ignoreRestSiblings: true }],
          "@typescript-eslint/no-unused-expressions": "off",
-         "tailwindcss/no-custom-classname": "off",
       },
    },
 

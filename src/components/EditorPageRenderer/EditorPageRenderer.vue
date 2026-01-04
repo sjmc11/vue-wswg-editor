@@ -50,15 +50,15 @@
             </template>
          </component>
          <!-- No layout found -->
-         <div v-else class="rounded-b-lg bg-white px-5 py-12 md:py-20">
-            <div class="mx-auto max-w-md pb-7 text-center">
+         <div v-else class="page-renderer-wrapper__no-layout">
+            <div class="page-renderer-wrapper__no-layout-content">
                <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="mx-auto size-20 text-gray-400"
+                  class="page-renderer-wrapper__no-layout-icon"
                >
                   <path
                      stroke-linecap="round"
@@ -67,15 +67,15 @@
                   ></path>
                </svg>
 
-               <h2 class="text-2xl font-bold text-gray-900">No layout found</h2>
+               <h2 class="page-renderer-wrapper__no-layout-title">No layout found</h2>
 
-               <p class="mt-4 text-pretty text-gray-700">
+               <p class="page-renderer-wrapper__no-layout-description">
                   Get started by creating your first layout. It only takes a few seconds.
                </p>
 
-               <p class="mt-6 text-sm text-gray-700">
-                  <a href="#" class="underline hover:text-gray-900">Learn how</a> or
-                  <a href="#" class="underline hover:text-gray-900">view examples</a>
+               <p class="page-renderer-wrapper__no-layout-links">
+                  <a href="#" class="page-renderer-wrapper__no-layout-link">Learn how</a> or
+                  <a href="#" class="page-renderer-wrapper__no-layout-link">view examples</a>
                </p>
             </div>
          </div>
@@ -559,6 +559,64 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 @use "../../assets/styles/mixins" as *;
+
+.page-renderer-wrapper {
+   position: relative;
+
+   &__no-layout {
+      padding: 3rem 1.25rem;
+      background-color: #fff;
+      border-radius: 0 0 0.5rem 0.5rem;
+
+      @media (min-width: 768px) {
+         padding-top: 5rem;
+         padding-bottom: 5rem;
+      }
+   }
+
+   &__no-layout-content {
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-bottom: 1.75rem;
+      text-align: center;
+   }
+
+   &__no-layout-icon {
+      width: 5rem;
+      height: 5rem;
+      margin-left: auto;
+      margin-right: auto;
+      color: #9ca3af;
+   }
+
+   &__no-layout-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+   }
+
+   &__no-layout-description {
+      margin-top: 1rem;
+      color: #374151;
+      text-wrap: pretty;
+   }
+
+   &__no-layout-links {
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+      color: #374151;
+   }
+
+   &__no-layout-link {
+      color: #374151;
+      text-decoration: underline;
+
+      &:hover {
+         color: #111827;
+      }
+   }
+}
 
 .block-wrapper {
    @include block-margin-classes;
