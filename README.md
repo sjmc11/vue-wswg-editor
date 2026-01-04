@@ -4,11 +4,13 @@
   <p>A powerful vue3 library for visual page builders</p>
   
   <p>
-    <a href="https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos">Live Demo</a> •
-    <a href="https://sjmc11.github.io/vue-wswg-editor/">Documentation</a> •
-    <a href="https://www.npmjs.com/package/vue-wswg-editor">NPM Package</a> •
-    <a href="https://github.com/sjmc11/vue-wswg-demos/tree/main/src/page-builder/wswg-demo-theme">Demo theme</a> •
-    <a href="https://github.com/sjmc11/vue-wswg-demos">Demo Project</a>
+    <a href="https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos" style="display: inline-block; padding: 0.5rem 1rem; margin: 0.25rem; background-color: #2563eb; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s;">Live Demo</a>
+    <a href="https://sjmc11.github.io/vue-wswg-editor/" style="display: inline-block; padding: 0.5rem 1rem; margin: 0.25rem; background-color: #2563eb; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s;">Documentation</a>
+    <a href="https://www.npmjs.com/package/vue-wswg-editor" style="display: inline-block; padding: 0.5rem 1rem; margin: 0.25rem; background-color: #2563eb; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s;">NPM</a>
+  </p>
+  <p>
+    <a href="https://github.com/sjmc11/vue-wswg-demos" style="display: inline-block; padding: 0.5rem 1rem; margin: 0.25rem; background-color: #1f2937; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s;">Demo Project</a>
+    <a href="https://github.com/sjmc11/vue-wswg-demos/tree/main/src/page-builder/wswg-demo-theme" style="display: inline-block; padding: 0.5rem 1rem; margin: 0.25rem; background-color: #1f2937; color: white; text-decoration: none; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s;">Demo Theme</a>
   </p>
 </div>
 
