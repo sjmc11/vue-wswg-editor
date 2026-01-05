@@ -1,6 +1,6 @@
 {
    "name": "vue-wswg-editor",
-   "version": "0.0.38",
+   "version": "0.0.41",
    "type": "module",
    "main": "./dist/vue-wswg-editor.es.js",
    "module": "./dist/vue-wswg-editor.es.js",
@@ -93,7 +93,10 @@
       "vue-tsc": "^2.2.12",
       "yup": "^1.7.1"
    },
-   "peerDependencies": {
-      "vue": "^3.4.0"
-   }
+  "peerDependencies": {
+     "vue": "^3.4.0"
+  },
+  "overrides": {
+    "sass-embedded": "npm:sass@^1.89.2"
+  }
 }

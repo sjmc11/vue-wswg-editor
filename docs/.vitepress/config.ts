@@ -67,7 +67,7 @@ export default defineConfig({
       socialLinks: [{ icon: "github", link: "https://github.com/sjmc11/vue-wswg-editor" }],
       footer: {
          message: "Released under the MIT License.",
-         copyright: "Copyright © 2025",
+         copyright: "Copyright © 2026",
       },
    },
 });

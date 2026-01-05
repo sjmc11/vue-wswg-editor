@@ -4,7 +4,7 @@ This page provides examples and reference implementations for using vue-wswg-edi
 
 ## Live Demo
 
-Try the library in action with the [Live Demo on StackBlitz](https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos). This interactive demo lets you explore the full capabilities of vue-wswg-editor directly in your browser.
+Try the library in action with the [Live Demo on StackBlitz](https://stackblitz.com/github/sjmc11/vue-wswg-demos?embed=1&view=preview). This interactive demo lets you explore the full capabilities of vue-wswg-editor directly in your browser.
 
 ## Example Theme
 

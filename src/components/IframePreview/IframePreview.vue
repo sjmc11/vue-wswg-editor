@@ -57,7 +57,9 @@ function createIframeSrc(): string {
    // Use the virtual route provided by the vite plugin
    // Pass the module URL as a query parameter for fallback in case the virtual module doesn't work
    const moduleUrlParam = encodeURIComponent(iframeAppModuleUrl);
-   return `${IFRAME_PREVIEW_ROUTE}?moduleUrl=${moduleUrlParam}`;
+   // Use /index.html suffix to ensure the file is served directly in production
+   // In development, the middleware still catches this because it matches startsWith
+   return `${IFRAME_PREVIEW_ROUTE}/index.html?moduleUrl=${moduleUrlParam}`;
 }
 
 // Update iframe content - send pageData to Vue app in iframe

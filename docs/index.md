@@ -14,7 +14,7 @@ hero:
         link: /guide/getting-started
       - theme: alt
         text: Live Demo
-        link: https://stackblitz.com/~/github.com/sjmc11/vue-wswg-demos
+        link: https://stackblitz.com/github/sjmc11/vue-wswg-demos?embed=1&view=preview
       - theme: alt
         text: View on GitHub
         link: https://github.com/sjmc11/vue-wswg-editor
