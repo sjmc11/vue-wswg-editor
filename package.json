@@ -1,6 +1,6 @@
 {
    "name": "vue-wswg-editor",
-   "version": "0.0.41",
+   "version": "0.0.44",
    "type": "module",
    "main": "./dist/vue-wswg-editor.es.js",
    "module": "./dist/vue-wswg-editor.es.js",
@@ -98,5 +98,6 @@
   },
   "overrides": {
     "sass-embedded": "npm:sass@^1.89.2"
-  }
+  },
+  "license": "MIT"
 }

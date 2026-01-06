@@ -572,11 +572,21 @@ import type { EditorFieldConfig, ValidatorFunction, ValidationResult } from "vue
 
 ## License
 
-[Add your license here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+MIT License allows you to:
+
+- ✅ Use the software commercially
+- ✅ Modify the software
+- ✅ Distribute the software
+- ✅ Sublicense the software
+- ✅ Private use
+
+The only requirement is that you include the original copyright and license notice in any copy of the software or substantial portions of the software.
 
 ## Contributing
 
-[Add contributing guidelines here]
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs, feature requests, or improvements you'd like to see.
 
 ## Related Projects
 
