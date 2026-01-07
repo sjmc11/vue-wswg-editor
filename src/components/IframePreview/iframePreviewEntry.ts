@@ -1,16 +1,22 @@
 /**
  * Iframe Preview Entry Point
  *
- * This file is built as a separate bundle for the iframe preview.
- * It creates a standalone Vue application that can be loaded in an iframe.
+ * This is a completely isolated entry point for the iframe preview app.
+ * It's designed to be built as a separate bundle with NO dependencies on the parent app.
  *
- * This bundle includes all the necessary code to render the preview,
- * but blocks/layouts are loaded dynamically from the consuming app.
+ * Key isolation strategy:
+ * - Uses CDN-loaded Vue and Vue Router (via import maps in the HTML)
+ * - Does NOT import any modules that could have side effects from the parent app
+ * - Blocks and layouts are loaded dynamically via virtual modules at runtime
  */
 
 import { createApp, ref, watch, h, type App } from "vue";
-import EditorPageRenderer from "./components/EditorPageRenderer/EditorPageRenderer.vue";
-import type { Block } from "./types/Block";
+import type { Block } from "../../types/Block";
+import "./iframePreviewApp.scss";
+
+// Import EditorPageRenderer - this will pull in the blocks/layouts
+// but via virtual modules that are resolved at build time
+import EditorPageRenderer from "../EditorPageRenderer/EditorPageRenderer.vue";
 
 export interface IframeAppState {
    pageData: Record<string, any> | null;
@@ -22,13 +28,9 @@ export interface IframeAppState {
    theme: string;
 }
 
-export interface IframeAppCallbacks {
-   onBlockClick?: (blockId: string, block: Block | null) => void;
-   onBlockHover?: (blockId: string | null) => void;
-}
-
 /**
  * Create and mount the Vue app for the iframe preview
+ * This function is completely self-contained and doesn't rely on any parent app code
  */
 export async function createIframeApp(container: HTMLElement): Promise<App> {
    // State
@@ -53,7 +55,6 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
    // Message handler
    function sendToParent(message: any) {
       if (window.parent) {
-         // Serialize message to handle Vue reactive proxies
          const serializedMessage = serializeForPostMessage(message);
          if (!serializedMessage) {
             return;
@@ -104,16 +105,14 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             // Inject external stylesheets from parent (<link> tags)
             if (msg.stylesheetUrls && Array.isArray(msg.stylesheetUrls)) {
                msg.stylesheetUrls.forEach((href: string) => {
-                  // Check if stylesheet is already loaded
                   if (!document.querySelector(`link[href="${href}"]`)) {
                      const link = document.createElement("link");
                      link.rel = "stylesheet";
                      link.href = href;
 
-                     // Create a promise that resolves when the stylesheet loads
                      const loadPromise = new Promise<void>((resolve) => {
                         link.onload = () => resolve();
-                        link.onerror = () => resolve(); // Resolve anyway to not block
+                        link.onerror = () => resolve();
                      });
                      loadPromises.push(loadPromise);
 
@@ -123,11 +122,8 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             }
 
             // Inject inline styles from parent (<style> tags)
-            // This is important for Vite dev mode where styles are injected inline
             if (msg.inlineStyles && Array.isArray(msg.inlineStyles)) {
-               // Remove previously injected parent styles
                document.querySelectorAll("style[data-wswg-parent-style]").forEach((el) => el.remove());
-               // Inject new styles
                msg.inlineStyles.forEach((content: string, index: number) => {
                   const style = document.createElement("style");
                   style.setAttribute("data-wswg-parent-style", String(index));
@@ -154,7 +150,6 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                   sendToParent({ type: "STYLESHEETS_LOADED" });
                });
             } else {
-               // No external stylesheets to wait for
                stylesheetsLoaded.value = true;
                sendToParent({ type: "STYLESHEETS_LOADED" });
             }
@@ -163,22 +158,18 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
       }
    });
 
-   // Create Vue app using render function (since we're using runtime-only Vue)
+   // Create Vue app
    const app = createApp({
       components: {
          EditorPageRenderer,
       },
       setup() {
-         // Ensure PageRenderer has time to load blocks before rendering
          const isPageReady = ref(false);
 
-         // Watch for pageData changes
          watch(
             () => pageData.value,
             async (newPageData) => {
                if (newPageData && newPageData[blocksKey.value]) {
-                  // Give PageRenderer time to load block modules
-                  // PageRenderer loads blocks in onBeforeMount, so we need to wait
                   await new Promise((resolve) => setTimeout(resolve, 200));
                   isPageReady.value = true;
                } else {
@@ -188,13 +179,11 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             { immediate: true }
          );
 
-         // Render function
          return () => {
             const currentPageData = pageData.value;
             const hasPageData = currentPageData && currentPageData[blocksKey.value];
             const blocks = hasPageData && currentPageData ? currentPageData[blocksKey.value] : [];
 
-            // Only show content when both stylesheets are loaded AND page data is ready
             if (isPageReady.value && stylesheetsLoaded.value && currentPageData) {
                return h(EditorPageRenderer, {
                   blocks: blocks,
@@ -207,20 +196,19 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                   theme: theme.value,
                });
             } else {
-               // Show loading state while PageRenderer loads blocks
-               return h("div", { class: "bg-white px-5 py-12 md:py-20" }, [
-                  h("div", { class: "mx-auto max-w-md pb-7 text-center" }, [
+               return h("div", { class: "iframe-preview-loading" }, [
+                  h("div", { class: "iframe-preview-loading__container" }, [
                      h(
                         "svg",
                         {
-                           class: "mx-auto size-8 animate-spin text-blue-600",
+                           class: "iframe-preview-loading__spinner",
                            xmlns: "http://www.w3.org/2000/svg",
                            fill: "none",
                            viewBox: "0 0 24 24",
                         },
                         [
                            h("circle", {
-                              class: "opacity-25",
+                              class: "iframe-preview-loading__spinner-circle",
                               cx: "12",
                               cy: "12",
                               r: "10",
@@ -228,13 +216,13 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                               "stroke-width": "4",
                            }),
                            h("path", {
-                              class: "opacity-75",
+                              class: "iframe-preview-loading__spinner-path",
                               fill: "currentColor",
                               d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z",
                            }),
                         ]
                      ),
-                     h("span", { class: "mt-4 text-gray-700" }, "Loading preview..."),
+                     h("span", { class: "iframe-preview-loading__text" }, "Loading preview..."),
                   ]),
                ]);
             }
@@ -242,53 +230,43 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
       },
    });
 
-   // Dynamic import helper - using Function constructor to create a truly dynamic import
-   // that Vite cannot analyze statically, preventing build-time resolution errors
-   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-   // @ts-ignore - modules may not be available in all consuming apps
-   const dynamicImport = new Function("modulePath", "return import(modulePath)");
-
    // Try to install Unhead plugin if available
-   // This is needed for layouts that use useHead from @vueuse/head
+   // Use dynamic import via Function to avoid static analysis
+   const dynamicImport = new Function("modulePath", "return import(modulePath)") as (path: string) => Promise<any>;
+
    try {
-      // Dynamic import to check if @vueuse/head is available
-      // This module is externalized in vite.config.ts so it won't be bundled
       const headModule = await dynamicImport("@vueuse/head");
       if (headModule && typeof headModule.createHead === "function") {
          const head = headModule.createHead();
          app.use(head);
       }
    } catch {
-      // @vueuse/head not available - layouts using useHead will show warnings but won't break
-      // This is expected if the consuming app doesn't use @vueuse/head
+      // @vueuse/head not available - that's fine
    }
 
-   // Try to use vue-router - first try from CDN, but components use consuming app's vue-router
-   // The issue is that components from the consuming app use their own vue-router instance
-   // with different Symbol keys. We need to use the same instance they're using.
-   // Try to import vue-router dynamically - this will use the consuming app's vue-router
-   // if it's available in the module resolution context
+   // Create a minimal router for the iframe app
+   // CRITICAL: We must use the SAME vue-router instance that the consuming app's components use.
+   // Vue Router uses Symbol() for injection keys, so different module instances = different symbols.
+   //
+   // Strategy:
+   // 1. ALWAYS try dynamic import first - this gets the same vue-router that components use
+   //    (Vite deduplicates modules, so all imports resolve to the same instance)
+   // 2. Only fall back to window.VueRouter if dynamic import fails
+   //    (in production with import maps, both should resolve to the same CDN module anyway)
    let VueRouter: any = null;
-   let routerInstalled = false;
 
+   // Try dynamic import first - this ensures we get the same vue-router instance as components
    try {
-      // Try dynamic import - this should resolve to the consuming app's vue-router
-      // when the library is consumed as source code
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - vue-router may not be available in all consuming apps
-      const routerModule = await dynamicImport("vue-router");
-      VueRouter = routerModule;
+      VueRouter = await import("vue-router");
    } catch {
-      // Fallback to CDN version
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      VueRouter = typeof window !== "undefined" ? (window as any).VueRouter : null;
+      // Dynamic import failed, try window.VueRouter as fallback
+      VueRouter = (window as any).VueRouter;
    }
 
    if (VueRouter && typeof VueRouter.createRouter === "function") {
       try {
-         // Create a minimal router instance
          const router = VueRouter.createRouter({
+            // Use memory history - this doesn't interact with the browser URL at all
             history: VueRouter.createMemoryHistory(),
             routes: [
                {
@@ -296,24 +274,23 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                   component: { template: "<div></div>" },
                },
                {
+                  // Catch-all route to prevent 404s
                   path: "/:pathMatch(.*)*",
                   component: { template: "<div></div>" },
                },
             ],
          });
 
-         // Store original resolve to call it first, then ensure matched array exists
+         // Patch resolve to ensure matched array exists (required by RouterLink)
          const originalResolve = router.resolve.bind(router);
          router.resolve = (to: any) => {
-            // Call original resolve to get proper route structure
-            const resolved = originalResolve(to);
-            // Ensure the resolved route has a matched array (useLink requires this)
-            if (resolved.route && (!resolved.route.matched || resolved.route.matched.length === 0)) {
-               resolved.route.matched = [
+            const resolved = originalResolve(to) as any;
+            if (resolved && (!resolved.matched || resolved.matched.length === 0)) {
+               resolved.matched = [
                   {
-                     path: resolved.route.path || "/",
-                     name: resolved.route.name,
-                     meta: resolved.route.meta || {},
+                     path: resolved.path || "/",
+                     name: resolved.name,
+                     meta: resolved.meta || {},
                      components: {},
                      children: [],
                   },
@@ -322,38 +299,28 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             return resolved;
          };
 
-         // Install router BEFORE mounting - this provides the router injection
-         // The app.use() call should handle the Symbol keys automatically
          app.use(router);
-
-         // Wait for router to be ready before mounting
          await router.isReady();
-
-         // Ensure currentRoute has proper structure with matched array
-         // currentRoute.value is readonly, so we navigate to ensure route is properly resolved
-         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-         // @ts-ignore
-         const currentRoute = router.currentRoute.value;
-         if (currentRoute && (!currentRoute.matched || currentRoute.matched.length === 0)) {
-            // Navigate to ensure route has proper matched array
-            await router.push("/");
-         }
-
-         routerInstalled = true;
-      } catch {
-         // Fall through to mount without router
+      } catch (e) {
+         console.warn("[iframe preview] Could not install router:", e);
       }
+   } else {
+      console.warn("[iframe preview] VueRouter not available - RouterLink components may fail");
    }
 
-   if (!routerInstalled) {
-      // Router was not installed - RouterLink components will fail
-      console.warn("[iframe preview] Router was not installed - RouterLink components will fail");
-   }
    // Mount the app
-   app.mount(container);
+   container.innerHTML = "";
+   const mountPoint = document.createElement("div");
+   container.appendChild(mountPoint);
+   app.mount(mountPoint);
 
    // Notify parent that iframe is ready
    sendToParent({ type: "IFRAME_READY" });
 
    return app;
+}
+
+// Register on window for the HTML to access
+if (typeof window !== "undefined") {
+   (window as any).__wswg_createIframeApp = createIframeApp;
 }

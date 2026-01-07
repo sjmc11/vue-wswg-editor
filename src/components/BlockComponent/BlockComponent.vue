@@ -22,7 +22,7 @@
          <component :is="blockComponent" v-bind="block" ref="blockComponentRef" />
       </div>
       <div
-         v-else
+         v-else-if="isRegistryReady"
          class="block-not-found"
          @mouseenter="emit('hoverBlock', block.id)"
          @mouseleave="emit('hoverBlock', null)"
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { computed, useTemplateRef } from "vue";
-import { getBlock } from "../../util/theme-registry";
+import { getBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { toCamelCase } from "../../util/helpers";
 import { onKeyStroke } from "@vueuse/core";

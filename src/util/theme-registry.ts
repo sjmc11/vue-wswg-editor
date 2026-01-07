@@ -17,6 +17,7 @@ export const themeLayouts: Ref<Record<string, Layout>> = shallowRef({});
 export const themeBlocks: Ref<Record<string, Block>> = shallowRef({});
 export const themeBlockFields: Ref<Record<string, Record<string, EditorFieldConfig>>> = shallowRef({});
 export const activeThemeId: Ref<string | undefined> = shallowRef(undefined);
+export const isRegistryReady: Ref<boolean> = shallowRef(false);
 let blockThumbnails: Record<string, any> | null = null; // non reactive cache of block thumbnails
 let themeThumbnails: Record<string, any> | null = null; // non reactive cache of theme thumbnails
 
@@ -57,13 +58,11 @@ export function getModuleDefault(module: any): any {
  * THEMES
  **************************************************/
 export async function initialiseThemeRegistry(): Promise<void> {
-   // Clear existing registry
-   Object.keys(pageBuilderThemes.value).forEach((key) => {
-      delete pageBuilderThemes.value[key];
-   });
-
    // Lazy load virtual modules to prevent initialization order issues
    const { modules: themeModules } = await import("vue-wswg-editor:themes");
+
+   // Build the new themes object (don't mutate the existing one)
+   const newThemes: Record<string, Theme> = {};
 
    for (const [path, module] of Object.entries(themeModules)) {
       let resolvedModule = module;
@@ -96,14 +95,16 @@ export async function initialiseThemeRegistry(): Promise<void> {
          license: themeConfig.license || "",
       };
 
-      pageBuilderThemes.value[themeId] = theme;
+      newThemes[themeId] = theme;
    }
 
    // If there are no themes, throw an error
-   if (Object.keys(pageBuilderThemes.value).length === 0) {
+   if (Object.keys(newThemes).length === 0) {
       console.error("[vue-wswg-editor:registry] No themes found");
-      return;
    }
+
+   // Reassign the entire value to trigger shallowRef reactivity
+   pageBuilderThemes.value = newThemes;
 }
 
 export function getThemes(): Theme[] {
@@ -170,11 +171,6 @@ export function getThemeThumbnail(themeDirectory: string): string | undefined {
  * LAYOUTS
  **************************************************/
 export async function initialiseLayoutRegistry(): Promise<void> {
-   // Clear existing registry
-   Object.keys(themeLayouts.value).forEach((key) => {
-      delete themeLayouts.value[key];
-   });
-
    // Get the active theme
    const activeTheme = getActiveTheme();
 
@@ -185,6 +181,9 @@ export async function initialiseLayoutRegistry(): Promise<void> {
    // Filter to only layouts from the active theme
    const themeLayoutPath = `${activeTheme.path}/layout`;
    const themeLayoutModules = Object.entries(layoutModules).filter(([path]) => path.startsWith(themeLayoutPath));
+
+   // Build the new layouts object (don't mutate the existing one)
+   const newLayouts: Record<string, Layout> = {};
 
    // Process only the active theme's layouts
    for (const [, module] of themeLayoutModules) {
@@ -199,13 +198,16 @@ export async function initialiseLayoutRegistry(): Promise<void> {
          continue;
       }
       // Mark layout component as raw to prevent Vue from making it reactive
-      themeLayouts.value[layout.__name] = markRaw(layout);
+      newLayouts[layout.__name] = markRaw(layout);
    }
+
    // If there are no layouts, warn
-   if (Object.keys(themeLayouts.value).length === 0) {
+   if (Object.keys(newLayouts).length === 0) {
       console.warn(`[vue-wswg-editor:registry] No layouts found for theme: ${activeTheme.id}`);
-      return;
    }
+
+   // Reassign the entire value to trigger shallowRef reactivity
+   themeLayouts.value = newLayouts;
 }
 
 export function getLayout(layoutType: string): Layout | undefined {
@@ -226,11 +228,6 @@ export function getLayout(layoutType: string): Layout | undefined {
  * BLOCK FIELDS
  **************************************************/
 async function initialiseBlockFieldsRegistry(): Promise<void> {
-   // Clear existing registry
-   Object.keys(themeBlockFields.value).forEach((key) => {
-      delete themeBlockFields.value[key];
-   });
-
    // Get the active theme
    const activeTheme = getActiveTheme();
 
@@ -244,6 +241,9 @@ async function initialiseBlockFieldsRegistry(): Promise<void> {
       path.startsWith(themeBlockFieldsPath)
    );
 
+   // Build the new block fields object (don't mutate the existing one)
+   const newBlockFields: Record<string, Record<string, EditorFieldConfig>> = {};
+
    // Process only the active theme's block fields
    for (const [path, module] of themeBlockFieldsModules) {
       let resolvedModule = module;
@@ -253,8 +253,11 @@ async function initialiseBlockFieldsRegistry(): Promise<void> {
       }
       const blockFields = getModuleDefault(resolvedModule);
       // Mark block fields component as raw to prevent Vue from making it reactive
-      themeBlockFields.value[path] = markRaw(blockFields);
+      newBlockFields[path] = markRaw(blockFields);
    }
+
+   // Reassign the entire value to trigger shallowRef reactivity
+   themeBlockFields.value = newBlockFields;
 }
 
 function getBlockFieldsFile(path: string): Record<string, EditorFieldConfig> {
@@ -276,11 +279,6 @@ function getBlockFieldsFile(path: string): Record<string, EditorFieldConfig> {
  * BLOCKS
  **************************************************/
 export async function initialiseBlockRegistry(): Promise<void> {
-   // Clear existing registry
-   Object.keys(themeBlocks.value).forEach((key) => {
-      delete themeBlocks.value[key];
-   });
-
    // Get the active theme
    const activeTheme = getActiveTheme();
 
@@ -291,6 +289,9 @@ export async function initialiseBlockRegistry(): Promise<void> {
    // Filter to only layouts from the active theme
    const themeBlockPath = `${activeTheme.path}/blocks`;
    const themeBlockModules = Object.entries(blockModules).filter(([path]) => path.startsWith(themeBlockPath));
+
+   // Build the new blocks object (don't mutate the existing one)
+   const newBlocks: Record<string, Block> = {};
 
    // Process only the active theme's layouts
    for (const [path, module] of themeBlockModules) {
@@ -318,14 +319,17 @@ export async function initialiseBlockRegistry(): Promise<void> {
          type: blockType,
       };
 
-      // Add the block to the registry
-      themeBlocks.value[blockType] = markRaw(block);
+      // Add the block to the new registry object
+      newBlocks[blockType] = markRaw(block);
    }
+
    // If there are no blocks, warn
-   if (Object.keys(themeBlocks.value).length === 0) {
+   if (Object.keys(newBlocks).length === 0) {
       console.warn(`[vue-wswg-editor:registry] No blocks found for theme: ${activeTheme.id}`);
-      return;
    }
+
+   // Reassign the entire value to trigger shallowRef reactivity
+   themeBlocks.value = newBlocks;
 }
 
 export function getBlock(blockType: string): Block | undefined {
@@ -382,6 +386,7 @@ async function initialiseThemeSubRegistries(useEditingRegistry?: boolean): Promi
  */
 export async function initialiseRegistry(themeId?: string, useEditingRegistry: boolean = true): Promise<void> {
    try {
+      isRegistryReady.value = false;
       // First, initialize theme registry to discover all available themes
       await initialiseThemeRegistry();
 
@@ -390,8 +395,10 @@ export async function initialiseRegistry(themeId?: string, useEditingRegistry: b
 
       // Load the theme sub registries (layouts, blocks, fields)
       await initialiseThemeSubRegistries(useEditingRegistry);
+      isRegistryReady.value = true;
    } catch (error) {
       console.error("[vue-wswg-editor:registry] Error during registry initialization:", error);
+      isRegistryReady.value = false;
       throw error;
    }
 }

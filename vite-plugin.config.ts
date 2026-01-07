@@ -12,7 +12,8 @@ export default defineConfig({
          fileName: () => `vite-plugin.js`,
       },
       rollupOptions: {
-         external: ["vite"],
+         // External Node.js built-ins and vite (the plugin runs in Node, not browser)
+         external: ["vite", "fs", "path"],
          output: {
             globals: {
                vite: "vite",

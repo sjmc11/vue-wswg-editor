@@ -1,6 +1,6 @@
 <template>
    <div id="page-blocks-list" class="page-blocks-list">
-      <template v-if="pageBlocks?.length">
+      <template v-if="isRegistryReady && pageBlocks?.length">
          <div
             v-for="block in pageBlocks"
             :key="block.id"
@@ -12,7 +12,7 @@
             @click="emit('block-click', block)"
          >
             <p>{{ block.label || block.type }}</p>
-            <span v-if="!block.__file" class="block-item__badge">Not registered</span>
+            <span v-if="!block.path" class="block-item__badge">Not registered</span>
          </div>
       </template>
       <template v-else>
@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, onMounted, ref } from "vue";
-import { getBlock } from "../../util/theme-registry";
+import { computed, onMounted, ref } from "vue";
+import { getBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { toNiceName } from "../../util/helpers";
 import Sortable from "sortablejs";

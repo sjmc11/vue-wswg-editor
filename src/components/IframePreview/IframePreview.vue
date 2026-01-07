@@ -1,6 +1,13 @@
 <template>
    <div ref="containerRef" class="iframe-preview-container">
-      <iframe ref="iframeRef" title="Page preview" :src="iframeSrc" class="iframe-preview" frameborder="0"></iframe>
+      <iframe
+         v-if="iframeSrc"
+         ref="iframeRef"
+         title="Page preview"
+         :src="iframeSrc"
+         class="iframe-preview"
+         frameborder="0"
+      ></iframe>
    </div>
 </template>
 
@@ -17,7 +24,6 @@ import {
 } from "./messageHandler";
 import type { Block } from "../../types/Block";
 import { IFRAME_PREVIEW_ROUTE } from "../../constants";
-import { getIframeAppModuleUrl } from "./iframePreviewApp";
 
 const props = defineProps<{
    pageData?: Record<string, any>;
@@ -43,24 +49,14 @@ const iframeRef = ref<HTMLIFrameElement | null>(null);
 const containerRef = ref<HTMLElement | null>(null);
 const iframeReady = ref(false);
 const stylesheetsLoaded = ref(false);
-const iframeSrc = ref<string>("");
 
 const blocksKey = computed(() => props.blocksKey || "blocks");
 const settingsKey = computed(() => props.settingsKey || "settings");
 
-// Get the iframe app module URL for fallback
-const iframeAppModuleUrl = getIframeAppModuleUrl();
-
 // Create iframe src using the virtual route served by the vite plugin
-// This keeps the iframe on the same origin, enabling module imports to work in WebContainers
-function createIframeSrc(): string {
-   // Use the virtual route provided by the vite plugin
-   // Pass the module URL as a query parameter for fallback in case the virtual module doesn't work
-   const moduleUrlParam = encodeURIComponent(iframeAppModuleUrl);
-   // Use /index.html suffix to ensure the file is served directly in production
-   // In development, the middleware still catches this because it matches startsWith
-   return `${IFRAME_PREVIEW_ROUTE}/index.html?moduleUrl=${moduleUrlParam}`;
-}
+// This HTML file is generated during build and served by the vite plugin middleware in dev
+// In production, users need to configure their server to serve this file
+const iframeSrc = ref<string>(IFRAME_PREVIEW_ROUTE);
 
 // Update iframe content - send pageData to Vue app in iframe
 async function updateIframeContent() {
@@ -170,7 +166,7 @@ watch(
 );
 
 onMounted(() => {
-   iframeSrc.value = createIframeSrc();
+   // Only set up message listener - iframeSrcdoc is already initialized
    setupMessageListener();
 });
 

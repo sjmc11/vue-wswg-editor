@@ -141,13 +141,11 @@ export function getLayoutFields(layoutName: string): Record<string, EditorFieldC
 }
 
 async function initialiseBlockFieldsRegistry(): Promise<void> {
-   // Clear existing registry
-   Object.keys(pageBuilderBlockFields.value).forEach((key) => {
-      delete pageBuilderBlockFields.value[key];
-   });
-
    // Lazy load virtual modules to prevent initialization order issues
    const { modules: fieldModules } = await import("vue-wswg-editor:fields");
+
+   // Build the new block fields object (don't mutate the existing one)
+   const newBlockFields: Record<string, any> = {};
 
    for (const [path, module] of Object.entries(fieldModules)) {
       let resolvedModule = module;
@@ -157,17 +155,19 @@ async function initialiseBlockFieldsRegistry(): Promise<void> {
       }
       const blockFieldModule = getModuleDefault(resolvedModule);
       // Mark as raw to prevent Vue from making it reactive
-      pageBuilderBlockFields.value[path] = markRaw(blockFieldModule);
+      newBlockFields[path] = markRaw(blockFieldModule);
    }
+
+   // Reassign the entire value to trigger reactivity
+   pageBuilderBlockFields.value = newBlockFields;
 }
 
 export async function initialiseLayoutRegistry(): Promise<void> {
-   Object.keys(pageBuilderLayouts.value).forEach((key) => {
-      delete pageBuilderLayouts.value[key];
-   });
-
    // Lazy load virtual modules to prevent initialization order issues
    const { modules: layoutModules } = await import("vue-wswg-editor:layouts");
+
+   // Build the new layouts object (don't mutate the existing one)
+   const newLayouts: Record<string, Layout> = {};
 
    // Handle both eager-loaded modules and lazy-loaded modules (functions)
    for (const [, module] of Object.entries(layoutModules)) {
@@ -182,18 +182,19 @@ export async function initialiseLayoutRegistry(): Promise<void> {
          continue;
       }
       // Mark layout component as raw to prevent Vue from making it reactive
-      pageBuilderLayouts.value[layout.__name] = markRaw(layout);
+      newLayouts[layout.__name] = markRaw(layout);
    }
+
+   // Reassign the entire value to trigger shallowRef reactivity
+   pageBuilderLayouts.value = newLayouts;
 }
 
 export async function initialiseBlockRegistry(): Promise<void> {
-   // Clear existing registry
-   Object.keys(pageBuilderBlocks.value).forEach((key) => {
-      delete pageBuilderBlocks.value[key];
-   });
-
    // Lazy load virtual modules to prevent initialization order issues
    const { modules: blockModules } = await import("vue-wswg-editor:blocks");
+
+   // Build the new blocks object (don't mutate the existing one)
+   const newBlocks: Record<string, Block> = {};
 
    // Load all blocks from the glob pattern
    // With eager: true, module is the actual module object, not a loader function
@@ -216,9 +217,12 @@ export async function initialiseBlockRegistry(): Promise<void> {
             directory: directory, // directory path where the block component is located (e.g., "@page-builder/blocks/hero-section")
             type: blockType,
          };
-         pageBuilderBlocks.value[blockType] = block;
+         newBlocks[blockType] = block;
       }
    }
+
+   // Reassign the entire value to trigger shallowRef reactivity
+   pageBuilderBlocks.value = newBlocks;
 }
 
 export async function initialiseRegistry(): Promise<void> {

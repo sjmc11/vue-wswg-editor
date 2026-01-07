@@ -1,6 +1,6 @@
 {
    "name": "vue-wswg-editor",
-   "version": "0.0.44",
+   "version": "0.0.48",
    "type": "module",
    "main": "./dist/vue-wswg-editor.es.js",
    "module": "./dist/vue-wswg-editor.es.js",
@@ -21,9 +21,9 @@
          "require": "./dist/vite-plugin.js",
          "types": "./src/vite-plugin.ts"
       },
-      "./src/components/IframePreview/iframePreviewApp": {
-         "import": "./src/components/IframePreview/iframePreviewApp.ts",
-         "types": "./src/components/IframePreview/iframePreviewApp.ts"
+      "./src/components/IframePreview/iframePreviewEntry": {
+         "import": "./src/components/IframePreview/iframePreviewEntry.ts",
+         "types": "./src/components/IframePreview/iframePreviewEntry.ts"
       },
       "./style.css": "./dist/style.css"
    },
