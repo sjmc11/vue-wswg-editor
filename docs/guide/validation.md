@@ -524,6 +524,10 @@ async function handleSave() {
 
 This validates all fields across all blocks and settings according to their field configurations, allowing you to block save/publish workflows when validation errors exist.
 
+::: tip Conditional Fields
+Fields that are hidden via a [`conditions`](/guide/fields#conditional-fields) function are automatically excluded from validation -- both in the editor sidebar and when calling `validateAllFields`. You do not need to account for conditional visibility in your validator logic.
+:::
+
 ### Nested Validation Results
 
 When validating fields that contain nested structures (like `repeater` or `object` fields), the validation results are returned as a nested `ValidationResult` structure. This allows you to pinpoint exactly where validation errors occur within complex data structures.
@@ -612,3 +616,4 @@ For comprehensive guidance on validating all fields, displaying validation error
 3. **Skip empty values in custom validators** - Let `required` handle empty checks
 4. **Keep validators focused** - Each validator should check one concern
 5. **Use async validators for server-side checks** - But be mindful of performance
+6. **Use `conditions` instead of manual checks** - If a field should only be validated when visible, use the [`conditions`](/guide/fields#conditional-fields) option rather than guarding inside your validator function

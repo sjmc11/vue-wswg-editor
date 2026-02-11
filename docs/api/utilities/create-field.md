@@ -275,6 +275,7 @@ All field types accept these common options:
 | `group`       | `string`            | Group field in sidebar                   |
 | `clearable`   | `boolean`           | Show clear button                        |
 | `validator`   | `ValidatorFunction` | Custom validation function               |
+| `conditions`  | `(blockData: any) => boolean` | Show/hide field based on block data. See [Conditional Fields](/guide/fields#conditional-fields) |
 | `minLength`   | `number`            | Minimum string length                    |
 | `maxLength`   | `number`            | Maximum string length                    |
 | `min`         | `number`            | Minimum numeric value                    |

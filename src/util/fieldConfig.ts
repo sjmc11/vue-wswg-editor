@@ -76,6 +76,9 @@ export interface EditorFieldConfig {
    // Range specific
    // Suffix to display after the range value (e.g., "px", "%", "rem")
    valueSuffix?: string;
+   // Conditions specific
+   // Function to check if the field should be visible
+   conditions?: (blockData: any) => boolean;
 }
 
 /**

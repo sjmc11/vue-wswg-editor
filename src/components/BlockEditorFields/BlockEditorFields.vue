@@ -55,18 +55,31 @@ const { fields, editable, activeTab } = defineProps<{
    activeTab?: string;
 }>();
 
+/**
+ * Check if a field's conditions are met
+ * Returns true if the field should be visible (no conditions, or conditions evaluate to true)
+ */
+function isFieldVisible(fieldConfig: EditorFieldConfig): boolean {
+   if (!fieldConfig?.conditions) return true;
+   if (!blockData.value) return true;
+   return fieldConfig.conditions(blockData.value);
+}
+
 const editorFields = computed(() => {
-   // If no groups, return all fields
-   if (!editorFieldGroups.value.length) return fields || {};
-   // If an active field group is set, return only the fields in that group
-   if (fields && Object.keys(fields).length > 0) {
-      return Object.fromEntries(Object.entries(fields).filter(([_, field]) => field?.group === activeFieldGroup.value));
+   let result: Record<string, EditorFieldConfig> = fields || {};
+
+   // Filter by active field group if groups exist
+   if (editorFieldGroups.value.length && fields && Object.keys(fields).length > 0) {
+      result = Object.fromEntries(
+         Object.entries(fields).filter(([_, field]) => field?.group === activeFieldGroup.value)
+      );
    }
-   // If no active field group is set, return all fields
-   return fields || {};
+
+   // Filter out fields whose conditions are not met
+   return Object.fromEntries(Object.entries(result).filter(([_, field]) => isFieldVisible(field)));
 });
 
-// Return unique string[] of unique field groups
+// Return unique string[] of unique field groups (only groups that have at least one visible field)
 const editorFieldGroups = computed(() => {
    // If there are no fields, return an empty array
    if (!fields || Object.keys(fields).length === 0) return [];
@@ -74,13 +87,19 @@ const editorFieldGroups = computed(() => {
    // If the fields do not have any groups, return empty array
    if (!Object.keys(fields).some((field) => fields[field]?.group)) return [];
 
-   return Object.keys(fields).reduce((acc, field) => {
+   // Collect all unique groups first
+   const allGroups = Object.keys(fields).reduce((acc, field) => {
       const fieldGroup = fields[field]?.group;
       if (fieldGroup && !acc.includes(fieldGroup)) {
          acc.push(fieldGroup);
       }
       return acc;
    }, [] as string[]);
+
+   // Filter out groups where all fields are conditionally hidden
+   return allGroups.filter((group) =>
+      Object.values(fields!).some((field) => field?.group === group && isFieldVisible(field))
+   );
 });
 
 watch(editorFieldGroups, () => {
