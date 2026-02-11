@@ -19,11 +19,11 @@
          class="fields-container"
          :class="{ 'fields-container--nested': nested }"
       >
-         <div v-for="(fieldConfig, fieldName) in editorFields" :key="fieldName" class="prop-field">
+         <div v-for="(fieldConfig, fieldName) in editorFields" :key="String(fieldName)" class="prop-field">
             <BlockEditorFieldNode
-               v-model="blockData[fieldName]"
+               v-model="blockData[String(fieldName)]"
                :fieldConfig="fieldConfig"
-               :fieldName="fieldName"
+               :fieldName="String(fieldName)"
                :editable="editable"
             />
          </div>
