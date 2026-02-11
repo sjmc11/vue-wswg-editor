@@ -91,6 +91,7 @@ Custom field components can be used in block fields using the `custom` field typ
 | `step`        | `number`                    | Step for number/range                                 |
 | `rows`        | `number`                    | Rows for textarea                                     |
 | `validator`   | `ValidatorFunction`         | Custom validation function                            |
+| `conditions`  | `(blockData: any) => boolean` | Condition function to show/hide field dynamically     |
 | `component`   | `Component`                 | Custom component for `custom` type                    |
 | `valueSuffix` | `string`                    | Suffix to display after range value (e.g., "px", "%") |
 | `responsive`  | `boolean`                   | Whether image is responsive                           |
@@ -175,6 +176,87 @@ export default {
 | `validator` | `ValidatorFunction` | Custom validation function       | All                        |
 
 For detailed validation examples, see the [Validation Guide](/guide/validation).
+
+## Conditional Fields
+
+Fields can be shown or hidden dynamically based on the values of other fields in the same block using the `conditions` option. This is useful when certain fields are only relevant depending on the current state of the block.
+
+### How It Works
+
+The `conditions` option accepts a function that receives the entire block's data object and returns a `boolean`:
+
+- Return `true` to show the field
+- Return `false` to hide the field
+- If no `conditions` function is provided, the field is always visible
+
+```typescript
+import { createField } from "vue-wswg-editor";
+
+export default {
+   layout: createField.select(
+      [
+         { label: "Simple", value: "simple", id: "layout-simple" },
+         { label: "Advanced", value: "advanced", id: "layout-advanced" },
+      ],
+      {
+         label: "Layout",
+         default: "simple",
+         group: "content",
+      }
+   ),
+
+   // This field is always visible (no conditions)
+   heading: createField.text({
+      label: "Heading",
+      required: true,
+      group: "content",
+   }),
+
+   // This field only appears when layout is "advanced"
+   subtitle: createField.text({
+      label: "Subtitle",
+      group: "content",
+      conditions: (blockData) => blockData.layout === "advanced",
+   }),
+};
+```
+
+In the example above, the `subtitle` field is only displayed in the editor sidebar when the user has selected the "Advanced" layout. The `heading` field has no `conditions` function, so it is always visible.
+
+### Conditions and Validation
+
+Fields that are hidden by a `conditions` function are excluded from validation entirely. This applies to both:
+
+- **Inline validation** in the editor sidebar (the field component is not rendered, so its validators do not run)
+- **`validateAllFields`** used before saving or publishing (hidden fields are skipped)
+
+This means you can safely mark a conditional field as `required` without it blocking validation when the field is not visible:
+
+```typescript
+export default {
+   showCta: createField.boolean({
+      label: "Show CTA",
+      default: false,
+   }),
+
+   // Required, but only validated when showCta is true
+   ctaText: createField.text({
+      label: "CTA Text",
+      required: true,
+      conditions: (blockData) => blockData.showCta === true,
+   }),
+
+   ctaUrl: createField.url({
+      label: "CTA URL",
+      required: true,
+      conditions: (blockData) => blockData.showCta === true,
+   }),
+};
+```
+
+### Conditions and Field Groups
+
+If every field within a [field group](#field-options) is conditionally hidden, the group tab itself is automatically removed from the sidebar. It will reappear as soon as at least one field in the group becomes visible again.
 
 ## Field Examples
 

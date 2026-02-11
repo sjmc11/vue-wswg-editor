@@ -153,6 +153,8 @@ async function validateSettings(value: any, settingsKey: string = "settings"): P
    for (const field in value[settingsKey]) {
       const fieldConfig = layoutOptions[field];
       if (!fieldConfig) continue;
+      // Skip validation for fields whose conditions are not met (conditionally hidden)
+      if (fieldConfig.conditions && !fieldConfig.conditions(value[settingsKey])) continue;
       const result = await validateField(value[settingsKey][field], fieldConfig);
       // If validation fails (returns false, string, or ValidationResult), add to validation results
       if (result !== true) {
@@ -193,6 +195,8 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
       for (const field in blockComponent?.fields || {}) {
          const fieldConfig = blockComponent?.fields?.[field];
          if (!fieldConfig) continue;
+         // Skip validation for fields whose conditions are not met (conditionally hidden)
+         if (fieldConfig.conditions && !fieldConfig.conditions(block)) continue;
          // Validate
          const result = await validateField(block[field], fieldConfig);
          // If validation fails (returns false, string, or ValidationResult), add to validation results
