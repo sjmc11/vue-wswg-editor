@@ -2,7 +2,7 @@
    <div id="page-viewport" ref="editorRef" class="page-renderer-wrapper" :class="{ 'settings-open': settingsOpen }">
       <template v-if="isReady">
          <component :is="layoutComponent" v-if="layoutComponent" v-bind="settings" :blocks="blocks">
-            <template #default>
+            <template #default="layoutSlotProps">
                <!-- No blocks found -->
                <EmptyState v-if="!blocks?.length" :editable="editable" @block-added="handleBlockAdded" />
                <!-- Blocks found -->
@@ -35,6 +35,7 @@
                            :activeBlock="activeBlock"
                            :editable="editable"
                            :hoveredBlockId="hoveredBlockId"
+                           :layoutSlotProps="layoutSlotProps"
                            @hover-block="setHoveredBlockId"
                            @click-block="handleBlockClick"
                         />

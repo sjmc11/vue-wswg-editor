@@ -19,7 +19,7 @@
          <div v-if="activeBlock?.id === block.id" class="editing-badge">
             <span>Editing</span>
          </div>
-         <component :is="blockComponent" v-bind="block" ref="blockComponentRef" />
+         <component :is="blockComponent" v-bind="{ ...layoutSlotProps, ...block }" ref="blockComponentRef" />
       </div>
       <div
          v-else-if="isRegistryReady"
@@ -54,6 +54,7 @@ const props = defineProps<{
    blockIndex: number;
    activeBlock: Block | null;
    hoveredBlockId: string | null;
+   layoutSlotProps?: Record<string, any>;
 }>();
 
 const blockComponentRef = useTemplateRef<HTMLElement | null>("blockComponentRef");
