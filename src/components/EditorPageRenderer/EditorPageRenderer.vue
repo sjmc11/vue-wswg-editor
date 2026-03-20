@@ -1,7 +1,13 @@
 <template>
    <div id="page-viewport" ref="editorRef" class="page-renderer-wrapper" :class="{ 'settings-open': settingsOpen }">
       <template v-if="isReady">
-         <component :is="layoutComponent" v-if="layoutComponent" v-bind="settings" :blocks="blocks">
+         <component
+            :is="layoutComponent"
+            v-if="layoutComponent"
+            v-bind="settings"
+            :blocks="blocks"
+            :isEditorMode="true"
+         >
             <template #default="layoutSlotProps">
                <!-- No blocks found -->
                <EmptyState v-if="!blocks?.length" :editable="editable" @block-added="handleBlockAdded" />

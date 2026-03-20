@@ -1,7 +1,13 @@
 <template>
    <div id="page-viewport" class="page-renderer-wrapper">
       <template v-if="isReady">
-         <component :is="layoutComponent" v-if="withLayout && layoutComponent" v-bind="settings" :blocks="blocks">
+         <component
+            :is="layoutComponent"
+            v-if="withLayout && layoutComponent"
+            v-bind="settings"
+            :blocks="blocks"
+            :isEditorMode="false"
+         >
             <template #default="layoutSlotProps">
                <div id="page-blocks-wrapper">
                   <div
@@ -10,7 +16,11 @@
                      class="block-wrapper"
                      :class="{ [getMarginClass(block)]: true }"
                   >
-                     <component :is="getBlock(block.type)" v-bind="{ ...layoutSlotProps, ...block }" :key="`block-${block.id}`" />
+                     <component
+                        :is="getBlock(block.type)"
+                        v-bind="{ ...layoutSlotProps, ...block }"
+                        :key="`block-${block.id}`"
+                     />
                   </div>
                </div>
             </template>
