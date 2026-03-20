@@ -35,6 +35,7 @@ const props = defineProps<{
    settingsKey?: string;
    settingsOpen?: boolean;
    theme?: string;
+   extraProps?: Record<string, any>;
 }>();
 
 const emit = defineEmits<{
@@ -64,7 +65,7 @@ async function updateIframeContent() {
    if (!props.pageData || !props.pageData[blocksKey.value]) return;
 
    await nextTick();
-   sendPageDataUpdate(iframeRef.value, props.pageData, blocksKey.value, settingsKey.value, props.theme || "default");
+   sendPageDataUpdate(iframeRef.value, props.pageData, blocksKey.value, settingsKey.value, props.theme || "default", props.extraProps);
 }
 
 // Setup message listener

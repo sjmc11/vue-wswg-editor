@@ -4,7 +4,7 @@
          <component
             :is="layoutComponent"
             v-if="withLayout && layoutComponent"
-            v-bind="settings"
+            v-bind="{ ...attrs, ...settings }"
             :blocks="blocks"
             :isEditorMode="false"
          >
@@ -18,7 +18,7 @@
                   >
                      <component
                         :is="getBlock(block.type)"
-                        v-bind="{ ...layoutSlotProps, ...block }"
+                        v-bind="{ ...attrs, ...layoutSlotProps, ...block }"
                         :key="`block-${block.id}`"
                      />
                   </div>
@@ -32,7 +32,7 @@
                class="block-wrapper"
                :class="{ [getMarginClass(block)]: true }"
             >
-               <component :is="getBlock(block.type)" v-bind="block" :key="`block-${block.id}`" />
+               <component :is="getBlock(block.type)" v-bind="{ ...attrs, ...block }" :key="`block-${block.id}`" />
             </div>
          </div>
       </template>
@@ -40,9 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, withDefaults, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, useAttrs } from "vue";
 import type { Block } from "../../types/Block";
 import { initialiseRegistry, getBlock, getLayout } from "../../util/theme-registry";
+
+defineOptions({ inheritAttrs: false });
+
+const attrs = useAttrs();
 
 const props = withDefaults(
    defineProps<{

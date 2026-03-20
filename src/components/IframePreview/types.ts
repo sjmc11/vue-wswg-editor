@@ -29,6 +29,7 @@ export interface UpdatePageDataMessage extends BaseMessage {
    blocksKey: string;
    settingsKey: string;
    theme: string;
+   extraProps?: Record<string, any>;
 }
 
 export interface SetActiveBlockMessage extends BaseMessage {

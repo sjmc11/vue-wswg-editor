@@ -4,7 +4,7 @@
          <component
             :is="layoutComponent"
             v-if="layoutComponent"
-            v-bind="settings"
+            v-bind="{ ...attrs, ...settings }"
             :blocks="blocks"
             :isEditorMode="true"
          >
@@ -85,13 +85,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, withDefaults, onBeforeMount, ref, onBeforeUnmount, onMounted, watch, nextTick } from "vue";
+import { computed, onBeforeMount, ref, onBeforeUnmount, onMounted, watch, nextTick, useAttrs } from "vue";
 import { initialiseRegistry, getLayout } from "../../util/theme-registry";
 import BlockComponent from "../BlockComponent/BlockComponent.vue";
 import EmptyState from "../EmptyState/EmptyState.vue";
 import type { Block } from "../../types/Block";
 import type { PartialClickMessage } from "../IframePreview/types";
 import Sortable from "sortablejs";
+
+defineOptions({ inheritAttrs: false });
+
+const attrs = useAttrs();
 
 const props = withDefaults(
    defineProps<{

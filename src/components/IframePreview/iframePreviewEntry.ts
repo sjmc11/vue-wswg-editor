@@ -41,6 +41,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
    const blocksKey = ref<string>("blocks");
    const settingsKey = ref<string>("settings");
    const theme = ref<string>("default");
+   const extraProps = ref<Record<string, any>>({});
    const stylesheetsLoaded = ref<boolean>(false);
 
    // Serialize data for postMessage (handles Vue reactive proxies)
@@ -81,6 +82,9 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             }
             if (msg.theme) {
                theme.value = msg.theme;
+            }
+            if (msg.extraProps) {
+               extraProps.value = msg.extraProps;
             }
             break;
          case "SET_ACTIVE_BLOCK":
@@ -186,6 +190,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
 
             if (isPageReady.value && stylesheetsLoaded.value && currentPageData) {
                return h(EditorPageRenderer, {
+                  ...extraProps.value,
                   blocks: blocks,
                   layout: currentPageData[settingsKey.value]?.layout,
                   settings: currentPageData[settingsKey.value],

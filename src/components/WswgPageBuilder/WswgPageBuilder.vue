@@ -51,6 +51,7 @@
                   :settingsKey="settingsKey"
                   :settingsOpen="showPageSettings"
                   :theme="theme"
+                  :extraProps="attrs"
                   @hover-block="setHoveredBlockId"
                   @click-block="handleBlockClick"
                   @block-reorder="handleBlockReorder"
@@ -84,7 +85,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, withDefaults, onBeforeMount, computed, watch } from "vue";
+import { ref, onBeforeMount, computed, watch, useAttrs } from "vue";
+
+defineOptions({ inheritAttrs: false });
+
+const attrs = useAttrs();
 import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
