@@ -134,6 +134,7 @@
             :fieldConfig="fieldConfig"
             :fieldName="fieldName"
             :editable="editable"
+            :parentBlockData="parentBlockData"
          />
       </div>
 
@@ -196,6 +197,10 @@ const props = defineProps<{
    fieldConfig: EditorFieldConfig;
    fieldName: string;
    editable: boolean;
+   // The data of the block (or settings) that contains this field. Used to
+   // evaluate `conditions` for fields nested inside a repeater so they can
+   // receive `(blockData, repeaterBlockData)` as arguments.
+   parentBlockData?: any;
 }>();
 
 const validationError = ref<string | null | ValidationResult>(null);
@@ -294,7 +299,7 @@ const canClearFieldValue = computed(() => {
 
 async function validateField(): Promise<void> {
    try {
-      const result = await validateFieldUtil(fieldValue.value, props.fieldConfig);
+      const result = await validateFieldUtil(fieldValue.value, props.fieldConfig, props.parentBlockData);
       // True = valid, false = invalid, string = error message
       if (result === true) {
          validationError.value = null;
@@ -574,6 +579,7 @@ watch(
       color: #dc2626;
       background-color: #fef2f2;
       border-radius: 0.125rem;
+      margin-top: 0.25rem;
    }
 
    // Form control styles

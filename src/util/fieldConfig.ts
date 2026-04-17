@@ -77,8 +77,11 @@ export interface EditorFieldConfig {
    // Suffix to display after the range value (e.g., "px", "%", "rem")
    valueSuffix?: string;
    // Conditions specific
-   // Function to check if the field should be visible
-   conditions?: (blockData: any) => boolean;
+   // Function to check if the field should be visible.
+   // - For top-level fields, `blockData` is the full block (or settings) data.
+   // - For fields inside a repeater, `blockData` is the containing block/settings data and
+   //   `repeaterBlockData` is the current repeater item's data.
+   conditions?: (blockData: any, repeaterBlockData?: any) => boolean;
 }
 
 /**

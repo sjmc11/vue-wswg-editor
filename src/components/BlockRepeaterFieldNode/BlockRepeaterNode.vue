@@ -66,10 +66,12 @@
                   :key="`${fieldName}-${index}-${subFieldName}`"
                >
                   <BlockEditorFieldNode
+                     v-if="isSubFieldVisible(subFieldConfig, fieldValue[index])"
                      v-model="fieldValue[index][subFieldName]"
                      :fieldConfig="subFieldConfig"
                      :fieldName="subFieldName"
                      :editable="editable"
+                     :parentBlockData="parentBlockData"
                   />
                </template>
             </div>
@@ -115,6 +117,10 @@ const props = defineProps<{
    fieldConfig: EditorFieldConfig;
    fieldName: string;
    editable: boolean;
+   // The data of the block (or settings) that contains this repeater field.
+   // Passed as the first argument to subfield `conditions` functions so they
+   // can be evaluated as `conditions(blockData, repeaterBlockData)`.
+   parentBlockData?: any;
 }>();
 
 const fieldValueModel = defineModel<any[]>();
@@ -200,6 +206,16 @@ function toggleRepeaterItem(itemId: string) {
 const canAddItem = computed(() => {
    return !props.editable || !!(props.fieldConfig.maxItems && fieldValue.value.length >= props.fieldConfig.maxItems);
 });
+
+/**
+ * Check if a repeater subfield should be visible based on its `conditions`.
+ * The conditions function receives `(parentBlockData, repeaterItemData)` so it
+ * can react to values at either level.
+ */
+function isSubFieldVisible(subFieldConfig: EditorFieldConfig, repeaterItemData: any): boolean {
+   if (!subFieldConfig?.conditions) return true;
+   return subFieldConfig.conditions(props.parentBlockData, repeaterItemData);
+}
 </script>
 
 <style scoped lang="scss">

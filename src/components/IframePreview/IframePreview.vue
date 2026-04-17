@@ -1,5 +1,5 @@
 <template>
-   <div ref="containerRef" class="iframe-preview-container">
+   <div class="iframe-preview-container">
       <iframe
          v-if="iframeSrc"
          ref="iframeRef"
@@ -8,11 +8,15 @@
          class="iframe-preview"
          frameborder="0"
       ></iframe>
+
+      <teleport v-if="slots.empty && emptySlotTeleportTarget" :to="emptySlotTeleportTarget">
+         <slot name="empty" />
+      </teleport>
    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed, useSlots } from "vue";
 import {
    sendPageDataUpdate,
    sendActiveBlock,
@@ -47,9 +51,11 @@ const emit = defineEmits<{
 }>();
 
 const iframeRef = ref<HTMLIFrameElement | null>(null);
-const containerRef = ref<HTMLElement | null>(null);
 const iframeReady = ref(false);
 const stylesheetsLoaded = ref(false);
+const emptySlotTeleportTarget = ref<HTMLElement | null>(null);
+const slots = useSlots();
+let emptySlotTargetRetryTimer: ReturnType<typeof setTimeout> | null = null;
 
 const blocksKey = computed(() => props.blocksKey || "blocks");
 const settingsKey = computed(() => props.settingsKey || "settings");
@@ -65,7 +71,61 @@ async function updateIframeContent() {
    if (!props.pageData || !props.pageData[blocksKey.value]) return;
 
    await nextTick();
-   sendPageDataUpdate(iframeRef.value, props.pageData, blocksKey.value, settingsKey.value, props.theme || "default", props.extraProps);
+   sendPageDataUpdate(
+      iframeRef.value,
+      props.pageData,
+      blocksKey.value,
+      settingsKey.value,
+      props.theme || "default",
+      props.extraProps
+   );
+
+   updateEmptySlotTeleportTarget();
+}
+
+function updateEmptySlotTeleportTarget() {
+   if (!slots.empty) {
+      emptySlotTeleportTarget.value = null;
+      return;
+   }
+
+   const iframe = iframeRef.value;
+   if (!iframe?.contentDocument) {
+      emptySlotTeleportTarget.value = null;
+      return;
+   }
+
+   const maxAttempts = 20;
+   const retryDelayMs = 50;
+
+   if (emptySlotTargetRetryTimer) {
+      clearTimeout(emptySlotTargetRetryTimer);
+      emptySlotTargetRetryTimer = null;
+   }
+
+   const attemptAssignTarget = (attempt = 0) => {
+      if (!iframeRef.value?.contentDocument) {
+         emptySlotTeleportTarget.value = null;
+         return;
+      }
+
+      const target = iframeRef.value.contentDocument.getElementById("wswg-empty-slot-target");
+      if (target) {
+         emptySlotTeleportTarget.value = target;
+         return;
+      }
+
+      if (attempt >= maxAttempts) {
+         emptySlotTeleportTarget.value = null;
+         return;
+      }
+
+      emptySlotTargetRetryTimer = setTimeout(() => {
+         attemptAssignTarget(attempt + 1);
+      }, retryDelayMs);
+   };
+
+   attemptAssignTarget();
 }
 
 // Setup message listener
@@ -103,6 +163,7 @@ function setupMessageListener() {
             stylesheetsLoaded.value = true;
             // Now that stylesheets are loaded, send the content
             updateIframeContent();
+            updateEmptySlotTeleportTarget();
             // Send initial settingsOpen state
             if (iframeRef.value && props.settingsOpen !== undefined) {
                sendSettingsOpen(iframeRef.value, props.settingsOpen);
@@ -127,6 +188,8 @@ watch(
    async () => {
       await nextTick();
       updateIframeContent();
+      await nextTick();
+      updateEmptySlotTeleportTarget();
    },
    { deep: true }
 );
@@ -172,6 +235,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+   if (emptySlotTargetRetryTimer) {
+      clearTimeout(emptySlotTargetRetryTimer);
+      emptySlotTargetRetryTimer = null;
+   }
    cleanupMessageListener();
 });
 </script>

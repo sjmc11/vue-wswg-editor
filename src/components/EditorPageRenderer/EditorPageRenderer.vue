@@ -10,7 +10,32 @@
          >
             <template #default="layoutSlotProps">
                <!-- No blocks found -->
-               <EmptyState v-if="!blocks?.length" :editable="editable" @block-added="handleBlockAdded" />
+               <div
+                  v-if="!blocks?.length"
+                  id="page-blocks-wrapper"
+                  ref="pageBlocksWrapperRef"
+                  class="page-renderer-wrapper__empty-dropzone"
+                  :class="{ 'drag-over': isDraggingOver }"
+                  @dragenter="handleDragEnter"
+                  @dragleave="handleDragLeave"
+                  @dragover="handleDragOver"
+                  @drop="handleDrop"
+               >
+                  <!-- Drop indicator for empty page -->
+                  <div
+                     v-if="isDraggingOver && dropInsertIndex !== null && dropIndicatorTop !== null"
+                     class="drop-indicator"
+                     :style="{ top: dropIndicatorTop + 'px' }"
+                  >
+                     <div class="drop-indicator-line"></div>
+                     <div class="drop-indicator-label">Drop here</div>
+                     <div class="drop-indicator-line"></div>
+                  </div>
+
+                  <div id="wswg-empty-slot-target">
+                     <EmptyState v-if="!emptySlotProvided" :editable="editable" @block-added="handleBlockAdded" />
+                  </div>
+               </div>
                <!-- Blocks found -->
                <div
                   v-else
@@ -107,6 +132,7 @@ const props = withDefaults(
       editable?: boolean;
       settingsOpen?: boolean;
       theme?: string;
+      emptySlotProvided?: boolean;
    }>(),
    {
       layout: "default",
@@ -116,6 +142,7 @@ const props = withDefaults(
       editable: false,
       settingsOpen: false,
       theme: "default",
+      emptySlotProvided: false,
    }
 );
 
@@ -568,6 +595,10 @@ onBeforeUnmount(() => {
 .page-renderer-wrapper {
    position: relative;
 
+   &__empty-dropzone {
+      min-height: 12rem;
+   }
+
    &__no-layout {
       padding: 3rem 1.25rem;
       background-color: #fff;
@@ -659,6 +690,10 @@ onBeforeUnmount(() => {
    &.drag-over {
       min-height: 100px;
    }
+}
+
+#wswg-empty-slot-target {
+   min-height: inherit;
 }
 
 .drop-indicator {

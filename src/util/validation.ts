@@ -5,7 +5,8 @@ import { toNiceName } from "./helpers";
 
 export async function validateField(
    value: any,
-   fieldConfig: EditorFieldConfig
+   fieldConfig: EditorFieldConfig,
+   blockData?: any
 ): Promise<boolean | string | ValidationResult> {
    // Create generic validator from field config properties (minLength, maxLength, etc.)
    const genericValidator = createGenericValidator(fieldConfig);
@@ -43,8 +44,12 @@ export async function validateField(
          for (const fieldName of Object.keys(fieldConfig.repeaterFields)) {
             const nestedFieldConfig: EditorFieldConfig | undefined = fieldConfig.repeaterFields[fieldName];
             if (!nestedFieldConfig) continue;
+            // Skip validation for repeater subfields whose conditions are not met.
+            // Conditions receive `(blockData, repeaterItemData)` so authors can
+            // conditionally show/validate subfields based on either scope.
+            if (nestedFieldConfig.conditions && !nestedFieldConfig.conditions(blockData, item)) continue;
             const nestedValue = item[fieldName];
-            const nestedResult = await validateField(nestedValue, nestedFieldConfig);
+            const nestedResult = await validateField(nestedValue, nestedFieldConfig, blockData);
             if (nestedResult !== true) {
                const fieldLabel = nestedFieldConfig.label || fieldName;
                // If nested result is a ValidationResult, nest it; otherwise use as string
@@ -85,8 +90,12 @@ export async function validateField(
       for (const fieldName of Object.keys(fieldConfig.objectFields)) {
          const nestedFieldConfig: EditorFieldConfig | undefined = fieldConfig.objectFields[fieldName];
          if (!nestedFieldConfig) continue;
+         // Skip validation for conditionally hidden nested object fields.
+         // Mirrors the UI behavior in BlockEditorFields, which evaluates
+         // `conditions` against the object's own value.
+         if (nestedFieldConfig.conditions && !nestedFieldConfig.conditions(value)) continue;
          const nestedValue = value[fieldName];
-         const nestedResult = await validateField(nestedValue, nestedFieldConfig);
+         const nestedResult = await validateField(nestedValue, nestedFieldConfig, blockData);
          if (nestedResult !== true) {
             const fieldLabel = nestedFieldConfig.label || fieldName;
             // If nested result is a ValidationResult, nest it; otherwise use as string
@@ -155,7 +164,7 @@ async function validateSettings(value: any, settingsKey: string = "settings"): P
       if (!fieldConfig) continue;
       // Skip validation for fields whose conditions are not met (conditionally hidden)
       if (fieldConfig.conditions && !fieldConfig.conditions(value[settingsKey])) continue;
-      const result = await validateField(value[settingsKey][field], fieldConfig);
+      const result = await validateField(value[settingsKey][field], fieldConfig, value[settingsKey]);
       // If validation fails (returns false, string, or ValidationResult), add to validation results
       if (result !== true) {
          validationResult.errors[fieldConfig.label || field] = result;
@@ -198,7 +207,7 @@ async function validateBlocks(value: any, blocksKey: string = "blocks"): Promise
          // Skip validation for fields whose conditions are not met (conditionally hidden)
          if (fieldConfig.conditions && !fieldConfig.conditions(block)) continue;
          // Validate
-         const result = await validateField(block[field], fieldConfig);
+         const result = await validateField(block[field], fieldConfig, block);
          // If validation fails (returns false, string, or ValidationResult), add to validation results
          if (result !== true) {
             validationResults[blockType].errors[fieldConfig.label || field] = result;

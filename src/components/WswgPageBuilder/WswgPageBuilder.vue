@@ -51,13 +51,17 @@
                   :settingsKey="settingsKey"
                   :settingsOpen="showPageSettings"
                   :theme="theme"
-                  :extraProps="attrs"
+                  :extraProps="iframeExtraProps"
                   @hover-block="setHoveredBlockId"
                   @click-block="handleBlockClick"
                   @block-reorder="handleBlockReorder"
                   @block-add="handleBlockAdd"
                   @click-partial="handleClickPartial"
-               />
+               >
+                  <template #empty>
+                     <slot name="empty" />
+                  </template>
+               </IframePreview>
             </div>
          </div>
 
@@ -85,11 +89,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, computed, watch, useAttrs } from "vue";
+import { ref, onBeforeMount, computed, watch, useAttrs, useSlots } from "vue";
 
 defineOptions({ inheritAttrs: false });
 
 const attrs = useAttrs();
+const slots = useSlots();
 import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
@@ -131,6 +136,10 @@ const activeSettingsTab = ref<string | undefined>(undefined);
 const sidebarWidth = ref(380); // Default sidebar width (380px)
 const previewRef = ref<HTMLElement | null>(null);
 const themeLoading = ref(false);
+const iframeExtraProps = computed(() => ({
+   ...attrs,
+   emptySlotProvided: Boolean(slots.empty),
+}));
 
 // Model value for the JSON page data
 const pageData = defineModel<Record<string, any>>();

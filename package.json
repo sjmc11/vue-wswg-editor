@@ -1,6 +1,6 @@
 {
    "name": "vue-wswg-editor",
-   "version": "0.0.53",
+   "version": "0.0.54",
    "type": "module",
    "main": "./dist/vue-wswg-editor.es.js",
    "module": "./dist/vue-wswg-editor.es.js",
@@ -72,6 +72,7 @@
       "@vue/test-utils": "^2.4.6",
       "@vue/tsconfig": "^0.7.0",
       "autoprefixer": "^10.4.21",
+      "baseline-browser-mapping": "^2.10.19",
       "concurrently": "^9.2.1",
       "eslint": "^9.30.0",
       "eslint-plugin-vue": "^9.33.0",
@@ -90,14 +91,25 @@
       "vite": "^5.4.19",
       "vitepress": "^1.6.4",
       "vitest": "^2.1.9",
+      "vue-router": "^4.6.4",
       "vue-tsc": "^2.2.12",
       "yup": "^1.7.1"
    },
-  "peerDependencies": {
-     "vue": "^3.4.0"
-  },
-  "overrides": {
-    "sass-embedded": "npm:sass@^1.89.2"
-  },
-  "license": "MIT"
+   "peerDependencies": {
+      "@vueuse/head": "^2.0.0",
+      "vue": "^3.4.0",
+      "vue-router": "^4.0.0"
+   },
+   "peerDependenciesMeta": {
+      "vue-router": {
+         "optional": true
+      },
+      "@vueuse/head": {
+         "optional": true
+      }
+   },
+   "overrides": {
+      "sass-embedded": "npm:sass@^1.89.2"
+   },
+   "license": "MIT"
 }

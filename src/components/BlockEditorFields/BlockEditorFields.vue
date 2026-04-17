@@ -25,6 +25,7 @@
                :fieldConfig="fieldConfig"
                :fieldName="String(fieldName)"
                :editable="editable"
+               :parentBlockData="blockData"
             />
          </div>
       </div>
