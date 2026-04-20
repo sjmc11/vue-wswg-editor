@@ -181,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, watchEffect } from "vue";
 import type { EditorFieldConfig } from "../../util/fieldConfig";
 import BlockRepeaterNode from "../BlockRepeaterFieldNode/BlockRepeaterNode.vue";
 import BlockMarginNode from "../BlockMarginFieldNode/BlockMarginNode.vue";
@@ -225,15 +225,23 @@ const checkboxValues = computed({
    },
 });
 
-// Computed property for object field values - ensure it's always an object
+// Object fields: never return a fresh `{}` from a getter — nested editors mutate
+// `blockData` in place, so the model must be the same object reference as `fieldValue`.
+watchEffect(() => {
+   if (props.fieldConfig.type !== "object" || !props.fieldConfig.objectFields) return;
+   const v = fieldValue.value;
+   if (typeof v === "object" && v !== null && !Array.isArray(v)) return;
+   const defaults =
+      props.fieldConfig.default &&
+      typeof props.fieldConfig.default === "object" &&
+      !Array.isArray(props.fieldConfig.default)
+         ? { ...(props.fieldConfig.default as Record<string, any>) }
+         : {};
+   fieldValue.value = defaults;
+});
+
 const objectFieldValue = computed({
-   get: () => {
-      // Ensure fieldValue is always an object for object fields
-      if (typeof fieldValue.value !== "object" || fieldValue.value === null || Array.isArray(fieldValue.value)) {
-         return {};
-      }
-      return fieldValue.value;
-   },
+   get: () => fieldValue.value as Record<string, any>,
    set: (newValue: Record<string, any>) => {
       fieldValue.value = newValue;
    },
