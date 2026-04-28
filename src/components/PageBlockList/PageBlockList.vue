@@ -5,13 +5,20 @@
             v-for="block in pageBlocks"
             :key="block.id"
             data-prevent-drop="true"
-            :class="{ 'block-item--hovered': hoveredBlockId === block.id }"
+            :class="{
+               'block-item--hovered': hoveredBlockId === block.id,
+               'block-item--omitted': isOmittedBlock(block.id),
+            }"
             class="block-item"
             @mouseenter="setHoveredBlockId(block.id)"
             @mouseleave="setHoveredBlockId(null)"
             @click="emit('block-click', block)"
          >
             <p>{{ block.label || block.type }}</p>
+            <span v-if="isOmittedBlock(block.id)" class="block-item__hidden-pill">
+               <span>Hidden</span>
+               <EyeSlashIcon class="block-item__hidden-icon" title="Hidden block" />
+            </span>
             <span v-if="!block.path" class="block-item__badge">Not registered</span>
          </div>
       </template>
@@ -27,6 +34,7 @@ import { getBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { toNiceName } from "../../util/helpers";
 import Sortable from "sortablejs";
+import { EyeSlashIcon } from "@heroicons/vue/24/outline";
 
 const emit = defineEmits<{
    (e: "block-click", block: Block): void;
@@ -38,6 +46,7 @@ const isSorting = ref(false);
 const props = defineProps<{
    blocksKey: string;
    settingsKey: string;
+   omitBlocks?: string[];
 }>();
 
 const pageBlocks = computed(() => {
@@ -61,6 +70,11 @@ const pageBlocks = computed(() => {
       };
    });
 });
+
+function isOmittedBlock(blockId: string): boolean {
+   if (!props.omitBlocks?.length) return false;
+   return props.omitBlocks.includes(blockId);
+}
 
 function setHoveredBlockId(id: string | null) {
    if (isSorting.value) return;
@@ -119,6 +133,11 @@ onMounted(() => {
       color: #2563eb;
    }
 
+   &--omitted {
+      color: #71717a;
+      filter: grayscale(100%);
+   }
+
    &__badge {
       margin-left: auto;
       padding: 0.125rem 0.5rem;
@@ -126,6 +145,25 @@ onMounted(() => {
       background-color: #f4f4f5;
       font-size: 0.75rem;
       color: #71717a;
+   }
+
+   &__hidden-icon {
+      width: 1rem;
+      height: 1rem;
+      margin-left: auto;
+      color: #737373;
+   }
+
+   &__hidden-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      background-color: #f4f4f5;
+      font-size: 0.75rem;
+      color: #71717a;
+      margin-left: auto;
    }
 }
 

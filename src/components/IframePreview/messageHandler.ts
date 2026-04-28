@@ -271,6 +271,7 @@ export function isValidParentMessage(message: any): message is ParentMessage {
       "STYLESHEETS_LOADED",
       "BLOCK_ELEMENT_POSITION",
       "CLICK_PARTIAL",
+      "OMIT_BLOCKS_CHANGED",
    ];
 
    return validTypes.includes(message.type);
@@ -293,6 +294,7 @@ export function handleIframeMessage(
          blockId: string,
          position: { top: number; left: number; width: number; height: number }
       ) => void;
+      onOmitBlocksChanged?: (omitBlocks: string[]) => void;
    }
 ): void {
    // Security: Validate origin (in production, check against expected origin)
@@ -327,6 +329,9 @@ export function handleIframeMessage(
          break;
       case "BLOCK_ELEMENT_POSITION":
          callbacks.onBlockPosition?.(message.blockId, message.position);
+         break;
+      case "OMIT_BLOCKS_CHANGED":
+         callbacks.onOmitBlocksChanged?.(message.omitBlocks);
          break;
    }
 }

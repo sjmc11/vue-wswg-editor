@@ -17,7 +17,8 @@ export type MessageType =
    | "BLOCK_ADD"
    | "IFRAME_READY"
    | "STYLESHEETS_LOADED"
-   | "BLOCK_ELEMENT_POSITION";
+   | "BLOCK_ELEMENT_POSITION"
+   | "OMIT_BLOCKS_CHANGED";
 
 export interface BaseMessage {
    type: MessageType;
@@ -114,6 +115,11 @@ export interface BlockElementPositionMessage extends BaseMessage {
    };
 }
 
+export interface OmitBlocksChangedMessage extends BaseMessage {
+   type: "OMIT_BLOCKS_CHANGED";
+   omitBlocks: string[];
+}
+
 export type IframeMessage =
    | UpdatePageDataMessage
    | SetActiveBlockMessage
@@ -132,4 +138,5 @@ export type ParentMessage =
    | IframeReadyMessage
    | StylesheetsLoadedMessage
    | BlockElementPositionMessage
+   | OmitBlocksChangedMessage
    | PartialClickMessage;

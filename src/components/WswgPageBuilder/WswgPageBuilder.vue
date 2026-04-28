@@ -57,6 +57,7 @@
                   @block-reorder="handleBlockReorder"
                   @block-add="handleBlockAdd"
                   @click-partial="handleClickPartial"
+               @omit-blocks-changed="handleOmitBlocksChanged"
                >
                   <template #empty>
                      <slot name="empty" />
@@ -82,6 +83,7 @@
                :blocksKey="blocksKey"
                :settingsKey="settingsKey"
                :activeSettingsTab="activeSettingsTab"
+               :omitBlocks="resolvedOmitBlocks"
             />
          </div>
       </div>
@@ -113,6 +115,7 @@ const props = withDefaults(
       settingsKey?: string;
       defaultBlockMargin?: "none" | "small" | "medium" | "large";
       theme?: string;
+      omitBlocks?: string[];
    }>(),
    {
       editable: false,
@@ -123,6 +126,7 @@ const props = withDefaults(
       settingsKey: "settings",
       defaultBlockMargin: "none",
       theme: "default",
+      omitBlocks: () => [],
    }
 );
 
@@ -136,9 +140,11 @@ const activeSettingsTab = ref<string | undefined>(undefined);
 const sidebarWidth = ref(380); // Default sidebar width (380px)
 const previewRef = ref<HTMLElement | null>(null);
 const themeLoading = ref(false);
+const resolvedOmitBlocks = ref<string[]>(props.omitBlocks ?? []);
 const iframeExtraProps = computed(() => ({
    ...attrs,
    emptySlotProvided: Boolean(slots.empty),
+   omitBlocks: props.omitBlocks,
 }));
 
 // Model value for the JSON page data
@@ -267,6 +273,14 @@ watch(
    }
 );
 
+watch(
+   () => props.omitBlocks,
+   (newOmitBlocks) => {
+      resolvedOmitBlocks.value = newOmitBlocks ?? [];
+   },
+   { deep: true }
+);
+
 function handleBlockReorder(oldIndex: number, newIndex: number) {
    if (!pageData.value?.[props.blocksKey]) return;
 
@@ -302,6 +316,10 @@ function handleClickPartial(partialValue: string) {
    } else {
       activeSettingsTab.value = undefined;
    }
+}
+
+function handleOmitBlocksChanged(omitBlocks: string[]) {
+   resolvedOmitBlocks.value = omitBlocks;
 }
 
 function sanitizePageData() {

@@ -9,6 +9,7 @@
             :isEditorMode="true"
          >
             <template #default="layoutSlotProps">
+               <template v-if="syncOmitBlocks(layoutSlotProps?.omitBlocks)"></template>
                <!-- No blocks found -->
                <div
                   v-if="!blocks?.length"
@@ -59,7 +60,7 @@
                   </div>
 
                   <template v-for="(block, blockIndex) in blocks" :key="block.id">
-                     <div v-if="!isOmittedBlock(block.id, layoutSlotProps?.omitBlocks)">
+                     <div v-if="!isOmittedBlock(block.id, reportOmitBlocks(layoutSlotProps?.omitBlocks))">
                         <BlockComponent
                            :block="block"
                            :blockIndex="blockIndex"
@@ -168,6 +169,32 @@ const isOmittedBlock = (blockId: string, omitBlocks?: string[]): boolean => {
    if (!blocksToOmit?.length) return false;
    return blocksToOmit.includes(blockId);
 };
+
+const lastReportedOmitBlocks = ref<string[]>([]);
+
+function reportOmitBlocks(omitBlocks?: string[]) {
+   const nextOmitBlocks = Array.isArray(omitBlocks) ? omitBlocks : (props.omitBlocks ?? []);
+   const hasChanged =
+      nextOmitBlocks.length !== lastReportedOmitBlocks.value.length ||
+      nextOmitBlocks.some((id, index) => id !== lastReportedOmitBlocks.value[index]);
+
+   if (!hasChanged) {
+      return nextOmitBlocks;
+   }
+
+   lastReportedOmitBlocks.value = [...nextOmitBlocks];
+   sendToParent({
+      type: "OMIT_BLOCKS_CHANGED",
+      omitBlocks: nextOmitBlocks,
+   });
+
+   return nextOmitBlocks;
+}
+
+function syncOmitBlocks(omitBlocks?: string[]): boolean {
+   reportOmitBlocks(omitBlocks);
+   return false;
+}
 
 function handleBlockClick(block: Block | null) {
    sendToParent({
@@ -571,6 +598,7 @@ watch(
 );
 
 onMounted(async () => {
+   reportOmitBlocks(props.omitBlocks);
    // Initialize Sortable after component is mounted
    if (props.blocks && props.blocks.length > 0 && layoutComponent.value && isReady.value) {
       await nextTick();

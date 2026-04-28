@@ -76,6 +76,7 @@
             :editable="editable"
             :blocksKey="blocksKey"
             :settingsKey="settingsKey"
+            :omitBlocks="omitBlocks"
             @block-click="handleBlockClick"
          />
       </div>
@@ -108,6 +109,7 @@ const props = withDefaults(
       settingsKey?: string;
       hasPageSettings?: boolean;
       activeSettingsTab?: string;
+      omitBlocks?: string[];
    }>(),
    {
       editable: true,
@@ -115,6 +117,7 @@ const props = withDefaults(
       settingsKey: "settings",
       hasPageSettings: false,
       activeSettingsTab: undefined,
+      omitBlocks: () => [],
    }
 );
 

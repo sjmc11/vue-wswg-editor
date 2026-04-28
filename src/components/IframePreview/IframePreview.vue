@@ -48,6 +48,7 @@ const emit = defineEmits<{
    (e: "block-reorder", oldIndex: number, newIndex: number): void;
    (e: "block-add", blockType: string, index: number): void;
    (e: "click-partial", partialValue: string): void;
+   (e: "omit-blocks-changed", omitBlocks: string[]): void;
 }>();
 
 const iframeRef = ref<HTMLIFrameElement | null>(null);
@@ -151,6 +152,9 @@ function setupMessageListener() {
          },
          onPartialClick: (partialValue: string) => {
             emit("click-partial", partialValue);
+         },
+         onOmitBlocksChanged: (omitBlocks: string[]) => {
+            emit("omit-blocks-changed", omitBlocks);
          },
          onIframeReady: () => {
             iframeReady.value = true;
