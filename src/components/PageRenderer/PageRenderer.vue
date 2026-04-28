@@ -4,6 +4,7 @@
          <component
             :is="layoutComponent"
             v-if="withLayout && layoutComponent"
+            ref="layoutComponentRef"
             v-bind="{ ...attrs, ...settings }"
             :blocks="blocks"
             :isEditorMode="false"
@@ -11,12 +12,14 @@
             <template #default="layoutSlotProps">
                <div id="page-blocks-wrapper">
                   <div v-for="block in blocks" :key="block.id" class="block-wrapper">
-                     <component
-                        :is="getBlock(block.type)"
-                        v-bind="{ ...attrs, ...layoutSlotProps, ...block }"
-                        :key="`block-${block.id}`"
-                        :class="{ [getMarginClass(block)]: true }"
-                     />
+                     <template v-if="!isOmittedBlock(block.id, layoutSlotProps?.omitBlocks)">
+                        <component
+                           :is="getBlock(block.type)"
+                           v-bind="{ ...attrs, ...layoutSlotProps, ...block }"
+                           :key="`block-${block.id}`"
+                           :class="{ [getMarginClass(block)]: true }"
+                        />
+                     </template>
                   </div>
                </div>
             </template>
@@ -28,7 +31,9 @@
                class="block-wrapper"
                :class="{ [getMarginClass(block)]: true }"
             >
-               <component :is="getBlock(block.type)" v-bind="{ ...attrs, ...block }" :key="`block-${block.id}`" />
+               <template v-if="!isOmittedBlock(block.id)">
+                  <component :is="getBlock(block.type)" v-bind="{ ...attrs, ...block }" :key="`block-${block.id}`" />
+               </template>
             </div>
          </div>
       </template>
@@ -51,12 +56,14 @@ const props = withDefaults(
       settings?: Record<string, any>;
       withLayout?: boolean;
       theme?: string;
+      omitBlocks?: string[];
    }>(),
    {
       layout: "default",
       settings: () => ({}),
       withLayout: false,
       theme: "default",
+      omitBlocks: () => [],
    }
 );
 
@@ -82,6 +89,12 @@ function getMarginClass(block: Block): string {
 
    return [getClass(top, "top"), getClass(bottom, "bottom")].join(" ");
 }
+
+const isOmittedBlock = (blockId: string, omitBlocks?: string[]): boolean => {
+   const blocksToOmit = omitBlocks || props.omitBlocks;
+   if (!blocksToOmit?.length) return false;
+   return blocksToOmit.includes(blockId);
+};
 
 onBeforeMount(async () => {
    isReady.value = false;

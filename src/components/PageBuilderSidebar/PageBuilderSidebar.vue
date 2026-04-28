@@ -26,6 +26,7 @@
                <h4 class="wswg-sidebar-title wswg-sidebar-title--with-back">
                   {{ computedActiveBlock.label || computedActiveBlock.type }}
                </h4>
+               <p class="text-neutral-500 text-xs">{{ activeBlock.id }}</p>
             </div>
             <!-- delete section button -->
             <button

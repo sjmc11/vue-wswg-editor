@@ -59,7 +59,7 @@
                   </div>
 
                   <template v-for="(block, blockIndex) in blocks" :key="block.id">
-                     <div>
+                     <div v-if="!isOmittedBlock(block.id, layoutSlotProps?.omitBlocks)">
                         <BlockComponent
                            :block="block"
                            :blockIndex="blockIndex"
@@ -133,6 +133,7 @@ const props = withDefaults(
       settingsOpen?: boolean;
       theme?: string;
       emptySlotProvided?: boolean;
+      omitBlocks?: string[];
    }>(),
    {
       layout: "default",
@@ -143,6 +144,7 @@ const props = withDefaults(
       settingsOpen: false,
       theme: "default",
       emptySlotProvided: false,
+      omitBlocks: () => [],
    }
 );
 
@@ -160,6 +162,12 @@ const layoutComponent = computed(() => {
    }
    return getLayout(props.layout);
 });
+
+const isOmittedBlock = (blockId: string, omitBlocks?: string[]): boolean => {
+   const blocksToOmit = omitBlocks || props.omitBlocks;
+   if (!blocksToOmit?.length) return false;
+   return blocksToOmit.includes(blockId);
+};
 
 function handleBlockClick(block: Block | null) {
    sendToParent({

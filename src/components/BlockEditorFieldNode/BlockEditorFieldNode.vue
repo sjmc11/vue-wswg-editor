@@ -555,9 +555,10 @@ watch(
    }
 
    &__object-fields {
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid #d1d5db;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      background: rgb(162 164 171 / 6%);
    }
 
    &__info {
