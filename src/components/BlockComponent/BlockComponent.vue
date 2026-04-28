@@ -67,16 +67,14 @@ const blockComponent = computed<Block | undefined>(() => {
 // Margin is an object with top and bottom properties
 // margin classses are formatted as `margin-<direction>-<size>`
 function getMarginClass(block: Block): string {
-   const top = block.margin?.top || "none";
-   const bottom = block.margin?.bottom || "none";
+   const top = block.margin?.top;
+   const bottom = block.margin?.bottom;
 
-   // Map margin sizes to custom class names: none, sm, md, lg, xl
-   const getClass = (size: string, direction: "top" | "bottom"): string => {
-      const normalizedSize = size === "small" ? "sm" : size === "medium" ? "md" : size === "large" ? "lg" : size;
-      return `margin-${direction}-${normalizedSize}`;
-   };
+   const classes: string[] = [];
+   if (top) classes.push(`margin-top-${top}`);
+   if (bottom) classes.push(`margin-bottom-${bottom}`);
 
-   return [getClass(top, "top"), getClass(bottom, "bottom")].join(" ");
+   return classes.join(" ");
 }
 
 // On escape key press

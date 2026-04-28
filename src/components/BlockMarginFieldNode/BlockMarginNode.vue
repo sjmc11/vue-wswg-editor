@@ -92,7 +92,6 @@ const toggleLinkedMargin = () => {
 };
 
 const handleLinkedMarginChange = () => {
-   if (!linkedMarginValue.value) return;
    fieldValue.value = { top: linkedMarginValue.value, bottom: linkedMarginValue.value };
 };
 
@@ -104,8 +103,11 @@ onMounted(() => {
    }
 
    // If top and bottom margin are not set, set them to the default value
-   if (!fieldValue.value || !fieldValue.value.top || !fieldValue.value.bottom) {
-      fieldValue.value = { top: props.fieldConfig.default || "", bottom: props.fieldConfig.default || "" };
+   if (!fieldValue.value || fieldValue.value.top == null || fieldValue.value.bottom == null) {
+      fieldValue.value = {
+         top: fieldValue.value?.top ?? props.fieldConfig.default ?? "",
+         bottom: fieldValue.value?.bottom ?? props.fieldConfig.default ?? "",
+      };
    }
 });
 </script>

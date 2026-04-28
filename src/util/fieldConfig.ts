@@ -177,12 +177,12 @@ export const createField = {
    margin: (config: Partial<EditorFieldConfig> = {}): EditorFieldConfig => ({
       type: "margin",
       options: [
-         { label: "None", value: "none", id: "margin-none" },
-         { label: "Small", value: "small", id: "margin-small" },
-         { label: "Medium", value: "medium", id: "margin-medium" },
-         { label: "Large", value: "large", id: "margin-large" },
+         { label: "None", value: "", id: "margin-none" },
+         { label: "Small", value: "sm", id: "margin-sm" },
+         { label: "Medium", value: "md", id: "margin-md" },
+         { label: "Large", value: "lg", id: "margin-lg" },
       ],
-      default: "none",
+      default: "",
       description: "Vertical margin spacing",
       group: "settings",
       placeholder: "Select a margin...",

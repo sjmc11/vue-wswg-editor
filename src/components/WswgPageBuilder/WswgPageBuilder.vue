@@ -113,7 +113,7 @@ const props = withDefaults(
       showBrowserBar?: boolean;
       blocksKey?: string;
       settingsKey?: string;
-      defaultBlockMargin?: "none" | "small" | "medium" | "large";
+      defaultBlockMargin?: "" | "sm" | "md" | "lg";
       theme?: string;
       omitBlocks?: string[];
    }>(),
@@ -124,7 +124,7 @@ const props = withDefaults(
       showBrowserBar: false,
       blocksKey: "blocks",
       settingsKey: "settings",
-      defaultBlockMargin: "none",
+      defaultBlockMargin: "",
       theme: "default",
       omitBlocks: () => [],
    }

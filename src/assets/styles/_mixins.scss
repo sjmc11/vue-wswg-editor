@@ -59,12 +59,6 @@
       }
    }
 
-   // No margin classes
-   &.margin-top-none::before,
-   &.margin-bottom-none::after {
-      display: none;
-      content: none;
-   }
 }
 
 // Apply Overlay Styles (Helper)
