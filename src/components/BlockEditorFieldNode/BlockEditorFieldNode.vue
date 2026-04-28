@@ -3,7 +3,7 @@
    <div class="editor-field-node">
       <div class="editor-field-node__header">
          <!-- Label -->
-         <label class="editor-field-node__label">
+         <label class="editor-field-node__label" :for="uniqueFieldId">
             {{ fieldConfig.label || fieldName }}
             <span v-if="fieldConfig.required" class="editor-field-node__required">*</span>
          </label>
@@ -23,22 +23,41 @@
 
       <!-- Custom field component-->
       <template v-if="fieldConfig.component">
-         <component :is="fieldConfig.component" v-model="fieldValue" :editable="editable" v-bind="fieldConfig" />
+         <component
+            :is="fieldConfig.component"
+            :id="uniqueFieldId"
+            v-model="fieldValue"
+            :editable="editable"
+            v-bind="fieldConfig"
+         />
       </template>
 
       <!-- Generic input (text, number, email, url) -->
       <template v-else-if="['text', 'number', 'email', 'url'].includes(fieldConfig.type)">
-         <input v-model="textFieldValue" class="form-control" :disabled="!editable" v-bind="fieldConfig" />
+         <input
+            :id="uniqueFieldId"
+            v-model="textFieldValue"
+            class="form-control"
+            :disabled="!editable"
+            v-bind="fieldConfig"
+         />
       </template>
 
       <!-- Text area -->
       <template v-else-if="fieldConfig.type === 'textarea'">
-         <textarea v-model="textFieldValue" class="form-control" :disabled="!editable" v-bind="fieldConfig"></textarea>
+         <textarea
+            :id="uniqueFieldId"
+            v-model="textFieldValue"
+            class="form-control"
+            :disabled="!editable"
+            v-bind="fieldConfig"
+         ></textarea>
       </template>
 
       <!-- Select -->
       <template v-else-if="fieldConfig.type === 'select'">
          <select
+            :id="uniqueFieldId"
             v-model="textFieldValue"
             class="form-control"
             :placeholder="fieldConfig.placeholder"
@@ -53,6 +72,7 @@
       <!-- Color picker -->
       <div v-else-if="fieldConfig.type === 'color'" class="editor-field-node__color-picker">
          <input
+            :id="uniqueFieldId"
             v-model="fieldValue"
             type="color"
             class="form-control editor-field-node__color-input"
@@ -65,7 +85,9 @@
       <div v-else-if="fieldConfig.type === 'range'" class="editor-field-node__range">
          <span class="editor-field-node__range-value">{{ fieldValue }}{{ fieldConfig.valueSuffix || "" }}</span>
          <input
+            :id="uniqueFieldId"
             v-model="fieldValue"
+            :name="uniqueFieldId"
             type="range"
             class="form-control"
             :min="fieldConfig.min || 0"
@@ -79,12 +101,13 @@
       <div v-else-if="fieldConfig.type === 'checkbox'" class="editor-field-node__checkbox-group">
          <label
             v-for="option in fieldConfig.options"
-            :key="`${fieldName}_${option.value}`"
+            :key="`${uniqueFieldId}_${option.value}`"
             class="editor-field-node__checkbox-label"
          >
             <input
-               :id="`${fieldName}_${option.value}`"
+               :id="`${uniqueFieldId}_${option.value}`"
                v-model="checkboxValues"
+               :name="`${uniqueFieldId}_${option.value}`"
                :value="option.value"
                type="checkbox"
                class="editor-field-node__checkbox-input"
@@ -96,15 +119,15 @@
 
       <!-- Radio -->
       <div v-else-if="fieldConfig.type === 'radio'" class="editor-field-node__radio-group">
-         <div v-for="option in fieldConfig.options" :key="`${fieldName}_${option.value}`">
-            <label :for="`${fieldName}_${option.value}`" class="editor-field-node__radio-label">
+         <div v-for="option in fieldConfig.options" :key="`${uniqueFieldId}_${option.value}`">
+            <label :for="`${uniqueFieldId}_${option.value}`" class="editor-field-node__radio-label">
                <p class="editor-field-node__radio-text">{{ option.label }}</p>
 
                <input
-                  :id="`${fieldName}_${option.value}`"
+                  :id="`${uniqueFieldId}_${option.value}`"
                   v-model="fieldValue"
                   type="radio"
-                  :name="fieldName"
+                  :name="uniqueFieldId"
                   class="sr-only"
                   :value="option.value"
                   :checked="fieldValue === option.value"
@@ -115,9 +138,9 @@
 
       <!-- Boolean toggle -->
       <template v-else-if="fieldConfig.type === 'boolean'">
-         <label :for="fieldName" class="editor-field-node__toggle">
+         <label :for="uniqueFieldId" class="editor-field-node__toggle">
             <input
-               :id="fieldName"
+               :id="uniqueFieldId"
                v-model="fieldValue"
                type="checkbox"
                class="editor-field-node__toggle-input"
@@ -170,7 +193,7 @@
 
       <!-- Default fallback -->
       <template v-else>
-         <input v-model="textFieldValue" type="text" class="form-control" :disabled="!editable" />
+         <input :id="uniqueFieldId" v-model="textFieldValue" type="text" class="form-control" :disabled="!editable" />
       </template>
 
       <!-- Validation error message -->
@@ -192,6 +215,9 @@ import { validateField as validateFieldUtil, type ValidationResult } from "../..
 import * as yup from "yup";
 
 const fieldValue = defineModel<any>();
+
+const randomId = Math.random().toString(36).substring(2, 15);
+const uniqueFieldId = computed(() => `${props.fieldName}-${randomId}`);
 
 const props = defineProps<{
    fieldConfig: EditorFieldConfig;
