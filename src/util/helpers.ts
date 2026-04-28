@@ -156,6 +156,14 @@ export function toCamelCase(input: string): string {
    );
 }
 
+export function toSnakeCase(input: string): string {
+   if (!input) return "";
+   return input
+      .replace(/([a-z])([A-Z])/g, "$1_$2")
+      .replace(/[-\s]+/g, "_")
+      .toLowerCase();
+}
+
 export function toNiceName(input: string): string {
    if (!input) return "";
 

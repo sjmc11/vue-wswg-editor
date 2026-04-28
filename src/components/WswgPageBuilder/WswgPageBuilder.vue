@@ -103,6 +103,7 @@ import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
 import IframePreview from "../IframePreview/IframePreview.vue";
 import { initialiseRegistry, getBlock, themeLayouts } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
+import { toSnakeCase } from "../../util/helpers";
 import { onKeyStroke, onClickOutside } from "@vueuse/core";
 
 const props = withDefaults(
@@ -191,7 +192,7 @@ async function handleAddBlock(blockType: string, insertIndex?: number) {
    // Create a new block object
    const newBlock = {
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      type: blockType,
+      type: toSnakeCase(blockType),
       margin: props.defaultBlockMargin
          ? { top: props.defaultBlockMargin, bottom: props.defaultBlockMargin }
          : undefined,

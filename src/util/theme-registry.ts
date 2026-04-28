@@ -2,7 +2,7 @@ import { shallowRef, markRaw, type Ref } from "vue";
 import type { Theme } from "../types/Theme";
 import type { Layout } from "../types/Layout";
 import type { Block } from "../types/Block";
-import { generateNameVariations, toCamelCase } from "./helpers";
+import { generateNameVariations, toSnakeCase } from "./helpers";
 import { EditorFieldConfig } from "./fieldConfig";
 
 // Load all thumbnail images - Vite will process these as assets and provide URLs
@@ -307,7 +307,7 @@ export async function initialiseBlockRegistry(): Promise<void> {
       }
 
       // Format the block
-      const blockType = toCamelCase(blockModule.type || blockModule.__name);
+      const blockType = toSnakeCase(blockModule.type || blockModule.__name);
       // Extract directory path from component path (e.g., "@page-builder/my-theme/blocks/hero-section/hero-section.vue" -> "@page-builder/my-theme/blocks/hero-section")
       const directory = path.replace(/\/[^/]+\.vue$/, "");
       // Mark the component itself as raw before spreading

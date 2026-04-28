@@ -2,7 +2,7 @@ import { ref, shallowRef, markRaw, type Ref } from "vue";
 import type { EditorFieldConfig } from "./fieldConfig";
 import type { Block } from "../types/Block";
 import type { Layout } from "../types/Layout";
-import { generateNameVariations, toCamelCase } from "./helpers";
+import { generateNameVariations, toSnakeCase } from "./helpers";
 
 // Load all thumbnail images - Vite will process these as assets and provide URLs
 // For images, Vite returns the URL as the default export when using eager: true
@@ -206,7 +206,7 @@ export async function initialiseBlockRegistry(): Promise<void> {
       }
       const component = getModuleDefault(resolvedModule);
       if (component && component.__name) {
-         const blockType = toCamelCase(component.type || component.__name);
+         const blockType = toSnakeCase(component.type || component.__name);
          // Extract directory path from component path (e.g., "@page-builder/blocks/hero-section/hero-section.vue" -> "@page-builder/blocks/hero-section")
          const directory = path.replace(/\/[^/]+\.vue$/, "");
          // Mark the component itself as raw before spreading

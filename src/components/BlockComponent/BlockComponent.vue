@@ -30,7 +30,7 @@
          <div class="block-not-found__content">
             <p class="block-not-found__text">Block not registered</p>
             <span class="block-not-found__badge">
-               {{ toCamelCase(block.type) }}
+               {{ block.type }}
             </span>
          </div>
       </div>
@@ -41,7 +41,6 @@
 import { computed, useTemplateRef } from "vue";
 import { getBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
-import { toCamelCase } from "../../util/helpers";
 import { onKeyStroke } from "@vueuse/core";
 
 const emit = defineEmits<{
@@ -56,8 +55,6 @@ const props = defineProps<{
    hoveredBlockId: string | null;
    layoutSlotProps?: Record<string, any>;
 }>();
-
-const blockComponentRef = useTemplateRef<HTMLElement | null>("blockComponentRef");
 
 const blockComponent = computed<Block | undefined>(() => {
    return getBlock(props.block.type) || undefined;
