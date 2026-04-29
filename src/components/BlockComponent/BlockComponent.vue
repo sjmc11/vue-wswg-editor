@@ -89,12 +89,12 @@ onKeyStroke("Escape", () => {
    position: relative;
    transition: all 0.3s ease;
 
-   // Margin spacing overlay
+   // Margin spacing overlay — only rendered when a margin class is applied
    &::before,
    &::after {
       position: absolute;
       left: 0;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       width: 100%;
