@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue";
+import { computed } from "vue";
 import { getBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { onKeyStroke } from "@vueuse/core";
