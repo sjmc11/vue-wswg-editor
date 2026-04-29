@@ -548,7 +548,7 @@ export function vueWswgEditorPlugin(options: VueWswgEditorPluginOptions): Plugin
             case virtualModules.fields:
                return shouldSkip("fields")
                   ? `export const modules = {};`
-                  : `export const modules = import.meta.glob("${options.rootDir}/*/blocks/**/fields.ts", { eager: false });`;
+                  : `export const modules = import.meta.glob(["${options.rootDir}/*/blocks/**/fields.ts", "${options.rootDir}/*/layout/**/fields.ts"], { eager: false });`;
             case virtualModules.thumbnails:
                return shouldSkip("thumbnails")
                   ? `export const modules = {};`

@@ -186,7 +186,7 @@ export async function initialiseLayoutRegistry(): Promise<void> {
    const newLayouts: Record<string, Layout> = {};
 
    // Process only the active theme's layouts
-   for (const [, module] of themeLayoutModules) {
+   for (const [path, module] of themeLayoutModules) {
       let resolvedModule = module;
       // If module is a function (lazy-loaded), call it to get the actual module
       if (typeof module === "function") {
@@ -196,6 +196,12 @@ export async function initialiseLayoutRegistry(): Promise<void> {
       // exclude modules without name or label
       if (!layout || !layout.label) {
          continue;
+      }
+      // Apply fields from fields.ts file if available (same pattern as blocks)
+      const directory = path.replace(/\/[^/]+\.vue$/, "");
+      const fileFields = getBlockFieldsFile(directory);
+      if (Object.keys(fileFields).length > 0) {
+         layout.fields = { ...fileFields, ...(layout.fields || {}) };
       }
       // Mark layout component as raw to prevent Vue from making it reactive
       newLayouts[layout.__name] = markRaw(layout);
@@ -235,10 +241,9 @@ async function initialiseBlockFieldsRegistry(): Promise<void> {
    // Then filter to only process block fields from the active theme
    const { modules: blockFieldsModules } = await import("vue-wswg-editor:fields");
 
-   // Filter to only block fields from the active theme
-   const themeBlockFieldsPath = `${activeTheme.path}/blocks`;
+   // Filter to only fields from the active theme (blocks and layouts)
    const themeBlockFieldsModules = Object.entries(blockFieldsModules).filter(([path]) =>
-      path.startsWith(themeBlockFieldsPath)
+      path.startsWith(`${activeTheme.path}/blocks`) || path.startsWith(`${activeTheme.path}/layout`)
    );
 
    // Build the new block fields object (don't mutate the existing one)
@@ -368,14 +373,15 @@ export function getBlockThumbnail(blockDirectory: string): string | undefined {
 
 /** THEME BLOCK & FIELD REGISTRY */
 async function initialiseThemeSubRegistries(useEditingRegistry?: boolean): Promise<void> {
-   // Load the layouts that belong to the active theme
-   await initialiseLayoutRegistry();
    // Load the additional theme fields and thumbnails if in edit mode
+   // Fields must be loaded before layouts and blocks so fields.ts files are available
    if (useEditingRegistry) {
       await initialiseBlockFieldsRegistry();
       await initialiseBlockThumbnailsRegistry();
       await initialiseThemeThumbnailsRegistry();
    }
+   // Load the layouts that belong to the active theme
+   await initialiseLayoutRegistry();
    // Load the blocks that belong to the active theme
    await initialiseBlockRegistry();
 }

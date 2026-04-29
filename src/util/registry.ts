@@ -170,7 +170,7 @@ export async function initialiseLayoutRegistry(): Promise<void> {
    const newLayouts: Record<string, Layout> = {};
 
    // Handle both eager-loaded modules and lazy-loaded modules (functions)
-   for (const [, module] of Object.entries(layoutModules)) {
+   for (const [path, module] of Object.entries(layoutModules)) {
       let resolvedModule = module;
       // If module is a function (lazy-loaded), call it to get the actual module
       if (typeof module === "function") {
@@ -180,6 +180,12 @@ export async function initialiseLayoutRegistry(): Promise<void> {
       // exclude modules without name or label - use continue instead of return to skip this iteration
       if (!layout || !layout.label) {
          continue;
+      }
+      // Apply fields from fields.ts file if available (same pattern as blocks)
+      const directory = path.replace(/\/[^/]+\.vue$/, "");
+      const fileFields = getBlockFields(directory);
+      if (Object.keys(fileFields).length > 0) {
+         layout.fields = { ...fileFields, ...(layout.fields || {}) };
       }
       // Mark layout component as raw to prevent Vue from making it reactive
       newLayouts[layout.__name] = markRaw(layout);
@@ -231,8 +237,9 @@ export async function initialiseRegistry(): Promise<void> {
       const { modules: thumbnailModules } = await import("vue-wswg-editor:thumbnails");
       thumbnailModulesCache = thumbnailModules;
 
-      await initialiseLayoutRegistry();
+      // Fields must be loaded before layouts and blocks so fields.ts files are available
       await initialiseBlockFieldsRegistry();
+      await initialiseLayoutRegistry();
       await initialiseBlockRegistry();
    } catch (error) {
       console.error("[vue-wswg-editor:registry] Error during registry initialization:", error);
