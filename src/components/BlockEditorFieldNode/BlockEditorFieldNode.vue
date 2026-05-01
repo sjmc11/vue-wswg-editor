@@ -81,12 +81,12 @@
          <input v-model="fieldValue" type="text" class="form-control" :disabled="!editable" />
       </div>
 
-      <!-- Range input -->
+      <!-- Range input: model is a number (coerced in script from string data) -->
       <div v-else-if="fieldConfig.type === 'range'" class="editor-field-node__range">
-         <span class="editor-field-node__range-value">{{ fieldValue }}{{ fieldConfig.valueSuffix || "" }}</span>
+         <span class="editor-field-node__range-value">{{ rangeSliderValue }}{{ fieldConfig.valueSuffix || "" }}</span>
          <input
             :id="uniqueFieldId"
-            v-model="fieldValue"
+            v-model="rangeSliderValue"
             :name="uniqueFieldId"
             type="range"
             class="form-control"
@@ -270,6 +270,57 @@ const objectFieldValue = computed({
    get: () => fieldValue.value as Record<string, any>,
    set: (newValue: Record<string, any>) => {
       fieldValue.value = newValue;
+   },
+});
+
+/** Range model may arrive as a string (e.g. imported JSON); invalid numbers → `min` or `0` when `min` is unset. */
+function parseRangeStoredValue(raw: unknown, min: number, max: number): number {
+   const clamp = (n: number) => Math.min(max, Math.max(min, n));
+   if (raw === "" || raw === null || raw === undefined) {
+      return min;
+   }
+   if (typeof raw === "string") {
+      const parsed = Number(raw.trim());
+      if (!Number.isFinite(parsed) || Number.isNaN(parsed)) {
+         return min;
+      }
+      return clamp(parsed);
+   }
+   if (typeof raw === "number") {
+      if (!Number.isFinite(raw) || Number.isNaN(raw)) {
+         return min;
+      }
+      return clamp(raw);
+   }
+   return min;
+}
+
+// Range: persist numbers; normalize strings (including non-numeric → min or 0) and clamp numbers
+watchEffect(() => {
+   if (props.fieldConfig.type !== "range") return;
+   const min = props.fieldConfig.min ?? 0;
+   const max = props.fieldConfig.max ?? 100;
+   const v = fieldValue.value;
+   if (v === null || v === undefined) return;
+
+   const normalized = parseRangeStoredValue(v, min, max);
+   if (!Object.is(v, normalized)) {
+      fieldValue.value = normalized;
+   }
+});
+
+const rangeSliderValue = computed({
+   get(): number {
+      const min = props.fieldConfig.min ?? 0;
+      const max = props.fieldConfig.max ?? 100;
+      const raw = fieldValue.value;
+      if (raw === null || raw === undefined) {
+         return min;
+      }
+      return parseRangeStoredValue(raw, min, max);
+   },
+   set(v: number) {
+      fieldValue.value = v;
    },
 });
 

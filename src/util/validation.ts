@@ -270,7 +270,7 @@ export function createGenericValidator(fieldConfig: EditorFieldConfig): Validato
       }
    }
 
-   // Number validations
+   // Number validations (min/max) — number and range; range values are normalized to numbers in the editor UI
    if (fieldConfig.type === "number" || fieldConfig.type === "range") {
       if (fieldConfig.min !== undefined) {
          validations.push(async (value: any) => {
