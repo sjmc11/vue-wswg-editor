@@ -2,7 +2,6 @@
    <div
       class="block-wrapper"
       :class="{
-         [getMarginClass(block)]: true,
          'active-block': activeBlock?.id === block.id,
          'hovered-block': hoveredBlockId === block.id,
       }"
@@ -12,6 +11,7 @@
       <div
          v-if="blockComponent"
          class="block-component"
+         :class="{ [getMarginClass(block)]: true }"
          @mouseenter="emit('hoverBlock', block.id)"
          @mouseleave="emit('hoverBlock', null)"
          @click="emit('clickBlock', block)"

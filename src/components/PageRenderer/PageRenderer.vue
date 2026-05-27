@@ -25,14 +25,14 @@
             </template>
          </component>
          <div v-else id="page-blocks-wrapper">
-            <div
-               v-for="block in blocks"
-               :key="block.id"
-               class="block-wrapper"
-               :class="{ [getMarginClass(block)]: true }"
-            >
+            <div v-for="block in blocks" :key="block.id" class="block-wrapper">
                <template v-if="!isOmittedBlock(block.id)">
-                  <component :is="getBlock(block.type)" v-bind="{ ...attrs, ...block }" :key="`block-${block.id}`" />
+                  <component
+                     :is="getBlock(block.type)"
+                     v-bind="{ ...attrs, ...block }"
+                     :key="`block-${block.id}`"
+                     :class="{ [getMarginClass(block)]: true }"
+                  />
                </template>
             </div>
          </div>
