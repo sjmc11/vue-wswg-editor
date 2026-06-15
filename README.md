@@ -461,6 +461,11 @@ Example:
       {
          "id": "block-2",
          "type": "divider"
+      },
+      {
+         "id": "block-3",
+         "type": "callout",
+         "kicker": "Learn more"
       }
    ],
    "settings": {
