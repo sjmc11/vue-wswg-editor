@@ -11,13 +11,17 @@
          >
             <template #default="layoutSlotProps">
                <div id="page-blocks-wrapper">
-                  <div v-for="block in blocks" :key="block.id" class="block-wrapper">
+                  <div
+                     v-for="block in blocks"
+                     :key="block.id"
+                     class="block-wrapper"
+                     :class="{ [getMarginClass(block)]: true, [block.type]: true }"
+                  >
                      <template v-if="!isOmittedBlock(block.id, layoutSlotProps?.omitBlocks)">
                         <component
                            :is="getBlock(block.type)"
                            v-bind="{ ...attrs, ...layoutSlotProps, ...block }"
                            :key="`block-${block.id}`"
-                           :class="{ [getMarginClass(block)]: true }"
                         />
                      </template>
                   </div>
@@ -25,14 +29,14 @@
             </template>
          </component>
          <div v-else id="page-blocks-wrapper">
-            <div v-for="block in blocks" :key="block.id" class="block-wrapper">
+            <div
+               v-for="block in blocks"
+               :key="block.id"
+               class="block-wrapper"
+               :class="{ [getMarginClass(block)]: true, [block.type]: true }"
+            >
                <template v-if="!isOmittedBlock(block.id)">
-                  <component
-                     :is="getBlock(block.type)"
-                     v-bind="{ ...attrs, ...block }"
-                     :key="`block-${block.id}`"
-                     :class="{ [getMarginClass(block)]: true }"
-                  />
+                  <component :is="getBlock(block.type)" v-bind="{ ...attrs, ...block }" :key="`block-${block.id}`" />
                </template>
             </div>
          </div>
@@ -114,9 +118,7 @@ onBeforeMount(async () => {
    position: relative;
 
    .block-wrapper {
-      > * {
-         @include block-margin-classes;
-      }
+      @include block-margin-classes;
    }
 }
 </style>
