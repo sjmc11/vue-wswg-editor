@@ -22,6 +22,7 @@ import {
    sendActiveBlock,
    sendHoveredBlock,
    sendSettingsOpen,
+   sendEditable,
    sendScrollToBlock,
    handleIframeMessage,
    sendStylesheets,
@@ -172,6 +173,10 @@ function setupMessageListener() {
             if (iframeRef.value && props.settingsOpen !== undefined) {
                sendSettingsOpen(iframeRef.value, props.settingsOpen);
             }
+            // Send initial editable state
+            if (iframeRef.value && props.editable !== undefined) {
+               sendEditable(iframeRef.value, props.editable);
+            }
          },
       });
    };
@@ -229,6 +234,16 @@ watch(
    (settingsOpen) => {
       if (iframeRef.value && iframeReady.value) {
          sendSettingsOpen(iframeRef.value, settingsOpen ?? false);
+      }
+   }
+);
+
+// Watch for editable changes
+watch(
+   () => props.editable,
+   (editable) => {
+      if (iframeRef.value && iframeReady.value) {
+         sendEditable(iframeRef.value, editable ?? false);
       }
    }
 );

@@ -7,6 +7,7 @@ export type MessageType =
    | "SET_ACTIVE_BLOCK"
    | "SET_HOVERED_BLOCK"
    | "SET_SETTINGS_OPEN"
+   | "SET_EDITABLE"
    | "SET_VIEWPORT"
    | "CLICK_PARTIAL"
    | "SCROLL_TO_BLOCK"
@@ -46,6 +47,11 @@ export interface SetHoveredBlockMessage extends BaseMessage {
 export interface SetSettingsOpenMessage extends BaseMessage {
    type: "SET_SETTINGS_OPEN";
    settingsOpen: boolean;
+}
+
+export interface SetEditableMessage extends BaseMessage {
+   type: "SET_EDITABLE";
+   editable: boolean;
 }
 
 export interface SetViewportMessage extends BaseMessage {
@@ -125,6 +131,7 @@ export type IframeMessage =
    | SetActiveBlockMessage
    | SetHoveredBlockMessage
    | SetSettingsOpenMessage
+   | SetEditableMessage
    | SetViewportMessage
    | ScrollToBlockMessage
    | InjectStylesheetsMessage

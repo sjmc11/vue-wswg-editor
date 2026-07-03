@@ -5,6 +5,7 @@ import type {
    SetActiveBlockMessage,
    SetHoveredBlockMessage,
    SetSettingsOpenMessage,
+   SetEditableMessage,
    SetViewportMessage,
    ScrollToBlockMessage,
    InjectStylesheetsMessage,
@@ -100,6 +101,17 @@ export function sendSettingsOpen(iframe: HTMLIFrameElement | null, settingsOpen:
    const message: SetSettingsOpenMessage = {
       type: "SET_SETTINGS_OPEN",
       settingsOpen,
+   };
+   sendToIframe(iframe, message);
+}
+
+/**
+ * Send editable state update to iframe
+ */
+export function sendEditable(iframe: HTMLIFrameElement | null, editable: boolean): void {
+   const message: SetEditableMessage = {
+      type: "SET_EDITABLE",
+      editable,
    };
    sendToIframe(iframe, message);
 }

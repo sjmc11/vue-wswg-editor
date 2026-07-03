@@ -17,7 +17,7 @@
          @mouseleave="emit('hoverBlock', null)"
          @click="emit('clickBlock', block)"
       >
-         <div v-if="activeBlock?.id === block.id" class="editing-badge">
+         <div v-if="activeBlock?.id === block.id && editable" class="editing-badge">
             <span>Editing</span>
          </div>
          <component :is="blockComponent" v-bind="{ ...layoutSlotProps, ...block }" ref="blockComponentRef" />
@@ -49,13 +49,19 @@ const emit = defineEmits<{
    (e: "clickBlock", block: Block | null): void;
 }>();
 
-const props = defineProps<{
-   block: Block;
-   blockIndex: number;
-   activeBlock: Block | null;
-   hoveredBlockId: string | null;
-   layoutSlotProps?: Record<string, any>;
-}>();
+const props = withDefaults(
+   defineProps<{
+      block: Block;
+      blockIndex: number;
+      activeBlock: Block | null;
+      hoveredBlockId: string | null;
+      editable?: boolean;
+      layoutSlotProps?: Record<string, any>;
+   }>(),
+   {
+      editable: false,
+   }
+);
 
 const blockComponent = computed<Block | undefined>(() => {
    return getBlock(props.block.type) || undefined;

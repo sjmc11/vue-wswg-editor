@@ -25,6 +25,7 @@ export interface IframeAppState {
    blocksKey: string;
    settingsKey: string;
    settingsOpen: boolean;
+   editable: boolean;
    theme: string;
 }
 
@@ -38,6 +39,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
    const activeBlock = ref<Block | null>(null);
    const hoveredBlockId = ref<string | null>(null);
    const settingsOpen = ref<boolean>(false);
+   const editable = ref<boolean>(false);
    const blocksKey = ref<string>("blocks");
    const settingsKey = ref<string>("settings");
    const theme = ref<string>("default");
@@ -95,6 +97,9 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
             break;
          case "SET_SETTINGS_OPEN":
             settingsOpen.value = msg.settingsOpen;
+            break;
+         case "SET_EDITABLE":
+            editable.value = msg.editable;
             break;
          case "SCROLL_TO_BLOCK": {
             const block = document.querySelector(`[data-block-id="${msg.blockId}"]`);
@@ -197,7 +202,7 @@ export async function createIframeApp(container: HTMLElement): Promise<App> {
                   activeBlock: activeBlock.value,
                   hoveredBlockId: hoveredBlockId.value,
                   settingsOpen: settingsOpen.value,
-                  editable: true,
+                  editable: editable.value,
                   theme: theme.value,
                });
             } else {
