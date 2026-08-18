@@ -19,7 +19,7 @@
                   >
                      <template v-if="!isOmittedBlock(block.id, layoutSlotProps?.omitBlocks)">
                         <component
-                           :is="getUsableBlock(block.type, layout)"
+                           :is="getUsableBlock(block.type, layout || settings?.layout)"
                            v-bind="{ ...attrs, ...layoutSlotProps, ...block }"
                            :key="`block-${block.id}`"
                         />
@@ -37,7 +37,7 @@
             >
                <template v-if="!isOmittedBlock(block.id)">
                   <component
-                     :is="getUsableBlock(block.type, layout)"
+                     :is="getUsableBlock(block.type, layout || settings?.layout)"
                      v-bind="{ ...attrs, ...block }"
                      :key="`block-${block.id}`"
                   />

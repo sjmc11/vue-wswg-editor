@@ -341,3 +341,7 @@ Layouts are scoped to their theme. When you use a theme, only layouts from that 
 - Maintain separate layout libraries for different themes
 
 To learn more about themes, see the [Themes Guide](/guide/themes).
+
+## Restricting Blocks to a Layout
+
+Blocks can opt in to specific layouts via `defineOptions({ layout })`. See [Restricting a Block to Layouts](/guide/blocks#restricting-a-block-to-layouts) in the Blocks guide.

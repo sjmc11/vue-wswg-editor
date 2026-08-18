@@ -31,7 +31,7 @@ const props = defineProps<{
 }>();
 
 const blockSearch = ref("");
-const sortableInstance = ref<Sortable | null>(null);
+const sortableInstance = ref<InstanceType<typeof Sortable> | null>(null);
 
 const themeBlockCount = computed(() => {
    if (!themeBlocks.value) return 0;
