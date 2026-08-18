@@ -19,7 +19,7 @@
                   >
                      <template v-if="!isOmittedBlock(block.id, layoutSlotProps?.omitBlocks)">
                         <component
-                           :is="getBlock(block.type)"
+                           :is="getUsableBlock(block.type, layout)"
                            v-bind="{ ...attrs, ...layoutSlotProps, ...block }"
                            :key="`block-${block.id}`"
                         />
@@ -36,7 +36,11 @@
                :class="{ [getMarginClass(block)]: true, [block.type]: true }"
             >
                <template v-if="!isOmittedBlock(block.id)">
-                  <component :is="getBlock(block.type)" v-bind="{ ...attrs, ...block }" :key="`block-${block.id}`" />
+                  <component
+                     :is="getUsableBlock(block.type, layout)"
+                     v-bind="{ ...attrs, ...block }"
+                     :key="`block-${block.id}`"
+                  />
                </template>
             </div>
          </div>
@@ -47,7 +51,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, useAttrs } from "vue";
 import type { Block } from "../../types/Block";
-import { initialiseRegistry, getBlock, getLayout } from "../../util/theme-registry";
+import { initialiseRegistry, getUsableBlock, getLayout } from "../../util/theme-registry";
 
 defineOptions({ inheritAttrs: false });
 
