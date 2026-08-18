@@ -67,6 +67,7 @@
                            :activeBlock="activeBlock"
                            :editable="editable"
                            :hoveredBlockId="hoveredBlockId"
+                           :layout="layout"
                            :layoutSlotProps="layoutSlotProps"
                            @hover-block="setHoveredBlockId"
                            @click-block="handleBlockClick"

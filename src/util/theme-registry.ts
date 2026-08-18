@@ -351,6 +351,34 @@ export function getBlock(blockType: string): Block | undefined {
    return undefined;
 }
 
+/**
+ * Whether a registered block may be used on the given layout.
+ * Omitted / empty `layout` on the block means it is available on all layouts.
+ */
+export function isBlockAllowedForLayout(block: Block, layoutId?: string | null): boolean {
+   const restriction = block.layout;
+   if (restriction == null) return true;
+
+   const allowed = (Array.isArray(restriction) ? restriction : [restriction]).filter(
+      (id): id is string => typeof id === "string" && id.length > 0
+   );
+   if (allowed.length === 0) return true;
+   if (!layoutId) return false;
+
+   const currentVariations = generateNameVariations(layoutId);
+   return allowed.some((id) => generateNameVariations(id).some((variation) => currentVariations.includes(variation)));
+}
+
+/**
+ * Registry lookup that treats a layout mismatch the same as an unregistered block.
+ */
+export function getUsableBlock(type: string, layoutId?: string | null): Block | undefined {
+   const block = getBlock(type);
+   if (!block) return undefined;
+   if (!isBlockAllowedForLayout(block, layoutId)) return undefined;
+   return block;
+}
+
 /**************************************************
  * BLOCK THUMBNAILS
  **************************************************/

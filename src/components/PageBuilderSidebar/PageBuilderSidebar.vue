@@ -53,7 +53,7 @@
             </div>
          </div>
          <!-- Blocks list -->
-         <BlockBrowser />
+         <BlockBrowser :layout="pageData?.[settingsKey]?.layout" />
       </div>
       <!-- No active block -->
       <div v-else>
@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getBlock } from "../../util/theme-registry";
+import { getUsableBlock } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import BlockBrowser from "../BlockBrowser/BlockBrowser.vue";
 import BlockEditorFields from "../BlockEditorFields/BlockEditorFields.vue";
@@ -133,8 +133,9 @@ const computedActiveBlock = computed(() => {
       return activeBlock.value;
    }
 
-   // Find the corresponding block in the registry
-   const registryBlock = getBlock(blockType);
+   // Find the corresponding block in the registry (layout-restricted types are treated as unregistered)
+   const currentLayout = pageData.value?.[props.settingsKey]?.layout;
+   const registryBlock = getUsableBlock(blockType, currentLayout);
 
    if (!registryBlock) {
       // If no registry block found, return activeBlock as-is

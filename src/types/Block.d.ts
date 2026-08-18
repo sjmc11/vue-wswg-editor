@@ -10,6 +10,8 @@ export type Block = Component & {
    // Defined in template
    label?: string;
    emoji?: string; // A single emoji character
+   // Restrict this block to one or more layouts (layout __name). Omitted = all layouts.
+   layout?: string | string[];
    // fields file
    fields?: Record<string, any>;
    // Auto generated from the component path

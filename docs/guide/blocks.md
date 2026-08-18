@@ -82,6 +82,34 @@ defineOptions({
 - **Consistency** - Matches the pattern used by layouts
 - **Accessibility** - Clearer identification for screen readers
 
+### Restricting a Block to Layouts
+
+By default, a block is available on every layout in its theme. Set `layout` in `defineOptions` to limit it to one or more layouts. Use the layout component `__name` (the layout filename), not the display label.
+
+```vue
+<script setup lang="ts">
+defineOptions({
+   label: "Signup Section",
+   layout: "auth", // only available on the auth layout
+});
+</script>
+```
+
+Or allow it on multiple layouts:
+
+```vue
+<script setup lang="ts">
+defineOptions({
+   label: "Signup Section",
+   layout: ["auth", "admin_layout"],
+});
+</script>
+```
+
+If `layout` is omitted, the block can be added on any layout as usual.
+
+If a page already contains a restricted block and the layout is switched to one that does not allow it, the instance stays in the page JSON. The editor shows the same "Block not registered" placeholder used for blocks that are missing from the active theme. Production rendering skips the block.
+
 ## Block Naming Convention
 
 - Block directories should use **kebab-case** (e.g., `hero-section`)

@@ -3,11 +3,14 @@
       <div class="block-browser__header">
          <input v-model="blockSearch" type="text" placeholder="Search blocks" class="block-browser__search" />
       </div>
-      <div v-if="!blockCount" class="block-browser__empty">
+      <div v-if="!themeBlockCount" class="block-browser__empty">
          <p>Create your first block to get started.</p>
          <p class="block-browser__empty-link">
             <a href="https://github.com/sano-io/page-builder/tree/main/blocks" target="_blank">How to create a block</a>
          </p>
+      </div>
+      <div v-else-if="!layoutAvailableBlocks.length" class="block-browser__empty">
+         No blocks available for this layout
       </div>
       <div v-else-if="!filteredBlocks.length" class="block-browser__empty">No blocks found</div>
       <div v-else id="available-blocks-list" class="block-browser__grid">
@@ -17,17 +20,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { themeBlocks } from "../../util/theme-registry";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { isBlockAllowedForLayout, themeBlocks } from "../../util/theme-registry";
 import AddBlockItem from "../AddBlockItem/AddBlockItem.vue";
 import type { Block } from "../../types/Block";
 import Sortable from "sortablejs";
 
+const props = defineProps<{
+   layout?: string;
+}>();
+
 const blockSearch = ref("");
-const filteredBlocks = computed(() => {
+const sortableInstance = ref<InstanceType<typeof Sortable> | null>(null);
+
+const themeBlockCount = computed(() => {
+   if (!themeBlocks.value) return 0;
+   return Object.values(themeBlocks.value).length;
+});
+
+const layoutAvailableBlocks = computed(() => {
    if (!themeBlocks.value) return [];
-   return Object.values(themeBlocks.value).filter((block: Block) => {
-      // against block name and label
+   return Object.values(themeBlocks.value).filter((block: Block) => isBlockAllowedForLayout(block, props.layout));
+});
+
+const filteredBlocks = computed(() => {
+   return layoutAvailableBlocks.value.filter((block: Block) => {
       return (
          block.type?.toLowerCase().includes(blockSearch.value.toLowerCase()) ||
          block.label?.toLowerCase().includes(blockSearch.value.toLowerCase())
@@ -35,16 +52,17 @@ const filteredBlocks = computed(() => {
    });
 });
 
-const blockCount = computed(() => {
-   if (!themeBlocks.value) return 0;
-   return Object.values(themeBlocks.value).length;
-});
+function destroySortable() {
+   sortableInstance.value?.destroy();
+   sortableInstance.value = null;
+}
 
 function initSortable() {
+   destroySortable();
    const sortableBlocksWrapper = document.getElementById("available-blocks-list");
    if (!sortableBlocksWrapper) return;
-   if (!blockCount.value) return;
-   new Sortable(sortableBlocksWrapper, {
+   if (!filteredBlocks.value.length) return;
+   sortableInstance.value = new Sortable(sortableBlocksWrapper, {
       animation: 150,
       ghostClass: "sortable-ghost",
       chosenClass: "sortable-chosen",
@@ -58,8 +76,16 @@ function initSortable() {
    });
 }
 
+watch(filteredBlocks, () => {
+   nextTick(() => initSortable());
+});
+
 onMounted(() => {
    initSortable();
+});
+
+onBeforeUnmount(() => {
+   destroySortable();
 });
 </script>
 

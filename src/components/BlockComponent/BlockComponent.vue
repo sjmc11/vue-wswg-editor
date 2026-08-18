@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getBlock, isRegistryReady } from "../../util/theme-registry";
+import { getUsableBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { onKeyStroke } from "@vueuse/core";
 
@@ -56,6 +56,7 @@ const props = withDefaults(
       activeBlock: Block | null;
       hoveredBlockId: string | null;
       editable?: boolean;
+      layout?: string;
       layoutSlotProps?: Record<string, any>;
    }>(),
    {
@@ -64,7 +65,7 @@ const props = withDefaults(
 );
 
 const blockComponent = computed<Block | undefined>(() => {
-   return getBlock(props.block.type) || undefined;
+   return getUsableBlock(props.block.type, props.layout) || undefined;
 });
 
 // Get the margin class for the block

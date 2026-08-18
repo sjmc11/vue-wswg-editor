@@ -101,7 +101,7 @@ import ResizeHandle from "../ResizeHandle/ResizeHandle.vue";
 import PageBuilderSidebar from "../PageBuilderSidebar/PageBuilderSidebar.vue";
 import BrowserNavigation from "../BrowserNavigation/BrowserNavigation.vue";
 import IframePreview from "../IframePreview/IframePreview.vue";
-import { initialiseRegistry, getBlock, themeLayouts } from "../../util/theme-registry";
+import { initialiseRegistry, getUsableBlock, themeLayouts } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { toSnakeCase } from "../../util/helpers";
 import { onKeyStroke, onClickOutside } from "@vueuse/core";
@@ -184,6 +184,10 @@ function handleBlockClick(block: Block | null) {
 async function handleAddBlock(blockType: string, insertIndex?: number) {
    if (!pageData.value) return;
 
+   const currentLayout = pageData.value?.[props.settingsKey]?.layout;
+   const blockComponent = getUsableBlock(blockType, currentLayout);
+   if (!blockComponent) return;
+
    // Ensure blocks array exists
    if (!pageData.value[props.blocksKey]) {
       pageData.value[props.blocksKey] = [];
@@ -198,7 +202,6 @@ async function handleAddBlock(blockType: string, insertIndex?: number) {
          : undefined,
    };
    // Get the default prop values from the block component
-   const blockComponent = getBlock(blockType);
    if (blockComponent?.props) {
       // loop props and set their default value
       Object.entries(blockComponent.props).forEach(([key, value]: [string, any]) => {

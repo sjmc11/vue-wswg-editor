@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { getBlock, isRegistryReady } from "../../util/theme-registry";
+import { getUsableBlock, isRegistryReady } from "../../util/theme-registry";
 import type { Block } from "../../types/Block";
 import { toNiceName } from "../../util/helpers";
 import Sortable from "sortablejs";
@@ -53,8 +53,9 @@ const pageBlocks = computed(() => {
    if (!pageData.value?.[props.blocksKey]) return [];
    // loop through pageData[blocksKey] and get the block data from registry or return a default block data
    return pageData.value[props.blocksKey].map((block: any) => {
-      // Find the corresponding block in the registry
-      const registryBlock = getBlock(block.type);
+      // Find the corresponding block in the registry (layout-restricted types are treated as unregistered)
+      const currentLayout = pageData.value?.[props.settingsKey]?.layout;
+      const registryBlock = getUsableBlock(block.type, currentLayout);
 
       if (registryBlock) {
          return {
