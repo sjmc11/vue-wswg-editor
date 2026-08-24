@@ -76,25 +76,25 @@ Custom field components can be used in block fields using the `custom` field typ
 
 ## Field Options
 
-| Option        | Type                        | Description                                           |
-| ------------- | --------------------------- | ----------------------------------------------------- |
-| `type`        | `EditorFieldType`           | Field type (required)                                 |
-| `label`       | `string`                    | Field label                                           |
-| `description` | `string`                    | Help text below field                                 |
-| `placeholder` | `string`                    | Input placeholder                                     |
-| `required`    | `boolean`                   | Whether field is required                             |
-| `default`     | `any`                       | Default value                                         |
-| `hidden`      | `boolean`                   | Hide field from editor                                |
-| `group`       | `string`                    | Group field in sidebar                                |
-| `options`     | `Array<{label, value, id}>` | Options for select/radio/checkbox                     |
-| `min` / `max` | `number`                    | Min/max for number/range                              |
-| `step`        | `number`                    | Step for number/range                                 |
-| `rows`        | `number`                    | Rows for textarea                                     |
-| `validator`   | `ValidatorFunction`         | Custom validation function                            |
+| Option        | Type                          | Description                                           |
+| ------------- | ----------------------------- | ----------------------------------------------------- |
+| `type`        | `EditorFieldType`             | Field type (required)                                 |
+| `label`       | `string`                      | Field label                                           |
+| `description` | `string`                      | Help text below field                                 |
+| `placeholder` | `string`                      | Input placeholder                                     |
+| `required`    | `boolean`                     | Whether field is required                             |
+| `default`     | `any`                         | Default value                                         |
+| `hidden`      | `boolean`                     | Hide field from editor                                |
+| `group`       | `string`                      | Group field in sidebar                                |
+| `options`     | `Array<{label, value, id}>`   | Options for select/radio/checkbox                     |
+| `min` / `max` | `number`                      | Min/max for number/range                              |
+| `step`        | `number`                      | Step for number/range                                 |
+| `rows`        | `number`                      | Rows for textarea                                     |
+| `validator`   | `ValidatorFunction`           | Custom validation function                            |
 | `conditions`  | `(blockData: any) => boolean` | Condition function to show/hide field dynamically     |
-| `component`   | `Component`                 | Custom component for `custom` type                    |
-| `valueSuffix` | `string`                    | Suffix to display after range value (e.g., "px", "%") |
-| `responsive`  | `boolean`                   | Whether image is responsive                           |
+| `component`   | `Component`                   | Custom component for `custom` type                    |
+| `valueSuffix` | `string`                      | Suffix to display after range value (e.g., "px", "%") |
+| `responsive`  | `boolean`                     | Whether image is responsive                           |
 
 ## Validation
 
@@ -257,6 +257,45 @@ export default {
 ### Conditions and Field Groups
 
 If every field within a [field group](#field-options) is conditionally hidden, the group tab itself is automatically removed from the sidebar. It will reappear as soon as at least one field in the group becomes visible again.
+
+## Repeater Item Labels
+
+Repeater fields can set a display title for each collapsed item via `repeaterFieldLabel`:
+
+- A **string** — the field key whose value is shown as the title (e.g. `"heading"`)
+- A **function** — `(item, index, parentBlockData?) => string` when the label depends on item type or a conditionally hidden field
+
+```typescript
+cards: createField.repeater(
+   {
+      type: createField.select(
+         [
+            { label: "Content card", value: "card_base", id: "card_base" },
+            { label: "Image card", value: "card_image", id: "card_image" },
+         ],
+         { label: "Card type", required: true, default: "card_base" }
+      ),
+      heading: createField.text({
+         label: "Heading",
+         conditions: (_blockData, item) => item.type === "card_base",
+      }),
+      alt: createField.text({
+         label: "Alt text",
+         conditions: (_blockData, item) => item.type === "card_image",
+      }),
+   },
+   {
+      label: "Cards",
+      // Prefer a function when the usual label field is not always present
+      repeaterFieldLabel: (item, index) =>
+         item.type === "card_base"
+            ? item.heading || `Card ${index + 1}`
+            : item.alt || `Image card ${index + 1}`,
+   }
+),
+```
+
+If the resolved label is empty, the editor falls back to `Item 1`, `Item 2`, and so on.
 
 ## Field Examples
 

@@ -152,9 +152,45 @@ createField.repeater(
       label: "Items",
       minItems: 1,
       maxItems: 10,
+      // Use a field key as the collapsed item title
+      repeaterFieldLabel: "title",
    }
 );
 ```
+
+`repeaterFieldLabel` accepts either:
+
+- A **string** — the field key whose value is shown as the item title
+- A **function** — `(item, index, parentBlockData?) => string` for custom titles (useful when the label field is conditionally hidden)
+
+```typescript
+createField.repeater(
+   {
+      type: createField.select(
+         [
+            { label: "Content card", value: "card_base", id: "card_base" },
+            { label: "Image card", value: "card_image", id: "card_image" },
+         ],
+         { label: "Card type", required: true, default: "card_base" }
+      ),
+      heading: createField.text({
+         label: "Heading",
+         conditions: (_blockData, item) => item.type === "card_base",
+      }),
+      alt: createField.text({
+         label: "Alt text",
+         conditions: (_blockData, item) => item.type === "card_image",
+      }),
+   },
+   {
+      label: "Cards",
+      repeaterFieldLabel: (item, index) =>
+         item.type === "card_base" ? item.heading || `Card ${index + 1}` : item.alt || `Image card ${index + 1}`,
+   }
+);
+```
+
+If the resolved label is empty, the editor falls back to `Item 1`, `Item 2`, etc.
 
 ### Object
 
@@ -264,29 +300,30 @@ createField.custom({
 
 All field types accept these common options:
 
-| Option        | Type                | Description                              |
-| ------------- | ------------------- | ---------------------------------------- |
-| `label`       | `string`            | Field label                              |
-| `description` | `string`            | Help text below field                    |
-| `placeholder` | `string`            | Input placeholder                        |
-| `required`    | `boolean`           | Whether field is required                |
-| `default`     | `any`               | Default value                            |
-| `hidden`      | `boolean`           | Hide field from editor                   |
-| `group`       | `string`            | Group field in sidebar                   |
-| `clearable`   | `boolean`           | Show clear button                        |
-| `validator`   | `ValidatorFunction` | Custom validation function               |
-| `conditions`  | `(blockData: any) => boolean` | Show/hide field based on block data. See [Conditional Fields](/guide/fields#conditional-fields) |
-| `minLength`   | `number`            | Minimum string length                    |
-| `maxLength`   | `number`            | Maximum string length                    |
-| `min`         | `number`            | Minimum numeric value                    |
-| `max`         | `number`            | Maximum numeric value                    |
-| `step`        | `number`            | Step for number/range                    |
-| `rows`        | `number`            | Rows for textarea                        |
-| `minItems`    | `number`            | Minimum repeater items                   |
-| `maxItems`    | `number`            | Maximum repeater items                   |
-| `component`   | `Component`         | Custom component (for custom type)       |
-| `valueSuffix` | `string`            | Suffix for range value (e.g., "px", "%") |
-| `responsive`  | `boolean`           | Whether image is responsive (image type) |
+| Option               | Type                                                    | Description                                                                                     |
+| -------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `label`              | `string`                                                | Field label                                                                                     |
+| `description`        | `string`                                                | Help text below field                                                                           |
+| `placeholder`        | `string`                                                | Input placeholder                                                                               |
+| `required`           | `boolean`                                               | Whether field is required                                                                       |
+| `default`            | `any`                                                   | Default value                                                                                   |
+| `hidden`             | `boolean`                                               | Hide field from editor                                                                          |
+| `group`              | `string`                                                | Group field in sidebar                                                                          |
+| `clearable`          | `boolean`                                               | Show clear button                                                                               |
+| `validator`          | `ValidatorFunction`                                     | Custom validation function                                                                      |
+| `conditions`         | `(blockData: any) => boolean`                           | Show/hide field based on block data. See [Conditional Fields](/guide/fields#conditional-fields) |
+| `minLength`          | `number`                                                | Minimum string length                                                                           |
+| `maxLength`          | `number`                                                | Maximum string length                                                                           |
+| `min`                | `number`                                                | Minimum numeric value                                                                           |
+| `max`                | `number`                                                | Maximum numeric value                                                                           |
+| `step`               | `number`                                                | Step for number/range                                                                           |
+| `rows`               | `number`                                                | Rows for textarea                                                                               |
+| `minItems`           | `number`                                                | Minimum repeater items                                                                          |
+| `maxItems`           | `number`                                                | Maximum repeater items                                                                          |
+| `repeaterFieldLabel` | `string \| ((item, index, parentBlockData?) => string)` | Repeater item title: field key or function (repeater type)                                      |
+| `component`          | `Component`                                             | Custom component (for custom type)                                                              |
+| `valueSuffix`        | `string`                                                | Suffix for range value (e.g., "px", "%")                                                        |
+| `responsive`         | `boolean`                                               | Whether image is responsive (image type)                                                        |
 
 ## Complete Example
 
