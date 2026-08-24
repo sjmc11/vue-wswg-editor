@@ -58,7 +58,8 @@ export interface EditorFieldConfig {
    validator?: ValidatorFunction;
    // Repeater-specific properties
    repeaterFields?: Record<string, EditorFieldConfig>;
-   repeaterFieldLabel?: string; // attribute key for the repeater field label
+   // Field key to use as the item title, or a function that returns the title string
+   repeaterFieldLabel?: string | ((item: any, index: number, parentBlockData?: any) => string);
    // Object-specific properties
    objectFields?: Record<string, EditorFieldConfig>; // nested fields for object type
    // String length validation

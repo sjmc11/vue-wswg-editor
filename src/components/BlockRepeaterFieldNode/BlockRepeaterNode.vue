@@ -27,10 +27,7 @@
                   <ChevronUpIcon v-else class="repeater-item-header__icon" />
                </button>
                <h4 class="repeater-item-header__title">
-                  <span v-if="fieldConfig.repeaterFieldLabel">
-                     {{ item[fieldConfig.repeaterFieldLabel] || `Item ${index + 1}` }}
-                  </span>
-                  <span v-else> Item {{ index + 1 }} </span>
+                  <span>{{ getRepeaterItemLabel(item, index) }}</span>
                </h4>
                <div v-if="editable" class="repeater-item-header__actions">
                   <button
@@ -206,6 +203,24 @@ function toggleRepeaterItem(itemId: string) {
 const canAddItem = computed(() => {
    return !props.editable || !!(props.fieldConfig.maxItems && fieldValue.value.length >= props.fieldConfig.maxItems);
 });
+
+/**
+ * Resolve the display title for a repeater item.
+ * `repeaterFieldLabel` may be a field key string or a function that returns a label.
+ */
+function getRepeaterItemLabel(item: any, index: number): string {
+   const labelConfig = props.fieldConfig.repeaterFieldLabel;
+   if (!labelConfig) return `Item ${index + 1}`;
+
+   if (typeof labelConfig === "function") {
+      const result = labelConfig(item, index, props.parentBlockData);
+      return typeof result === "string" && result.trim() ? result : `Item ${index + 1}`;
+   }
+
+   // Existing string-key behavior
+   const value = item?.[labelConfig];
+   return value ? String(value) : `Item ${index + 1}`;
+}
 
 /**
  * Check if a repeater subfield should be visible based on its `conditions`.
